@@ -8,6 +8,7 @@ import { OccasionSection } from '../components/home/OccasionSection';
 import { StoreLocationSection } from '../components/home/StoreLocationSection';
 import { WhyChooseUs } from '../components/home/WhyChooseUs';
 import { useStore } from '../context/StoreContext';
+import { getProductionUrl } from '../utils/seo';
 
 export const HomePage: React.FC = () => {
   const { settings, homepageConfig } = useStore();
@@ -31,7 +32,7 @@ export const HomePage: React.FC = () => {
       latitude: '28.5684',
       longitude: '77.3824',
     },
-    url: 'https://cakesnmore-noida.web.app',
+    url: getProductionUrl('/'),
     openingHours: 'Mo-Su 09:00-23:00',
     priceRange: '₹₹',
   };

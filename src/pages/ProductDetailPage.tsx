@@ -20,6 +20,7 @@ import { ProductCard } from '../components/products/ProductCard';
 import { useCart } from '../../src/context/CartContext';
 import { useStore } from '../../src/context/StoreContext';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
+import { getProductionUrl } from '../utils/seo';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -85,25 +86,51 @@ export const ProductDetailPage: React.FC = () => {
     .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
     .slice(0, 4);
 
+  const productUrl = getProductionUrl(`/product/${product.slug}`);
+  const productImages = product.images.map((image) => (image.startsWith('/') ? getProductionUrl(image) : image));
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    image: product.images,
-    description: product.description,
-    sku: product.id,
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: 'INR',
-      price: product.price,
-      availability: product.available
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
-      seller: {
-        '@type': 'LocalBusiness',
-        name: 'Cakes N More Noida Sector 76',
+    '@graph': [
+      {
+        '@type': 'Product',
+        url: productUrl,
+        name: product.name,
+        image: productImages,
+        description: product.description,
+        sku: product.id,
+        brand: { '@type': 'Brand', name: 'Cakes N More' },
+        offers: {
+          '@type': 'Offer',
+          url: productUrl,
+          priceCurrency: 'INR',
+          price: product.price,
+          availability: product.available
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          seller: {
+            '@type': 'LocalBusiness',
+            name: 'Cakes N More',
+            url: getProductionUrl('/'),
+          },
+          hasMerchantReturnPolicy: {
+            '@type': 'MerchantReturnPolicy',
+            applicableCountry: 'IN',
+            merchantReturnLink: getProductionUrl('/returns-policy'),
+          },
+        },
       },
-    },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
+          ...(product.categorySlug
+            ? [{ '@type': 'ListItem', position: 3, name: product.categoryName || 'Category', item: getProductionUrl(`/category/${product.categorySlug}`) }]
+            : []),
+          { '@type': 'ListItem', position: product.categorySlug ? 4 : 3, name: product.name, item: productUrl },
+        ],
+      },
+    ],
   };
 
   return (

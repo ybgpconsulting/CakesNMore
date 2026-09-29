@@ -1,27 +1,22 @@
-name = "fnp-noida76"
+name = "cakesnmore"
 main = "worker/index.ts"
-compatibility_date = "2026-09-24"
+compatibility_date = "2026-09-25"
 
 [assets]
 directory = "./dist"
 not_found_handling = "single-page-application"
 binding = "ASSETS"
+run_worker_first = ["/api/*", "/media/*", "/sitemap.xml", "/robots.txt"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "fnp-noida76"
-database_id = "d1ba94f2-427d-41d1-8cc1-51c8f1911034"
+database_name = "cakesnmore"
+database_id = "80ca6af3-c589-4bbf-8921-45ed43a3fc74"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
 binding = "MEDIA"
-bucket_name = "cakesnmore-media"
+bucket_name = "cakesnmore"
 
 [vars]
-ADMIN_EMAIL = "admin@fnpnoida76.com"
-# Comma-separated frontend origins allowed to use credentialed cross-origin API requests.
-# CORS_ORIGIN = "https://your-store.example"
-
-# Set these with `wrangler secret put`, never in this file:
-# ADMIN_PASSWORD_HASH = "pbkdf2_sha256$100000$base64url-salt$base64url-hash"
-# SESSION_SECRET = "a-long-random-secret"
+ADMIN_EMAIL = "admin@cakesnmorenoida.in"

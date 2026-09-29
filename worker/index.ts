@@ -20,6 +20,7 @@ interface Env {
 }
 
 type JsonObject = Record<string, unknown>;
+const PRODUCTION_ORIGIN = 'https://cakesnmorenoida.in';
 const COOKIE_NAME = 'fnp_admin_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 12;
 const MAX_JSON_BYTES = 128 * 1024;
@@ -37,6 +38,46 @@ function json(data: unknown, status = 200, headers: HeadersInit = {}): Response 
 
 function error(message: string, status = 400): Response {
   return json({ error: message }, status);
+}
+
+function xmlEscape(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function sitemapUrl(path: string, lastmod?: string): string {
+  const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : '';
+  return `  <url>\n    <loc>${xmlEscape(`${PRODUCTION_ORIGIN}${path}`)}</loc>${lastmodXml}\n  </url>`;
+}
+
+async function buildSitemap(env: Env): Promise<Response> {
+  await seedIfEmpty(env);
+  const [categories, products, homepageSetting, storeSetting] = await Promise.all([
+    env.DB.prepare('SELECT slug FROM categories WHERE active = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string }>(),
+    env.DB.prepare('SELECT slug, updated_at FROM products WHERE available = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string; updated_at: string }>(),
+    env.DB.prepare('SELECT updated_at FROM settings WHERE key = ?').bind('homepage').first<{ updated_at: string }>(),
+    env.DB.prepare('SELECT updated_at FROM settings WHERE key = ?').bind('store').first<{ updated_at: string }>(),
+  ]);
+  const productLastmod = products.results.map((product) => product.updated_at).filter(Boolean).sort().at(-1);
+  const urls = [
+    sitemapUrl('/', homepageSetting?.updated_at || storeSetting?.updated_at),
+    sitemapUrl('/shop', productLastmod),
+    ...categories.results.map((category) => sitemapUrl(`/category/${encodeURIComponent(category.slug)}`)),
+    ...products.results.map((product) => sitemapUrl(`/product/${encodeURIComponent(product.slug)}`, product.updated_at)),
+    sitemapUrl('/about'),
+    sitemapUrl('/contact'),
+    sitemapUrl('/privacy-policy'),
+    sitemapUrl('/terms-and-conditions'),
+    sitemapUrl('/shipping-and-delivery'),
+    sitemapUrl('/returns-policy'),
+  ];
+  const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
+  return new Response(body, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=300' } });
+}
+
+function robotsResponse(): Response {
+  return new Response('User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/*\n\nSitemap: https://cakesnmorenoida.in/sitemap.xml\n', {
+    headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' },
+  });
 }
 
 function asBoolean(value: unknown): boolean {
@@ -335,6 +376,8 @@ async function handleMedia(request: Request, env: Env, url: URL): Promise<Respon
 export default { async fetch(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   try {
+    if (url.pathname === '/sitemap.xml' && request.method === 'GET') return await buildSitemap(env);
+    if (url.pathname === '/robots.txt' && request.method === 'GET') return robotsResponse();
     if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/')) {
       if (request.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), request, env);
       if (url.pathname.startsWith('/api/')) await seedIfEmpty(env);

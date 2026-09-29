@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/*
 
-Sitemap: https://fnp-noida76.web.app/sitemap.xml
+Sitemap: https://cakesnmorenoida.in/sitemap.xml

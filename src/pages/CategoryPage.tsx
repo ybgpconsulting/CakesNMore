@@ -4,6 +4,7 @@ import { ChevronRight, Home, Sparkles } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
 import { useStore } from '../context/StoreContext';
+import { getProductionUrl } from '../utils/seo';
 
 export const CategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -26,6 +27,22 @@ export const CategoryPage: React.FC = () => {
       });
   }, [products, currentCategory, sortBy]);
 
+  const breadcrumbSchema = currentCategory
+    ? {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: currentCategory.name,
+            item: getProductionUrl(`/category/${currentCategory.slug}`),
+          },
+        ],
+      }
+      : null;
+
   if (!currentCategory) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
@@ -46,6 +63,7 @@ export const CategoryPage: React.FC = () => {
       <SEO
         title={`${currentCategory.name} Delivery in Sector 76 Noida | Cakes N More`}
         description={`Order fresh ${currentCategory.name.toLowerCase()} in Sector 76, Noida. ${currentCategory.description} Handcrafted and delivered with love via WhatsApp order.`}
+        schema={{ '@context': 'https://schema.org', '@graph': [breadcrumbSchema] }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

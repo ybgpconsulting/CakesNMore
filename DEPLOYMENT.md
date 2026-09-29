@@ -16,8 +16,8 @@ On Windows paths containing `&`, use the repository scripts (`npm run deploy`, `
 ## Create Cloudflare resources
 
 ```bash
-npm run wrangler -- d1 create fnp-noida76
-npm run wrangler -- r2 bucket create cakesnmore-media
+npm run wrangler -- d1 create cakesnmore
+npm run wrangler -- r2 bucket create cakesnmore
 ```
 
 Copy the D1 database ID into `wrangler.toml` in place of `REPLACE_WITH_D1_DATABASE_ID`.
@@ -58,7 +58,7 @@ npm run build
 npm run deploy
 ```
 
-`wrangler.toml` maps `dist/` to Worker static assets, configures SPA fallback, binds D1 as `DB`, and binds R2 as `MEDIA`. Public reads are available under `/api/products`, `/api/categories`, `/api/settings/store`, `/api/settings/delivery`, and `/api/homepage/config`. Admin writes and media operations require the admin session.
+`wrangler.toml` maps `dist/` to Worker static assets, configures SPA fallback, runs the dynamic `/sitemap.xml` and `/robots.txt` routes through the Worker, binds D1 as `DB`, and binds R2 as `MEDIA`. Public reads are available under `/api/products`, `/api/categories`, `/api/settings/store`, `/api/settings/delivery`, and `/api/homepage/config`. Admin writes and media operations require the admin session.
 
 ## Local development
 

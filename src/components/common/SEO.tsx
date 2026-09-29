@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { getProductionUrl, PRODUCTION_ORIGIN } from '../../utils/seo';
 
 interface SEOProps {
   title?: string;
@@ -6,6 +7,7 @@ interface SEOProps {
   canonical?: string;
   image?: string;
   type?: string;
+  robots?: string;
   schema?: Record<string, any>;
 }
 
@@ -15,6 +17,7 @@ export const SEO: React.FC<SEOProps> = ({
   canonical,
   image = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop',
   type = 'website',
+  robots,
   schema,
 }) => {
   useEffect(() => {
@@ -37,6 +40,7 @@ export const SEO: React.FC<SEOProps> = ({
     updateMeta('property', 'og:description', description);
     updateMeta('property', 'og:image', image);
     updateMeta('property', 'og:type', type);
+    updateMeta('property', 'og:url', getProductionUrl(window.location.pathname));
     updateMeta('name', 'twitter:title', title);
     updateMeta('name', 'twitter:description', description);
     updateMeta('name', 'twitter:image', image);
@@ -48,7 +52,15 @@ export const SEO: React.FC<SEOProps> = ({
       link.setAttribute('rel', 'canonical');
       document.head.appendChild(link);
     }
-    link.setAttribute('href', canonical || `${window.location.origin}${window.location.pathname}`);
+    const canonicalPath = canonical
+      ? new URL(canonical, PRODUCTION_ORIGIN).pathname
+      : window.location.pathname;
+    link.setAttribute('href', getProductionUrl(canonicalPath));
+    updateMeta(
+      'name',
+      'robots',
+      robots || (window.location.pathname.startsWith('/admin') ? 'noindex,nofollow' : 'index,follow')
+    );
 
     // Dynamic JSON-LD script if provided
     let scriptEl: HTMLScriptElement | null = null;
