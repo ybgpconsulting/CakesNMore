@@ -142,10 +142,11 @@ export const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-28 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-36 sm:py-12">
       <SEO
         title={`Review Order (${totalQuantity} items) | Cakes N More Noida Sector 76`}
         description="Review your selected celebration cakes and flowers before WhatsApp confirmation. Fast delivery across Sector 76, Noida."
+        noindex={true}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -584,7 +585,7 @@ export const CartPage: React.FC = () => {
       </div>
 
       {/* Sticky Mobile Checkout Bar */}
-      <div className="lg:hidden fixed bottom-[52px] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
+      <div className="lg:hidden fixed bottom-[calc(56px+max(0.4rem,env(safe-area-inset-bottom,0px)))] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div className="flex flex-col shrink-0">
             <span className="text-[10px] uppercase font-bold text-gray-400">Total ({totalQuantity} items)</span>

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Clock, ExternalLink, Mail, MapPin, Navigation, Phone, Send, Store } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
-import { safeExternalUrl } from '../utils/urls';
+import { generateWhatsAppUrl, normalizeWhatsAppNumber, safeExternalUrl } from '../utils/urls';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
+import { getProductionUrl } from '../utils/seo';
 
 export const ContactPage: React.FC = () => {
   const { settings } = useStore();
@@ -14,8 +15,8 @@ export const ContactPage: React.FC = () => {
   const [inquiryMessage, setInquiryMessage] = useState('');
 
   const cleanPhone = settings.phone.replace(/[^0-9+]/g, '') || '+919999517599';
-  const cleanWhatsApp = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const whatsappUrl = `https://wa.me/${cleanWhatsApp}`;
+  const cleanWhatsApp = normalizeWhatsAppNumber(settings.whatsappNumber);
+  const whatsappUrl = generateWhatsAppUrl(cleanWhatsApp);
   const deliveryPartners = [
     { name: 'Zomato', url: settings.zomatoUrl, logo: 'https://cdn.simpleicons.org/zomato/E23744' },
     { name: 'Swiggy', url: settings.swiggyUrl, logo: 'https://cdn.simpleicons.org/swiggy/FC8019' },
@@ -35,15 +36,71 @@ ${inquiryMessage || 'I would like to inquire about cake and flower delivery opti
 
 Please let me know availability and pricing.`;
 
-    const url = `https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    const url = generateWhatsAppUrl(cleanWhatsApp, text);
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!win) {
+      window.location.href = url;
+    }
   };
+
+  const contactSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'ContactPage',
+        '@id': getProductionUrl('/contact'),
+        name: 'Contact Cakes N More Sector 76 Noida',
+        url: getProductionUrl('/contact'),
+      },
+      {
+        '@type': ['Bakery', 'Florist', 'LocalBusiness'],
+        '@id': 'https://cakesnmorenoida.in/#localbusiness',
+        name: settings.businessName || 'Cakes N More',
+        telephone: settings.phone,
+        email: settings.email || 'contact@cakesnmorenoida.in',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City',
+          addressLocality: 'Sector 76, Noida',
+          addressRegion: 'Uttar Pradesh',
+          postalCode: '201301',
+          addressCountry: 'IN',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: '28.5684',
+          longitude: '77.3824',
+        },
+        hasMap: 'https://maps.google.com/?q=28.5684,77.3824',
+        openingHours: 'Mo-Su 09:00-23:00',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'Contact Us', item: getProductionUrl('/contact') },
+        ],
+      },
+    ],
+  };
+
+  const contactKeywords = [
+    'contact cakes n more noida',
+    'bakery phone number sector 76 noida',
+    'shop 29 amrapali crystal home noida',
+    'cake shop near mithaas noida',
+    'florist contact number noida 76',
+    'cakes n more whatsapp order number',
+    'bakery near sector 76 metro station noida',
+  ].join(', ');
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
         title="Contact & Location | Cakes N More Noida Sector 76"
         description="Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 for quick WhatsApp orders and same-day delivery."
+        keywords={contactKeywords}
+        schema={contactSchema}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -130,7 +187,7 @@ Please let me know availability and pricing.`;
                 <div>
                   <h3 className="font-serif text-base font-bold text-gray-900">WhatsApp Orders &amp; Inquiry</h3>
                   <a
-                    href={`https://wa.me/${cleanWhatsApp}`}
+                    href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-bold text-[#25D366] hover:underline"

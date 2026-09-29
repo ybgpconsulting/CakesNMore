@@ -124,6 +124,15 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setFormError('Product title is required.');
       return;
     }
+    const numericPrice = Number(price);
+    if (isNaN(numericPrice) || numericPrice < 0) {
+      setFormError('Please enter a valid price (must be 0 or greater).');
+      return;
+    }
+    if (oldPrice !== undefined && oldPrice !== null && (isNaN(Number(oldPrice)) || Number(oldPrice) < 0)) {
+      setFormError('Original price must be a valid positive number if provided.');
+      return;
+    }
     if (images.length === 0) {
       setFormError('Please add at least one product photo.');
       return;

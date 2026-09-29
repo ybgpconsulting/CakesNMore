@@ -9,6 +9,7 @@ export interface Product {
   description: string;
   price: number;
   oldPrice?: number;
+  sku?: string;
   categoryId: string;
   categoryName?: string;
   categorySlug?: string;
@@ -142,3 +143,72 @@ export interface CustomerDeliveryAddress {
   deliveryInstructions: string;
 }
 
+export type DuplicateResolutionAction = 'skip' | 'update' | 'create_new';
+
+export interface ImportItemRaw {
+  category: string;
+  name: string;
+  description?: string;
+  price: string | number;
+  oldPrice?: string | number;
+  sku?: string;
+  images?: string | string[];
+  available?: string | boolean | number;
+  weightOptions?: string | string[];
+}
+
+export interface ParsedImportItem {
+  rowNumber: number;
+  raw: ImportItemRaw;
+  name: string;
+  slug: string;
+  categoryName: string;
+  categorySlug: string;
+  categoryId: string;
+  isNewCategory: boolean;
+  description: string;
+  price: number;
+  oldPrice?: number;
+  sku?: string;
+  images: string[];
+  available: boolean;
+  weightOptions?: string[];
+  featured: boolean;
+  bestseller: boolean;
+  displayOrder: number;
+  status: 'valid_new' | 'duplicate' | 'invalid';
+  errors: string[];
+  warnings: string[];
+  duplicateMatchId?: string;
+  duplicateMatchName?: string;
+  duplicateMatchType?: 'sku' | 'name_category';
+  duplicateAction: DuplicateResolutionAction;
+  selected: boolean;
+}
+
+export interface ImportHistoryRecord {
+  id: string;
+  importedAt: string;
+  fileName: string;
+  fileFormat: string;
+  totalItems: number;
+  createdCount: number;
+  updatedCount: number;
+  skippedCount: number;
+  categoriesCreatedCount: number;
+  errors: string[];
+}
+
+export interface MenuImportPayload {
+  fileName: string;
+  fileFormat: 'csv' | 'json';
+  categoriesToCreate: Category[];
+  productsToCreate: Product[];
+  productsToUpdate: Product[];
+  skippedCount: number;
+}
+
+export interface MenuImportResponse {
+  ok: boolean;
+  summary: ImportHistoryRecord;
+}

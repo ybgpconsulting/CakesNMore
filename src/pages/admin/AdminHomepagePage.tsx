@@ -14,6 +14,10 @@ export const AdminHomepagePage: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    setFormData({ ...homepageConfig });
+  }, [homepageConfig]);
+
   const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;

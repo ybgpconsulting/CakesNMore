@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
             </div>
 
             <p className="text-sm text-[#A89897] leading-relaxed max-w-sm pt-1">
-              Fresh cakes, flowers, plants and gifts from our 100% pure veg store in Sector 76, Noida.
+              Fresh 100% eggless celebration cakes, exotic flower bouquets, indoor plants and luxury gift hampers from our neighborhood boutique bakery in Sector 76, Noida.
             </p>
 
             <div className="pt-2 flex items-center gap-3">
@@ -200,8 +200,15 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Local Keywords & Delivery Reach Ribbon */}
+        <div className="pt-6 border-t border-[#312527] mb-4">
+          <p className="text-[11px] text-[#A89897] leading-relaxed">
+            <strong className="text-[#E8A598]">Local Doorstep Delivery Across Noida:</strong> Sector 76, Sector 75, Sector 74, Sector 77, Sector 78, Sector 79, Sector 50, Sector 51, Amrapali Silicon City, Amrapali Crystal Homes, Mahagun Moderne, Supertech Capetown, Aditya Urban Casa, and Central Noida. 100% Eggless Cakes • Midnight Delivery • Fresh Flowers.
+          </p>
+        </div>
+
         {/* Bottom Sub-bar */}
-        <div className="pt-5 mt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
+        <div className="pt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
           <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#D8C7C5]">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>

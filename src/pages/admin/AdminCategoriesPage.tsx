@@ -69,6 +69,11 @@ export const AdminCategoriesPage: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      setActionNotice({ type: 'error', text: 'Category name is required.' });
+      return;
+    }
+
     const cleanSlug =
       slug.trim() ||
       name
@@ -86,10 +91,14 @@ export const AdminCategoriesPage: React.FC = () => {
       displayOrder: Number(displayOrder),
     };
 
-    await upsertCategory(newCat);
-    setIsModalOpen(false);
-    setActionNotice({ type: 'success', text: `Category "${newCat.name}" saved.` });
-    setTimeout(() => setActionNotice(null), 3000);
+    try {
+      await upsertCategory(newCat);
+      setIsModalOpen(false);
+      setActionNotice({ type: 'success', text: `Category "${newCat.name}" saved.` });
+      setTimeout(() => setActionNotice(null), 3000);
+    } catch (err: any) {
+      setActionNotice({ type: 'error', text: err?.message || 'Failed to save category.' });
+    }
   };
 
   const handleDelete = async (cat: Category) => {

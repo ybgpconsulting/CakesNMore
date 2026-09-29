@@ -23,7 +23,7 @@ type JsonObject = Record<string, unknown>;
 const PRODUCTION_ORIGIN = 'https://cakesnmorenoida.in';
 const COOKIE_NAME = 'fnp_admin_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 12;
-const MAX_JSON_BYTES = 128 * 1024;
+const MAX_JSON_BYTES = 2 * 1024 * 1024;
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const LOGIN_WINDOW_SECONDS = 15 * 60;
 const LOGIN_MAX_FAILURES = 5;
@@ -44,9 +44,9 @@ function xmlEscape(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
-function sitemapUrl(path: string, lastmod?: string): string {
-  const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : '';
-  return `  <url>\n    <loc>${xmlEscape(`${PRODUCTION_ORIGIN}${path}`)}</loc>${lastmodXml}\n  </url>`;
+function sitemapUrl(path: string, lastmod?: string, changefreq = 'weekly', priority = '0.8'): string {
+  const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod.slice(0, 10))}</lastmod>` : '';
+  return `  <url>\n    <loc>${xmlEscape(`${PRODUCTION_ORIGIN}${path}`)}</loc>${lastmodXml}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 
 async function buildSitemap(env: Env): Promise<Response> {
@@ -59,23 +59,23 @@ async function buildSitemap(env: Env): Promise<Response> {
   ]);
   const productLastmod = products.results.map((product) => product.updated_at).filter(Boolean).sort().at(-1);
   const urls = [
-    sitemapUrl('/', homepageSetting?.updated_at || storeSetting?.updated_at),
-    sitemapUrl('/shop', productLastmod),
-    ...categories.results.map((category) => sitemapUrl(`/category/${encodeURIComponent(category.slug)}`)),
-    ...products.results.map((product) => sitemapUrl(`/product/${encodeURIComponent(product.slug)}`, product.updated_at)),
-    sitemapUrl('/about'),
-    sitemapUrl('/contact'),
-    sitemapUrl('/privacy-policy'),
-    sitemapUrl('/terms-and-conditions'),
-    sitemapUrl('/shipping-and-delivery'),
-    sitemapUrl('/returns-policy'),
+    sitemapUrl('/', homepageSetting?.updated_at || storeSetting?.updated_at, 'daily', '1.0'),
+    sitemapUrl('/shop', productLastmod, 'daily', '0.9'),
+    ...categories.results.map((category) => sitemapUrl(`/category/${encodeURIComponent(category.slug)}`, undefined, 'weekly', '0.9')),
+    ...products.results.map((product) => sitemapUrl(`/product/${encodeURIComponent(product.slug)}`, product.updated_at, 'weekly', '0.8')),
+    sitemapUrl('/about', undefined, 'monthly', '0.6'),
+    sitemapUrl('/contact', undefined, 'monthly', '0.7'),
+    sitemapUrl('/shipping-and-delivery', undefined, 'monthly', '0.5'),
+    sitemapUrl('/returns-policy', undefined, 'monthly', '0.4'),
+    sitemapUrl('/terms-and-conditions', undefined, 'monthly', '0.4'),
+    sitemapUrl('/privacy-policy', undefined, 'monthly', '0.4'),
   ];
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
   return new Response(body, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=300' } });
 }
 
 function robotsResponse(): Response {
-  return new Response('User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/*\n\nSitemap: https://cakesnmorenoida.in/sitemap.xml\n', {
+  return new Response('User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/*\nDisallow: /api/\n\nUser-agent: Googlebot\nAllow: /\n\nUser-agent: Bingbot\nAllow: /\n\nSitemap: https://cakesnmorenoida.in/sitemap.xml\n', {
     headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' },
   });
 }
@@ -95,16 +95,17 @@ function validDate(value: unknown): boolean { return typeof value === 'string' &
 function imageReference(value: unknown): string | undefined { if (typeof value !== 'string' || value.length > 2048) return undefined; if (value.startsWith('/media/')) return mediaKey(decodeURIComponent(value.slice(7))) ? value : undefined; return urlValue(value, true); }
 
 function validateProduct(value: unknown): Product | null {
-  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'selectedWeight', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
+  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'sku', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'selectedWeight', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
   const item = value;
   const id = text(item.id, 120); const name = text(item.name, 160); const slug = text(item.slug, 160); const description = text(item.description, 5000, false); const categoryId = text(item.categoryId, 120); const images = stringArray(item.images, 20, 2048);
-  const price = numberValue(item.price, 0, 10000000); const oldPrice = item.oldPrice === undefined ? undefined : numberValue(item.oldPrice, 0, 10000000);
+  const price = numberValue(item.price, 0, 10000000); const oldPrice = item.oldPrice == null ? undefined : numberValue(item.oldPrice, 0, 10000000);
   const featured = booleanValue(item.featured); const bestseller = booleanValue(item.bestseller); const available = booleanValue(item.available); const displayOrder = numberValue(item.displayOrder, 0, 1000000);
-  if (!id || !name || !slug || description === undefined || !categoryId || !images || images.some((image) => !imageReference(image)) || price === undefined || (item.oldPrice !== undefined && oldPrice === undefined) || featured === undefined || bestseller === undefined || available === undefined || displayOrder === undefined || !validDate(item.createdAt) || !validDate(item.updatedAt)) return null;
-  const categoryName = item.categoryName === undefined ? undefined : text(item.categoryName, 160, false); const categorySlug = item.categorySlug === undefined ? undefined : text(item.categorySlug, 160, false);
-  const weightOptions = item.weightOptions === undefined ? undefined : stringArray(item.weightOptions, 20, 80); const selectedWeight = item.selectedWeight === undefined ? undefined : text(item.selectedWeight, 80, false); const allowCustomMessage = item.allowCustomMessage === undefined ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder === undefined ? undefined : text(item.customMessagePlaceholder, 300, false);
-  if ((item.categoryName !== undefined && categoryName === undefined) || (item.categorySlug !== undefined && categorySlug === undefined) || (item.weightOptions !== undefined && !weightOptions) || (item.selectedWeight !== undefined && selectedWeight === undefined) || (item.allowCustomMessage !== undefined && allowCustomMessage === undefined) || (item.customMessagePlaceholder !== undefined && customMessagePlaceholder === undefined)) return null;
-  return { id, name, slug, description, price, oldPrice, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, selectedWeight, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
+  if (!id || !name || !slug || description === undefined || !categoryId || !images || images.some((image) => !imageReference(image)) || price === undefined || (item.oldPrice != null && oldPrice === undefined) || featured === undefined || bestseller === undefined || available === undefined || displayOrder === undefined || !validDate(item.createdAt) || !validDate(item.updatedAt)) return null;
+  const sku = item.sku == null ? undefined : text(item.sku, 120, false);
+  const categoryName = item.categoryName == null ? undefined : text(item.categoryName, 160, false); const categorySlug = item.categorySlug == null ? undefined : text(item.categorySlug, 160, false);
+  const weightOptions = item.weightOptions == null ? undefined : stringArray(item.weightOptions, 20, 80); const selectedWeight = item.selectedWeight == null ? undefined : text(item.selectedWeight, 80, false); const allowCustomMessage = item.allowCustomMessage == null ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder == null ? undefined : text(item.customMessagePlaceholder, 300, false);
+  if ((item.sku != null && sku === undefined) || (item.categoryName != null && categoryName === undefined) || (item.categorySlug != null && categorySlug === undefined) || (item.weightOptions != null && !weightOptions) || (item.selectedWeight != null && selectedWeight === undefined) || (item.allowCustomMessage != null && allowCustomMessage === undefined) || (item.customMessagePlaceholder != null && customMessagePlaceholder === undefined)) return null;
+  return { id, name, slug, description, price, oldPrice, sku, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, selectedWeight, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
 }
 
 function validateCategory(value: unknown): Category | null {
@@ -134,7 +135,7 @@ function validateHomepage(value: unknown): HomepageConfig | null {
 function validateDelivery(value: unknown): DeliverySettings | null {
   if (!isRecord(value) || !hasOnlyKeys(value, ['enabled', 'radiusKm', 'storeName', 'storeLatitude', 'storeLongitude', 'deliveryMessage', 'minOrderValue', 'deliveryCharge', 'freeDeliveryThreshold', 'allowedPincodes', 'specialDeliveryAreas'])) return null;
   const enabled = booleanValue(value.enabled); const radiusKm = numberValue(value.radiusKm, 0, 500); const storeName = text(value.storeName, 200); const latitude = numberValue(value.storeLatitude, -90, 90); const longitude = numberValue(value.storeLongitude, -180, 180); const message = text(value.deliveryMessage, 2000); const optionalNumbers = ['minOrderValue', 'deliveryCharge', 'freeDeliveryThreshold'];
-  if (enabled === undefined || radiusKm === undefined || !storeName || latitude === undefined || longitude === undefined || !message || optionalNumbers.some((key) => value[key] !== undefined && numberValue(value[key], 0, 10000000) === undefined) || (value.allowedPincodes !== undefined && !stringArray(value.allowedPincodes, 1000, 20)) || (value.specialDeliveryAreas !== undefined && !stringArray(value.specialDeliveryAreas, 1000, 200))) return null;
+  if (enabled === undefined || radiusKm === undefined || !storeName || latitude === undefined || longitude === undefined || !message || optionalNumbers.some((key) => value[key] != null && numberValue(value[key], 0, 10000000) === undefined) || (value.allowedPincodes != null && !stringArray(value.allowedPincodes, 1000, 20)) || (value.specialDeliveryAreas != null && !stringArray(value.specialDeliveryAreas, 1000, 200))) return null;
   return { enabled, radiusKm, storeName, storeLatitude: latitude, storeLongitude: longitude, deliveryMessage: message, minOrderValue: value.minOrderValue as number | undefined, deliveryCharge: value.deliveryCharge as number | undefined, freeDeliveryThreshold: value.freeDeliveryThreshold as number | undefined, allowedPincodes: value.allowedPincodes as string[] | undefined, specialDeliveryAreas: value.specialDeliveryAreas as string[] | undefined };
 }
 
@@ -150,15 +151,19 @@ async function detectImageType(file: File): Promise<'image/jpeg' | 'image/png' |
   return null;
 }
 
+function safeJsonParse<T>(raw: unknown, fallback: T): T {
+  try { return raw ? JSON.parse(String(raw)) as T : fallback; } catch { return fallback; }
+}
+
 function productFromRow(row: Record<string, unknown>): Product {
   return {
     id: String(row.id), name: String(row.name), slug: String(row.slug), description: String(row.description || ''),
     price: Number(row.price), oldPrice: row.old_price == null ? undefined : Number(row.old_price),
     categoryId: String(row.category_id), categoryName: row.category_name ? String(row.category_name) : undefined,
     categorySlug: row.category_slug ? String(row.category_slug) : undefined,
-    images: JSON.parse(String(row.images_json || '[]')), featured: asBoolean(row.featured),
+    images: safeJsonParse<string[]>(row.images_json, []), featured: asBoolean(row.featured),
     bestseller: asBoolean(row.bestseller), available: asBoolean(row.available), displayOrder: Number(row.display_order),
-    weightOptions: row.weight_options_json ? JSON.parse(String(row.weight_options_json)) : undefined,
+    weightOptions: row.weight_options_json ? safeJsonParse<string[] | undefined>(row.weight_options_json, undefined) : undefined,
     selectedWeight: row.selected_weight ? String(row.selected_weight) : undefined,
     allowCustomMessage: row.allow_custom_message == null ? undefined : asBoolean(row.allow_custom_message),
     customMessagePlaceholder: row.custom_message_placeholder ? String(row.custom_message_placeholder) : undefined,
@@ -186,7 +191,7 @@ async function seedIfEmpty(env: Env): Promise<void> {
 
 async function setting<T>(env: Env, key: string, fallback: T): Promise<T> {
   const row = await env.DB.prepare('SELECT value_json FROM settings WHERE key = ?').bind(key).first<{ value_json: string }>();
-  return row ? JSON.parse(row.value_json) as T : fallback;
+  return row ? safeJsonParse(row.value_json, fallback) : fallback;
 }
 
 function base64Url(bytes: ArrayBuffer | Uint8Array): string {
@@ -221,7 +226,8 @@ async function isAdmin(request: Request, env: Env): Promise<boolean> {
   } catch { return false; }
 }
 
-async function verifyPassword(password: string, stored: string): Promise<boolean> {
+async function verifyPassword(password: string, stored?: string): Promise<boolean> {
+  if (!stored) return false;
   const [algorithm, iterationsText, saltText, hashText] = stored.split('$');
   if (algorithm !== 'pbkdf2_sha256' || !iterationsText || !saltText || !hashText) return false;
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
@@ -231,15 +237,20 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
   return actual === hashText;
 }
 
-function sessionCookie(value: string, maxAge = SESSION_TTL_SECONDS): string {
-  return `${COOKIE_NAME}=${value}; Path=/; Max-Age=${maxAge}; Expires=${new Date(Date.now() + maxAge * 1000).toUTCString()}; HttpOnly; Secure; SameSite=None`;
+function sessionCookie(value: string, maxAge = SESSION_TTL_SECONDS, isSecure = false): string {
+  const secure = isSecure ? '; Secure' : '';
+  return `${COOKIE_NAME}=${value}; Path=/; Max-Age=${maxAge}; Expires=${new Date(Date.now() + maxAge * 1000).toUTCString()}; HttpOnly${secure}; SameSite=Lax`;
 }
 
 function allowedOrigin(request: Request, env: Env): string | null {
   const origin = request.headers.get('Origin');
-  if (!origin || !env.CORS_ORIGIN) return null;
-  const configuredOrigins = env.CORS_ORIGIN.split(',').map((value) => value.trim()).filter(Boolean);
-  return configuredOrigins.includes(origin) ? origin : null;
+  if (!origin) return null;
+  if (env.CORS_ORIGIN) {
+    const configuredOrigins = env.CORS_ORIGIN.split(',').map((value) => value.trim()).filter(Boolean);
+    return configuredOrigins.includes(origin) ? origin : null;
+  }
+  const devOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'];
+  return devOrigins.includes(origin) ? origin : null;
 }
 
 function withCors(response: Response, request: Request, env: Env): Response {
@@ -281,10 +292,14 @@ async function recordLoginFailure(env: Env, key: string): Promise<void> {
 async function clearLoginFailures(env: Env, key: string): Promise<void> { await env.DB.prepare('DELETE FROM login_rate_limits WHERE key = ?').bind(key).run(); }
 
 async function handleApi(request: Request, env: Env, url: URL): Promise<Response> {
-  const path = url.pathname.replace(/^\/api\/?/, '');
+  const path = url.pathname.replace(/^\/api\/?/, '').replace(/\/+$/, '');
   const method = request.method;
+  const isSecure = url.protocol === 'https:' || request.headers.get('x-forwarded-proto') === 'https';
 
   if (path === 'auth/login' && method === 'POST') {
+    if (!env.ADMIN_PASSWORD_HASH || !env.SESSION_SECRET) {
+      return error('Administrator authentication is not configured. Please set ADMIN_PASSWORD_HASH and SESSION_SECRET.', 500);
+    }
     let body: { email?: string; password?: string };
     try { body = await readJson(request); } catch { return error('Invalid login request.', 400); }
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
@@ -293,9 +308,9 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     if (!email || email.length > 320 || !body.password || body.password.length > 1024 || email !== env.ADMIN_EMAIL.toLowerCase() || !(await verifyPassword(body.password, env.ADMIN_PASSWORD_HASH))) { await Promise.all(keys.map((key) => recordLoginFailure(env, key))); return error('Invalid email or password.', 401); }
     await Promise.all(keys.map((key) => clearLoginFailures(env, key)));
     const session = await createSession(env, env.ADMIN_EMAIL.toLowerCase());
-    return json({ user: { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true } }, 200, { 'set-cookie': sessionCookie(session), 'cache-control': 'no-store' });
+    return json({ user: { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true } }, 200, { 'set-cookie': sessionCookie(session, SESSION_TTL_SECONDS, isSecure), 'cache-control': 'no-store' });
   }
-  if (path === 'auth/logout' && method === 'POST') return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0) });
+  if (path === 'auth/logout' && method === 'POST') return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0, isSecure) });
   if (path === 'auth/me' && method === 'GET') return (await isAdmin(request, env)) ? json({ user: { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true } }) : error('Unauthorized', 401);
 
   if (path === 'products' && method === 'GET') {
@@ -336,6 +351,104 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   if (path === 'settings/store' && method === 'PUT' && body) { const item = validateStore(body); return item ? saveSetting(env, 'store', item) : error('Invalid store settings payload.', 422); }
   if (path === 'settings/delivery' && method === 'PUT' && body) { const item = validateDelivery(body); return item ? saveSetting(env, 'delivery', item) : error('Invalid delivery settings payload.', 422); }
   if (path === 'homepage/config' && method === 'PUT' && body) { const item = validateHomepage(body); return item ? saveSetting(env, 'homepage', item) : error('Invalid homepage payload.', 422); }
+
+  if (path === 'admin/menu-import/history' && method === 'GET') {
+    const history = await setting<Record<string, unknown>[]>(env, 'menu_import_history', []);
+    return json(history);
+  }
+
+  if (path === 'admin/menu-import' && method === 'POST' && body) {
+    const fileName = typeof body.fileName === 'string' ? body.fileName.slice(0, 200) : 'menu_import';
+    const fileFormat = body.fileFormat === 'csv' || body.fileFormat === 'json' ? body.fileFormat : 'csv';
+    const rawCategories = Array.isArray(body.categoriesToCreate) ? body.categoriesToCreate : [];
+    const rawProductsToCreate = Array.isArray(body.productsToCreate) ? body.productsToCreate : [];
+    const rawProductsToUpdate = Array.isArray(body.productsToUpdate) ? body.productsToUpdate : [];
+    const skippedCount = typeof body.skippedCount === 'number' && Number.isFinite(body.skippedCount) ? body.skippedCount : 0;
+
+    const validatedCategories: Category[] = [];
+    for (const cat of rawCategories) {
+      const valid = validateCategory(cat);
+      if (valid) validatedCategories.push(valid);
+    }
+
+    const validatedProductsToCreate: Product[] = [];
+    for (const prod of rawProductsToCreate) {
+      const valid = validateProduct(prod);
+      if (valid) validatedProductsToCreate.push(valid);
+    }
+
+    const validatedProductsToUpdate: Product[] = [];
+    for (const prod of rawProductsToUpdate) {
+      const valid = validateProduct(prod);
+      if (valid) validatedProductsToUpdate.push(valid);
+    }
+
+    const statements: D1PreparedStatement[] = [];
+
+    for (const cat of validatedCategories) {
+      statements.push(
+        env.DB.prepare(
+          'INSERT OR REPLACE INTO categories (id,name,slug,description,image,active,display_order) VALUES (?,?,?,?,?,?,?)'
+        ).bind(cat.id, cat.name, cat.slug, cat.description, cat.image, cat.active ? 1 : 0, cat.displayOrder)
+      );
+    }
+
+    for (const item of [...validatedProductsToCreate, ...validatedProductsToUpdate]) {
+      statements.push(
+        env.DB.prepare(
+          'INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+        ).bind(
+          item.id,
+          item.name,
+          item.slug,
+          item.description,
+          item.price,
+          item.oldPrice ?? null,
+          item.categoryId,
+          item.categoryName ?? null,
+          item.categorySlug ?? null,
+          JSON.stringify(item.images),
+          item.featured ? 1 : 0,
+          item.bestseller ? 1 : 0,
+          item.available ? 1 : 0,
+          item.displayOrder,
+          item.weightOptions ? JSON.stringify(item.weightOptions) : null,
+          item.selectedWeight ?? null,
+          item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0,
+          item.customMessagePlaceholder ?? null,
+          item.createdAt || now,
+          now
+        )
+      );
+    }
+
+    // Execute in transaction-safe batches of 50
+    const BATCH_CHUNK_SIZE = 50;
+    for (let i = 0; i < statements.length; i += BATCH_CHUNK_SIZE) {
+      const chunk = statements.slice(i, i + BATCH_CHUNK_SIZE);
+      await env.DB.batch(chunk);
+    }
+
+    const historyRecord = {
+      id: `imp_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+      importedAt: now,
+      fileName,
+      fileFormat,
+      totalItems: validatedProductsToCreate.length + validatedProductsToUpdate.length + skippedCount,
+      createdCount: validatedProductsToCreate.length,
+      updatedCount: validatedProductsToUpdate.length,
+      skippedCount,
+      categoriesCreatedCount: validatedCategories.length,
+      errors: [],
+    };
+
+    const existingHistory = await setting<Record<string, unknown>[]>(env, 'menu_import_history', []);
+    const updatedHistory = [historyRecord, ...existingHistory].slice(0, 50);
+    await saveSetting(env, 'menu_import_history', updatedHistory);
+
+    return json({ ok: true, summary: historyRecord });
+  }
+
   return error('Not found', 404);
 }
 
@@ -345,6 +458,7 @@ async function saveSetting(env: Env, key: string, value: unknown): Promise<Respo
 }
 
 async function handleMedia(request: Request, env: Env, url: URL): Promise<Response> {
+  const mediaPath = url.pathname.replace(/\/+$/, '');
   if (url.pathname.startsWith('/media/') && request.method === 'GET') {
     const key = mediaKey(decodeURIComponent(url.pathname.slice(7)));
     if (!key) return error('Invalid media key.', 400);
@@ -352,7 +466,7 @@ async function handleMedia(request: Request, env: Env, url: URL): Promise<Respon
     return object ? new Response(object.body, { headers: { 'content-type': object.httpMetadata?.contentType || 'application/octet-stream', 'cache-control': 'public, max-age=31536000, immutable' } }) : error('Media not found', 404);
   }
   if (!(await isAdmin(request, env))) return error('Unauthorized', 401);
-  if (url.pathname === '/api/media/upload' && request.method === 'POST') {
+  if (mediaPath === '/api/media/upload' && request.method === 'POST') {
     const form = await request.formData(); const file = form.get('file'); const folder = String(form.get('folder') || 'products');
     if (!(file instanceof File)) return error('Image file is required.');
     if (!['products', 'categories', 'homepage'].includes(folder)) return error('Invalid media folder.', 422);
@@ -363,9 +477,9 @@ async function handleMedia(request: Request, env: Env, url: URL): Promise<Respon
     if (!detectedType || file.type !== detectedType || extensionType[extension || ''] !== detectedType) return error('Image MIME type and file content do not match.', 415);
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100); const key = `${folder}/${crypto.randomUUID()}-${safeName}`;
     await env.MEDIA.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: detectedType } });
-    return json({ url: `${url.origin}/media/${key}`, key });
+    return json({ url: `/media/${key}`, key });
   }
-  if (url.pathname === '/api/media' && request.method === 'DELETE') {
+  if (mediaPath === '/api/media' && request.method === 'DELETE') {
     let body: { key?: unknown }; try { body = await readJson(request); } catch { return error('Invalid media delete request.', 400); }
     const key = mediaKey(body.key); if (!key) return error('Invalid media key.', 422);
     await env.MEDIA.delete(key); return json({ ok: true });
@@ -378,10 +492,12 @@ export default { async fetch(request: Request, env: Env): Promise<Response> {
   try {
     if (url.pathname === '/sitemap.xml' && request.method === 'GET') return await buildSitemap(env);
     if (url.pathname === '/robots.txt' && request.method === 'GET') return robotsResponse();
-    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/')) {
+    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/') || url.pathname === '/api') {
       if (request.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), request, env);
-      if (url.pathname.startsWith('/api/')) await seedIfEmpty(env);
-      const response = url.pathname.startsWith('/media/') || url.pathname === '/api/media' || url.pathname === '/api/media/upload'
+      if (url.pathname.startsWith('/api/') || url.pathname === '/api') await seedIfEmpty(env);
+      const normalizedPath = url.pathname.replace(/\/+$/, '') || '/';
+      const isMedia = url.pathname.startsWith('/media/') || normalizedPath === '/api/media' || normalizedPath === '/api/media/upload';
+      const response = isMedia
         ? await handleMedia(request, env, url)
         : await handleApi(request, env, url);
       return withCors(response, request, env);

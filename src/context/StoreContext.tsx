@@ -109,9 +109,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         error: `Cannot delete category: ${linkedProducts.length} product(s) are currently assigned to it. Please reassign or delete the products first.`,
       };
     }
-    await removeCategory(categoryId);
-    await loadAllData();
-    return { success: true };
+    try {
+      await removeCategory(categoryId);
+      await loadAllData();
+      return { success: true };
+    } catch (err: any) {
+      return {
+        success: false,
+        error: err?.message || 'Failed to delete category.',
+      };
+    }
   };
 
   const updateSettingsHandler = async (newSettings: StoreSettings) => {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, CustomerDeliveryAddress, Product, StoreSettings, VerifiedLocation } from '../types';
 import { formatDistanceKm, getGoogleMapsLocationUrl } from '../utils/distance';
+import { generateWhatsAppUrl, normalizeWhatsAppNumber } from '../utils/urls';
 import { useStore } from './StoreContext';
 
 interface CartContextType {
@@ -112,6 +113,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     selectedWeight?: string,
     customMessage?: string
   ) => {
+    if (!product.available) {
+      showToast(`"${product.name}" is currently unavailable`);
+      return;
+    }
     const safeQuantity = Math.max(1, Math.min(99, Math.floor(quantity || 1)));
     const sanitizedProduct: Product = {
       ...product,
@@ -188,9 +193,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       radiusKm?: number;
     }
   ): string => {
-    const rawNumber = settings.whatsappNumber || '919999517599';
-    // Clean phone number: remove +, -, spaces
-    const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
+    const cleanNumber = normalizeWhatsAppNumber(settings?.whatsappNumber);
 
     // Format products list
     const productLines = cart.map((item, index) => {
@@ -264,8 +267,7 @@ ${mapsUrl}
     ].filter(Boolean);
 
     const message = messageParts.join('\n\n');
-    const encoded = encodeURIComponent(message);
-    return `https://wa.me/${cleanNumber}?text=${encoded}`;
+    return generateWhatsAppUrl(cleanNumber, message);
   };
 
   /**
@@ -278,8 +280,7 @@ ${mapsUrl}
     weight?: string,
     customMessage?: string
   ): string => {
-    const rawNumber = settings.whatsappNumber || '919999517599';
-    const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
+    const cleanNumber = normalizeWhatsAppNumber(settings?.whatsappNumber);
 
     const optionsParts = [];
     if (weight) optionsParts.push(`Weight: ${weight}`);
@@ -300,7 +301,7 @@ Total Amount: ₹${total}
 
 Please confirm availability and delivery to Sector 76, Noida.`;
 
-    return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+    return generateWhatsAppUrl(cleanNumber, message);
   };
 
   return (

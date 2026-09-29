@@ -149,12 +149,23 @@ const policyContent: Record<
   },
 };
 
+const canonicalMap: Record<PolicyKey, string> = {
+  privacy: '/privacy-policy',
+  terms: '/terms-and-conditions',
+  shipping: '/shipping-and-delivery',
+  returns: '/returns-policy',
+};
+
 export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
   const content = policyContent[page];
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
-      <SEO title={`${content.title} | Cakes N More`} description={content.description} />
+      <SEO
+        title={`${content.title} | Cakes N More Sector 76 Noida`}
+        description={content.description}
+        canonical={canonicalMap[page]}
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">

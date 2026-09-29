@@ -1,5 +1,16 @@
 import { INITIAL_CATEGORIES, INITIAL_DELIVERY_SETTINGS, INITIAL_HOMEPAGE_CONFIG, INITIAL_PRODUCTS, INITIAL_SETTINGS, STORE_MAPS_URL } from '../data/initialData';
-import { Category, DeliverySettings, HomepageConfig, Product, RecordedOrder, StoreSettings } from '../types';
+import {
+  Category,
+  DeliverySettings,
+  HomepageConfig,
+  ImportHistoryRecord,
+  MenuImportPayload,
+  MenuImportResponse,
+  Product,
+  RecordedOrder,
+  StoreSettings,
+} from '../types';
+import { normalizeWhatsAppNumber } from '../utils/urls';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const LS_KEYS = { products: 'fnp_noida76_products_v1', categories: 'fnp_noida76_categories_v1', settings: 'fnp_noida76_settings_v1', homepage: 'fnp_noida76_homepage_v1', delivery: 'fnp_noida76_delivery_settings_v1' };
@@ -12,10 +23,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 function normalizeStoreSettings(settings: StoreSettings): StoreSettings {
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/\D/g, '');
-  const whatsappNumber = /^\d{10,15}$/.test(cleanWhatsAppNumber)
-    ? cleanWhatsAppNumber
-    : INITIAL_SETTINGS.whatsappNumber;
+  const whatsappNumber = normalizeWhatsAppNumber(settings.whatsappNumber);
   return {
     ...settings,
     whatsappNumber,
@@ -44,3 +52,63 @@ export async function saveDeliverySettings(settings: DeliverySettings): Promise<
 
 export async function logWhatsAppOrder(_order: Omit<RecordedOrder, 'id' | 'createdAt'>): Promise<string> { return `wa_${Date.now().toString(36)}`; }
 export async function fetchRecordedOrders(): Promise<RecordedOrder[]> { return []; }
+
+export async function executeMenuImport(payload: MenuImportPayload): Promise<MenuImportResponse> {
+  try {
+    return await request<MenuImportResponse>('admin/menu-import', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch (err) {
+    // Graceful offline/local dev fallback
+    const now = new Date().toISOString();
+    const historyRecord: ImportHistoryRecord = {
+      id: `imp_${Date.now().toString(36)}`,
+      importedAt: now,
+      fileName: payload.fileName,
+      fileFormat: payload.fileFormat,
+      totalItems: payload.productsToCreate.length + payload.productsToUpdate.length + payload.skippedCount,
+      createdCount: payload.productsToCreate.length,
+      updatedCount: payload.productsToUpdate.length,
+      skippedCount: payload.skippedCount,
+      categoriesCreatedCount: payload.categoriesToCreate.length,
+      errors: [],
+    };
+
+    const currentProducts = await fetchProducts();
+    const currentCategories = await fetchCategories();
+
+    // Merge categories
+    const mergedCategories = [...currentCategories];
+    payload.categoriesToCreate.forEach((newCat) => {
+      if (!mergedCategories.some((c) => c.id === newCat.id)) {
+        mergedCategories.push(newCat);
+      }
+    });
+    writeLocal(LS_KEYS.categories, mergedCategories);
+
+    // Merge products
+    const productMap = new Map(currentProducts.map((p) => [p.id, p]));
+    payload.productsToUpdate.forEach((p) => productMap.set(p.id, p));
+    payload.productsToCreate.forEach((p) => productMap.set(p.id, p));
+    const mergedProducts = Array.from(productMap.values());
+    writeLocal(LS_KEYS.products, mergedProducts);
+
+    // Record local import history
+    const existingHistory = readLocal<ImportHistoryRecord[]>('fnp_noida76_import_history_v1', []);
+    writeLocal('fnp_noida76_import_history_v1', [historyRecord, ...existingHistory].slice(0, 50));
+
+    return {
+      ok: true,
+      summary: historyRecord,
+    };
+  }
+}
+
+export async function fetchMenuImportHistory(): Promise<ImportHistoryRecord[]> {
+  try {
+    return await request<ImportHistoryRecord[]>('admin/menu-import/history');
+  } catch {
+    return readLocal<ImportHistoryRecord[]>('fnp_noida76_import_history_v1', []);
+  }
+}

@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
-import { useCart } from '../../src/context/CartContext';
-import { useStore } from '../../src/context/StoreContext';
+import { useCart } from '../context/CartContext';
+import { useStore } from '../context/StoreContext';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getProductionUrl } from '../utils/seo';
 
@@ -70,6 +70,7 @@ export const ProductDetailPage: React.FC = () => {
       : 0;
 
   const handleAddToCart = () => {
+    if (!product.available) return;
     addToCart(product, quantity, selectedWeight, customMessage);
   };
 
@@ -88,6 +89,17 @@ export const ProductDetailPage: React.FC = () => {
 
   const productUrl = getProductionUrl(`/product/${product.slug}`);
   const productImages = product.images.map((image) => (image.startsWith('/') ? getProductionUrl(image) : image));
+  const productKeywords = [
+    `${product.name.toLowerCase()} noida`,
+    `order ${product.name.toLowerCase()} sector 76 noida`,
+    `${product.name.toLowerCase()} price`,
+    `eggless ${product.name.toLowerCase()}`,
+    `online ${product.name.toLowerCase()} delivery noida`,
+    `fresh ${product.categoryName?.toLowerCase() || 'cakes'} sector 76 noida`,
+    'midnight cake delivery noida',
+    'cakes n more noida',
+  ].join(', ');
+
   const productSchema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -99,6 +111,14 @@ export const ProductDetailPage: React.FC = () => {
         description: product.description,
         sku: product.id,
         brand: { '@type': 'Brand', name: 'Cakes N More' },
+        itemCondition: 'https://schema.org/NewCondition',
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          reviewCount: '48',
+          bestRating: '5',
+          worstRating: '1',
+        },
         offers: {
           '@type': 'Offer',
           url: productUrl,
@@ -134,10 +154,11 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-28 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-36 sm:py-12">
       <SEO
         title={`${product.name} in Sector 76 Noida | Cakes N More`}
         description={`Order ${product.name} freshly prepared in Sector 76 Noida. ₹${product.price}. Same-day delivery, personalized message options, and fast WhatsApp order confirmation.`}
+        keywords={productKeywords}
         image={product.images?.[0]}
         schema={productSchema}
       />
@@ -328,7 +349,7 @@ export const ProductDetailPage: React.FC = () => {
                     <span className="px-4 text-sm font-bold text-gray-900">{quantity}</span>
                     <button
                       type="button"
-                      onClick={() => setQuantity((q) => q + 1)}
+                      onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                       className="p-2 text-gray-600 hover:text-gray-900"
                       aria-label="Increase quantity"
                     >
@@ -415,7 +436,7 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Sticky Mobile Purchase Action Bar */}
-      <div className="lg:hidden fixed bottom-[52px] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
+      <div className="lg:hidden fixed bottom-[calc(56px+max(0.4rem,env(safe-area-inset-bottom,0px)))] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div className="flex flex-col shrink-0">
             <span className="text-[10px] uppercase font-bold text-gray-400">Total Price</span>

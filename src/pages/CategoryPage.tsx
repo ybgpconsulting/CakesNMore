@@ -27,21 +27,47 @@ export const CategoryPage: React.FC = () => {
       });
   }, [products, currentCategory, sortBy]);
 
-  const breadcrumbSchema = currentCategory
+  const categoryKeywordsMap: Record<string, string> = {
+    cakes: 'eggless cake delivery sector 76 noida, birthday cakes noida 76, anniversary cakes noida, chocolate truffle cake noida, red velvet cake noida, photo cake noida, bento cake noida, pinata cake noida, best cake shop sector 76 noida',
+    flowers: 'fresh flower delivery sector 76 noida, florist in sector 76 noida, rose bouquet delivery noida, lilies bouquet noida, orchids delivery noida, midnight flower delivery noida, exotic flowers noida',
+    combos: 'cake and flower combo noida, birthday combo delivery noida sector 76, flowers and teddy hamper noida, midnight surprise gift combo noida',
+    plants: 'indoor plants delivery noida, air purifying plants noida 76, lucky bamboo money plant noida, potted plant gifts noida',
+    chocolates: 'artisanal chocolates noida, chocolate gift hampers noida, premium chocolate delivery sector 76 noida',
+    gifts: 'gift hampers sector 76 noida, birthday gifts delivery noida, anniversary personalized gifts noida',
+  };
+
+  const categoryKeywords = currentCategory
+    ? categoryKeywordsMap[currentCategory.slug.toLowerCase()] ||
+      `${currentCategory.name.toLowerCase()} delivery sector 76 noida, best ${currentCategory.name.toLowerCase()} noida, online ${currentCategory.name.toLowerCase()} shop noida`
+    : '';
+
+  const categorySchema = currentCategory
     ? {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
-          { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
+        '@context': 'https://schema.org',
+        '@graph': [
           {
-            '@type': 'ListItem',
-            position: 3,
-            name: currentCategory.name,
-            item: getProductionUrl(`/category/${currentCategory.slug}`),
+            '@type': 'CollectionPage',
+            '@id': getProductionUrl(`/category/${currentCategory.slug}`),
+            name: `${currentCategory.name} Delivery in Sector 76 Noida`,
+            description: currentCategory.description,
+            url: getProductionUrl(`/category/${currentCategory.slug}`),
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+              { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: currentCategory.name,
+                item: getProductionUrl(`/category/${currentCategory.slug}`),
+              },
+            ],
           },
         ],
       }
-      : null;
+    : undefined;
 
   if (!currentCategory) {
     return (
@@ -63,7 +89,9 @@ export const CategoryPage: React.FC = () => {
       <SEO
         title={`${currentCategory.name} Delivery in Sector 76 Noida | Cakes N More`}
         description={`Order fresh ${currentCategory.name.toLowerCase()} in Sector 76, Noida. ${currentCategory.description} Handcrafted and delivered with love via WhatsApp order.`}
-        schema={{ '@context': 'https://schema.org', '@graph': [breadcrumbSchema] }}
+        keywords={categoryKeywords}
+        image={currentCategory.image}
+        schema={categorySchema}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,10 +132,33 @@ export const CategoryPage: React.FC = () => {
               <img
                 src={currentCategory.image}
                 alt={currentCategory.name}
+                loading="lazy"
+                decoding="async"
+                width={400}
+                height={300}
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
+        </div>
+
+        {/* Quick Category Switcher Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
+          {categories
+            .filter((c) => c.active)
+            .map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/category/${cat.slug}`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 active:scale-95 ${
+                  cat.id === currentCategory.id
+                    ? 'bg-[#831843] text-white shadow-sm'
+                    : 'bg-white text-gray-700 border border-gray-200 hover:border-[#831843] hover:text-[#831843]'
+                }`}
+              >
+                {cat.name}
+              </Link>
+            ))}
         </div>
 
         {/* Toolbar: Count & Sort */}

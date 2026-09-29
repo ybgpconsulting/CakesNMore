@@ -2,6 +2,8 @@ import React from 'react';
 import { CheckCircle2, XCircle, MapPin, ArrowRight, RotateCcw } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { formatDistanceKm } from '../../utils/distance';
+import { generateWhatsAppUrl } from '../../utils/urls';
+import { useStore } from '../../context/StoreContext';
 import { DeliverySettings, VerifiedLocation } from '../../types';
 
 interface DeliveryResultProps {
@@ -17,13 +19,14 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
   onContinueShopping,
   onCheckAnotherLocation,
 }) => {
+  const { settings: storeSettings } = useStore();
   const isAvailable = verifiedLocation.verified;
   const formattedDist = formatDistanceKm(verifiedLocation.distanceKm);
-  const cleanPhone = (settings as any).whatsappNumber || '919999517599';
 
-  const whatsappInquiryUrl = `https://wa.me/${cleanPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+  const whatsappInquiryUrl = generateWhatsAppUrl(
+    storeSettings.whatsappNumber,
     `Hi Cakes N More Sector 76 Noida, I am checking delivery for my location (approx ${formattedDist} away). Can you deliver cakes/flowers to my area?`
-  )}`;
+  );
 
   if (isAvailable) {
     return (

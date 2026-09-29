@@ -96,7 +96,7 @@ export const DeliveryAvailabilityGate: React.FC = () => {
       aria-labelledby="delivery-gate-heading"
       className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200"
     >
-      <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EADBDA] overflow-hidden max-h-[92vh] flex flex-col">
+      <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#EADBDA] overflow-hidden max-h-[92dvh] pb-[max(0rem,env(safe-area-inset-bottom,0px))] flex flex-col">
         {/* Brand Banner Bar */}
         <div className="bg-gradient-to-r from-[#831843] via-[#9d174d] to-[#831843] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">

@@ -46,7 +46,9 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
       return;
     }
 
-    const isMatch = allowedPincodes.includes(cleanPin);
+    const activeAllowedPincodes =
+      allowedPincodes && allowedPincodes.length > 0 ? allowedPincodes : NOIDA_PINCODES;
+    const isMatch = activeAllowedPincodes.includes(cleanPin);
 
     if (isMatch) {
       setCheckedState({

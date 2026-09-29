@@ -293,7 +293,7 @@ export const Header: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-20 bottom-0 bg-white/98 z-50 overflow-y-auto border-t border-gray-100 p-6 flex flex-col justify-between animate-in slide-in-from-top duration-200">
+        <div className="lg:hidden fixed inset-x-0 top-full bottom-0 h-[calc(100dvh-100%)] bg-white/98 z-50 overflow-y-auto border-t border-gray-100 p-5 sm:p-6 pb-[max(2rem,calc(env(safe-area-inset-bottom,0px)+1.5rem))] flex flex-col justify-between animate-in slide-in-from-top duration-200">
           <div className="space-y-4">
             {/* Mobile Search input */}
             <form onSubmit={handleSearch} className="relative mb-6">

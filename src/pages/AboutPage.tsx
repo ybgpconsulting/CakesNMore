@@ -3,15 +3,48 @@ import { Link } from 'react-router-dom';
 import { Award, Cake, Clock, Heart, MapPin, Phone, ShieldCheck, Sparkles, Store } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
+import { getProductionUrl } from '../utils/seo';
 
 export const AboutPage: React.FC = () => {
   const { settings } = useStore();
+
+  const aboutSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'AboutPage',
+        '@id': getProductionUrl('/about'),
+        name: 'About Cakes N More Sector 76 Noida',
+        description: 'About Cakes N More - premier 100% eggless bakery and boutique florist in Sector 76 Noida.',
+        url: getProductionUrl('/about'),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'About Us', item: getProductionUrl('/about') },
+        ],
+      },
+    ],
+  };
+
+  const aboutKeywords = [
+    'about cakes n more noida',
+    'bakery in sector 76 noida',
+    'eggless patisserie noida',
+    'cake shop near mithaas amrapali silicon city',
+    'florist in sector 76 noida',
+    'flower shop noida 201301',
+    'midnight cake delivery noida',
+  ].join(', ');
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
         title="About Us | Cakes N More Noida Sector 76"
         description="Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home."
+        keywords={aboutKeywords}
+        schema={aboutSchema}
       />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">

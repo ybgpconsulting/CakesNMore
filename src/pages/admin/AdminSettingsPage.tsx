@@ -12,6 +12,10 @@ export const AdminSettingsPage: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    setFormData({ ...settings });
+  }, [settings]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveError(null);

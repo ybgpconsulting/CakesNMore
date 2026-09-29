@@ -1,0 +1,5 @@
+# Local Worker Secrets for development with `npm run dev:worker`
+# Copy to `.dev.vars` and customize if desired:
+ADMIN_PASSWORD_HASH="pbkdf2_sha256$100000$NPQ-IZJtIvmQptp0UkjA3g$rq5AYXsd07zJ99KJEoePukUonN-SN1BSqvK_wK93peg"
+SESSION_SECRET="cakesnmore-local-dev-session-secret-key-32chars"
+CORS_ORIGIN="http://localhost:3000,http://127.0.0.1:3000"

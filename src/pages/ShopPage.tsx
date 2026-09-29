@@ -4,6 +4,7 @@ import { Filter, RotateCcw, Search, SlidersHorizontal, Sparkles, X } from 'lucid
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
 import { useStore } from '../context/StoreContext';
+import { getProductionUrl } from '../utils/seo';
 
 export const ShopPage: React.FC = () => {
   const { products, categories } = useStore();
@@ -21,6 +22,38 @@ export const ShopPage: React.FC = () => {
   const [featuredOnly, setFeaturedOnly] = useState<boolean>(initialFilter === 'featured');
   const [bestsellerOnly, setBestsellerOnly] = useState<boolean>(initialFilter === 'bestseller');
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
+
+  const shopSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': getProductionUrl('/shop'),
+        name: 'Online Bakery & Flower Shop in Sector 76 Noida',
+        description: 'Browse our complete catalogue of 100% eggless celebration cakes, exotic flowers, and gift hampers in Sector 76, Noida.',
+        url: getProductionUrl('/shop'),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
+        ],
+      },
+    ],
+  };
+
+  const shopKeywords = [
+    'buy cakes online noida',
+    'order cakes online sector 76 noida',
+    'fresh flowers delivery noida',
+    'eggless birthday cakes noida',
+    'gift hampers noida',
+    'anniversary flower bouquets noida',
+    'red velvet cake noida',
+    'chocolate truffle cake noida 76',
+    'midnight cake delivery noida',
+  ].join(', ');
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -88,6 +121,8 @@ export const ShopPage: React.FC = () => {
       <SEO
         title="Shop Fresh Cakes, Flower Bouquets & Hampers | Cakes N More Sector 76 Noida"
         description="Browse our complete catalogue of freshly prepared celebration cakes, flower arrangements, indoor plants and luxury gifts in Sector 76, Noida with easy WhatsApp checkout."
+        keywords={shopKeywords}
+        schema={shopSchema}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -251,7 +286,7 @@ export const ShopPage: React.FC = () => {
           {/* Mobile Filter Drawer Modal */}
           {showMobileFilters && (
             <div className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end justify-center">
-              <div className="bg-white w-full rounded-t-3xl max-h-[85vh] overflow-y-auto p-5 border-t border-gray-200 shadow-2xl animate-in slide-in-from-bottom duration-200">
+              <div className="bg-white w-full rounded-t-3xl max-h-[85dvh] overflow-y-auto p-5 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1rem))] border-t border-gray-200 shadow-2xl animate-in slide-in-from-bottom duration-200">
                 <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4 text-[#831843]" />

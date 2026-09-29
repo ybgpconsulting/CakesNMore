@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   AlertCircle,
   Check,
   CheckCircle2,
   Edit2,
+  FileSpreadsheet,
   Filter,
   Package,
   Plus,
@@ -80,16 +82,26 @@ export const AdminProductsPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingProduct(null);
-            setIsFormOpen(true);
-          }}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md transition-all active:scale-95"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add New Product</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/admin/import-menu"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-bold text-xs shadow-xs transition-all active:scale-95"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <span>Import Menu (CSV / JSON)</span>
+          </Link>
+
+          <button
+            onClick={() => {
+              setEditingProduct(null);
+              setIsFormOpen(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-xs shadow-md transition-all active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Product</span>
+          </button>
+        </div>
       </div>
 
       {/* Action Success Toast */}

@@ -125,6 +125,8 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     return () => {
       window.clearTimeout(resizeTimer);
       map.remove();
+      mapInstanceRef.current = null;
+      userMarkerRef.current = null;
     };
   }, [storeLat, storeLon, radiusKm]);
 

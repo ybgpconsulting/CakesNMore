@@ -39,6 +39,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
       : 0;
 
   const handleAddToCart = () => {
+    if (!product.available) return;
     addToCart(product, quantity, selectedWeight, customMessage);
     onClose();
   };
@@ -52,8 +53,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   );
 
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="quick-view-title" className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="relative bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-gray-100 my-8 animate-in fade-in zoom-in-95 duration-200">
+    <div role="dialog" aria-modal="true" aria-labelledby="quick-view-title" className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="relative bg-white rounded-3xl max-w-3xl w-full max-h-[90dvh] overflow-y-auto shadow-2xl border border-gray-100 my-auto animate-in fade-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -197,7 +198,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                   <span className="px-3 text-sm font-bold text-gray-800">{quantity}</span>
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => q + 1)}
+                    onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                     className="p-1.5 text-gray-600 hover:text-gray-900"
                     aria-label="Increase quantity"
                   >

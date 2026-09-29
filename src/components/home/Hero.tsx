@@ -86,27 +86,30 @@ export const Hero: React.FC = () => {
           <div className="premium-reveal lg:col-span-5 relative mt-4 lg:mt-0">
             <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
               {/* Decorative Frame with Optimized Aspect Ratio */}
-              <div className="premium-image-frame relative rounded-3xl overflow-hidden border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100">
+              <div className="premium-image-frame relative rounded-3xl overflow-hidden border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100 shadow-xl">
                 <img
                   src={
                     homepageConfig.heroImage ||
-                    'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop'
+                    'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=900&auto=format&fit=crop'
                   }
                   alt="Fresh Cakes and Flower Bouquets in Sector 76 Noida"
                   loading="eager"
+                  fetchPriority="high"
                   decoding="async"
+                  width={800}
+                  height={600}
                   className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                   <p className="text-xs uppercase tracking-wider text-[#FCE7F3] font-bold">Amrapali Crystal Home</p>
                   <p className="font-serif text-lg font-bold">Sector 76, Noida Central</p>
                 </div>
               </div>
 
-              {/* Floating Floating Rating Card */}
-              <div className="absolute -bottom-6 -left-4 sm:-left-6 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-[#FEF3C7] text-[#B45309] flex items-center justify-center font-bold text-lg">
+              {/* Floating Rating Card */}
+              <div className="absolute -bottom-5 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2.5 sm:gap-3 z-10">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#FEF3C7] text-[#B45309] flex items-center justify-center font-bold text-base sm:text-lg">
                   ★
                 </div>
                 <div>
@@ -120,8 +123,9 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
 
-              {/* Floating Express Delivery Pill */}
-              <div className="absolute -top-3 -right-3 bg-[#831843] text-white px-4 py-2 rounded-2xl shadow-lg text-xs font-bold flex items-center gap-1.5 animate-bounce">
+              {/* Floating Express Delivery Pill - Smooth subtle pulse instead of jarring bounce */}
+              <div className="absolute -top-3 -right-2 sm:-right-3 bg-[#831843] text-white px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-lg text-[11px] sm:text-xs font-bold flex items-center gap-1.5 z-10">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>⚡ 60-Min Express Delivery</span>
               </div>
             </div>
