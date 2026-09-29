@@ -1,4 +1,5 @@
-import { Category, DuplicateResolutionAction, ImportItemRaw, ParsedImportItem, Product } from '../types';
+import { Category, DuplicateResolutionAction, ImportItemRaw, ParsedImportItem, Product, WeightPriceOption } from '../types';
+import { parseWeightPricesString } from './productPricing';
 
 /**
  * Standard category fallback images from approved Unsplash photography
@@ -389,7 +390,7 @@ export function parseJsonMenu(jsonText: string): ImportItemRaw[] {
 }
 
 /**
- * Clean & normalize price inputs (strips currency signs like ₹, Rs., commas)
+ * Clean & normalize price inputs (strips currency signs like ₹, Rs., commas, and trailing /-)
  */
 export function cleanPriceNumber(val: unknown): number | null {
   if (val == null) return null;
@@ -399,6 +400,7 @@ export function cleanPriceNumber(val: unknown): number | null {
   const cleanStr = String(val)
     .replace(/\b(rs|inr)\b\.?/gi, '')
     .replace(/[₹$€£\s]/g, '')
+    .replace(/\/-$/, '')
     .replace(/,/g, '')
     .trim();
   const num = parseFloat(cleanStr);
@@ -423,11 +425,19 @@ export function cleanBooleanValue(val: unknown): boolean {
   return true; // Default to available
 }
 
+export interface CleanImageOptions {
+  allowGenericFallback?: boolean;
+  categorySlug?: string;
+}
+
 /**
- * Parse image URLs string or array
+ * Parse image URLs string or array.
+ * Note (Requirement 6): Generic fallback images are NOT automatically published
+ * to production. Missing images return [] unless allowGenericFallback is explicitly set.
  */
-export function cleanImageUrls(val: unknown, categorySlug: string): string[] {
+export function cleanImageUrls(val: unknown, options?: CleanImageOptions | string): string[] {
   let urls: string[] = [];
+  const opts: CleanImageOptions = typeof options === 'string' ? { categorySlug: options } : options || {};
 
   if (Array.isArray(val)) {
     urls = val.map((v) => String(v).trim()).filter(Boolean);
@@ -450,9 +460,9 @@ export function cleanImageUrls(val: unknown, categorySlug: string): string[] {
     }
   });
 
-  if (validUrls.length === 0) {
-    // Provide a fallback category image
-    const fallback = CATEGORY_IMAGE_DEFAULTS[categorySlug] || CATEGORY_IMAGE_DEFAULTS.default;
+  if (validUrls.length === 0 && opts.allowGenericFallback) {
+    const slug = opts.categorySlug || 'default';
+    const fallback = CATEGORY_IMAGE_DEFAULTS[slug] || CATEGORY_IMAGE_DEFAULTS.default;
     return [fallback];
   }
 
@@ -482,7 +492,12 @@ export interface ValidationSummary {
   validNewCount: number;
   duplicateCount: number;
   invalidCount: number;
+  missingImageCount: number;
   newCategories: Category[];
+}
+
+export interface ValidateImportOptions {
+  allowGenericFallback?: boolean;
 }
 
 /**
@@ -491,7 +506,8 @@ export interface ValidationSummary {
 export function validateAndMatchImportItems(
   rawItems: ImportItemRaw[],
   existingProducts: Product[],
-  existingCategories: Category[]
+  existingCategories: Category[],
+  options: ValidateImportOptions = {}
 ): { items: ParsedImportItem[]; summary: ValidationSummary } {
   const newCategoriesMap = new Map<string, Category>();
   const parsedItems: ParsedImportItem[] = [];
@@ -580,7 +596,7 @@ export function validateAndMatchImportItems(
       }
     }
 
-    // 5. Images
+    // 5. Images (Requirement 6: generic fallback NOT auto-published unless explicitly configured)
     const rawImagesString = Array.isArray(raw.images) ? raw.images.join(',') : String(raw.images || '');
     if (rawImagesString.trim()) {
       const rawImageParts = rawImagesString.split(/[,|\n;]/).map((s) => s.trim()).filter(Boolean);
@@ -597,11 +613,30 @@ export function validateAndMatchImportItems(
         }
       }
     }
-    const images = cleanImageUrls(raw.images, categorySlug);
+    const images = cleanImageUrls(raw.images, {
+      allowGenericFallback: options.allowGenericFallback,
+      categorySlug,
+    });
+    const hasMissingImage = images.length === 0;
+    if (hasMissingImage) {
+      warnings.push('No product image provided. Flagged for admin review (generic fallback will not be auto-published).');
+    }
 
     // 6. Availability & Weights
     const available = cleanBooleanValue(raw.available);
-    const weightOptions = cleanWeightOptions(raw.weightOptions);
+    const parsedWeightPrices = parseWeightPricesString(raw.weightPrices || raw.weightOptions, price ?? undefined);
+    let weightPrices: WeightPriceOption[] | undefined;
+    let weightOptions: string[] | undefined;
+
+    if (parsedWeightPrices && parsedWeightPrices.length > 0) {
+      weightPrices = parsedWeightPrices;
+      weightOptions = parsedWeightPrices.map((wp) => wp.weight);
+      if (price === null || price === 0) {
+        price = Math.min(...parsedWeightPrices.map((wp) => wp.price));
+      }
+    } else {
+      weightOptions = cleanWeightOptions(raw.weightOptions);
+    }
     const description = (raw.description || '').trim();
     const sku = raw.sku ? raw.sku.trim() : undefined;
 
@@ -692,6 +727,7 @@ export function validateAndMatchImportItems(
       images,
       available,
       weightOptions,
+      weightPrices,
       featured: false,
       bestseller: false,
       displayOrder: existingProducts.length + idx + 1,
@@ -703,12 +739,15 @@ export function validateAndMatchImportItems(
       duplicateMatchType,
       duplicateAction: 'skip', // default for duplicate rows
       selected: status !== 'invalid', // select valid items by default
+      hasMissingImage,
+      needsImageReview: hasMissingImage,
     });
   });
 
   const validNewCount = parsedItems.filter((i) => i.status === 'valid_new').length;
   const duplicateCount = parsedItems.filter((i) => i.status === 'duplicate').length;
   const invalidCount = parsedItems.filter((i) => i.status === 'invalid').length;
+  const missingImageCount = parsedItems.filter((i) => i.hasMissingImage).length;
 
   return {
     items: parsedItems,
@@ -717,6 +756,7 @@ export function validateAndMatchImportItems(
       validNewCount,
       duplicateCount,
       invalidCount,
+      missingImageCount,
       newCategories: Array.from(newCategoriesMap.values()),
     },
   };

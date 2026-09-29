@@ -20,11 +20,18 @@ export interface Product {
   displayOrder: number;
   // Product options/attributes for future-readiness
   weightOptions?: string[]; // e.g. ['500g', '1kg', '2kg']
+  weightPrices?: WeightPriceOption[]; // Weight-wise pricing options (e.g. 500g = ₹500, 1kg = ₹900)
   selectedWeight?: string;
   allowCustomMessage?: boolean;
   customMessagePlaceholder?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface WeightPriceOption {
+  weight: string;
+  price: number;
+  oldPrice?: number;
 }
 
 export interface Category {
@@ -78,6 +85,7 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedWeight?: string;
+  unitPrice?: number;
   customMessage?: string;
 }
 
@@ -155,6 +163,7 @@ export interface ImportItemRaw {
   images?: string | string[];
   available?: string | boolean | number;
   weightOptions?: string | string[];
+  weightPrices?: unknown;
 }
 
 export interface ParsedImportItem {
@@ -173,6 +182,7 @@ export interface ParsedImportItem {
   images: string[];
   available: boolean;
   weightOptions?: string[];
+  weightPrices?: WeightPriceOption[];
   featured: boolean;
   bestseller: boolean;
   displayOrder: number;
@@ -184,6 +194,8 @@ export interface ParsedImportItem {
   duplicateMatchType?: 'sku' | 'name_category';
   duplicateAction: DuplicateResolutionAction;
   selected: boolean;
+  hasMissingImage?: boolean;
+  needsImageReview?: boolean;
 }
 
 export interface ImportHistoryRecord {

@@ -7,7 +7,7 @@ import {
   INITIAL_PRODUCTS,
   INITIAL_SETTINGS,
 } from '../src/data/initialData';
-import { Category, DeliverySettings, HomepageConfig, Product, StoreSettings } from '../src/types';
+import { Category, DeliverySettings, HomepageConfig, Product, StoreSettings, WeightPriceOption } from '../src/types';
 
 interface Env {
   DB: D1Database;
@@ -94,8 +94,22 @@ function stringArray(value: unknown, maxItems: number, maxLength: number): strin
 function validDate(value: unknown): boolean { return typeof value === 'string' && !Number.isNaN(Date.parse(value)); }
 function imageReference(value: unknown): string | undefined { if (typeof value !== 'string' || value.length > 2048) return undefined; if (value.startsWith('/media/')) return mediaKey(decodeURIComponent(value.slice(7))) ? value : undefined; return urlValue(value, true); }
 
+function validateWeightPrices(val: unknown): WeightPriceOption[] | undefined {
+  if (!Array.isArray(val) || val.length === 0 || val.length > 20) return undefined;
+  const list: WeightPriceOption[] = [];
+  for (const item of val) {
+    if (!isRecord(item)) return undefined;
+    const w = text(item.weight, 80);
+    const p = numberValue(item.price, 0, 10000000);
+    const op = item.oldPrice == null ? undefined : numberValue(item.oldPrice, 0, 10000000);
+    if (!w || p === undefined || (item.oldPrice != null && op === undefined)) return undefined;
+    list.push({ weight: w, price: p, oldPrice: op });
+  }
+  return list;
+}
+
 function validateProduct(value: unknown): Product | null {
-  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'sku', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'selectedWeight', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
+  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'sku', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'weightPrices', 'selectedWeight', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
   const item = value;
   const id = text(item.id, 120); const name = text(item.name, 160); const slug = text(item.slug, 160); const description = text(item.description, 5000, false); const categoryId = text(item.categoryId, 120); const images = stringArray(item.images, 20, 2048);
   const price = numberValue(item.price, 0, 10000000); const oldPrice = item.oldPrice == null ? undefined : numberValue(item.oldPrice, 0, 10000000);
@@ -103,9 +117,11 @@ function validateProduct(value: unknown): Product | null {
   if (!id || !name || !slug || description === undefined || !categoryId || !images || images.some((image) => !imageReference(image)) || price === undefined || (item.oldPrice != null && oldPrice === undefined) || featured === undefined || bestseller === undefined || available === undefined || displayOrder === undefined || !validDate(item.createdAt) || !validDate(item.updatedAt)) return null;
   const sku = item.sku == null ? undefined : text(item.sku, 120, false);
   const categoryName = item.categoryName == null ? undefined : text(item.categoryName, 160, false); const categorySlug = item.categorySlug == null ? undefined : text(item.categorySlug, 160, false);
-  const weightOptions = item.weightOptions == null ? undefined : stringArray(item.weightOptions, 20, 80); const selectedWeight = item.selectedWeight == null ? undefined : text(item.selectedWeight, 80, false); const allowCustomMessage = item.allowCustomMessage == null ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder == null ? undefined : text(item.customMessagePlaceholder, 300, false);
-  if ((item.sku != null && sku === undefined) || (item.categoryName != null && categoryName === undefined) || (item.categorySlug != null && categorySlug === undefined) || (item.weightOptions != null && !weightOptions) || (item.selectedWeight != null && selectedWeight === undefined) || (item.allowCustomMessage != null && allowCustomMessage === undefined) || (item.customMessagePlaceholder != null && customMessagePlaceholder === undefined)) return null;
-  return { id, name, slug, description, price, oldPrice, sku, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, selectedWeight, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
+  const weightOptions = item.weightOptions == null ? undefined : stringArray(item.weightOptions, 20, 80);
+  const weightPrices = item.weightPrices == null ? undefined : validateWeightPrices(item.weightPrices);
+  const selectedWeight = item.selectedWeight == null ? undefined : text(item.selectedWeight, 80, false); const allowCustomMessage = item.allowCustomMessage == null ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder == null ? undefined : text(item.customMessagePlaceholder, 300, false);
+  if ((item.sku != null && sku === undefined) || (item.categoryName != null && categoryName === undefined) || (item.categorySlug != null && categorySlug === undefined) || (item.weightOptions != null && !weightOptions) || (item.weightPrices != null && !weightPrices) || (item.selectedWeight != null && selectedWeight === undefined) || (item.allowCustomMessage != null && allowCustomMessage === undefined) || (item.customMessagePlaceholder != null && customMessagePlaceholder === undefined)) return null;
+  return { id, name, slug, description, price, oldPrice, sku, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, weightPrices, selectedWeight, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
 }
 
 function validateCategory(value: unknown): Category | null {
@@ -156,6 +172,18 @@ function safeJsonParse<T>(raw: unknown, fallback: T): T {
 }
 
 function productFromRow(row: Record<string, unknown>): Product {
+  const parsedWeightData = row.weight_options_json ? safeJsonParse<unknown[] | undefined>(row.weight_options_json, undefined) : undefined;
+  let weightOptions: string[] | undefined;
+  let weightPrices: WeightPriceOption[] | undefined;
+  if (Array.isArray(parsedWeightData) && parsedWeightData.length > 0) {
+    if (typeof parsedWeightData[0] === 'object' && parsedWeightData[0] !== null && 'weight' in (parsedWeightData[0] as object)) {
+      weightPrices = parsedWeightData as WeightPriceOption[];
+      weightOptions = weightPrices.map((wp) => wp.weight);
+    } else if (typeof parsedWeightData[0] === 'string') {
+      weightOptions = parsedWeightData as string[];
+    }
+  }
+
   return {
     id: String(row.id), name: String(row.name), slug: String(row.slug), description: String(row.description || ''),
     price: Number(row.price), oldPrice: row.old_price == null ? undefined : Number(row.old_price),
@@ -163,7 +191,8 @@ function productFromRow(row: Record<string, unknown>): Product {
     categorySlug: row.category_slug ? String(row.category_slug) : undefined,
     images: safeJsonParse<string[]>(row.images_json, []), featured: asBoolean(row.featured),
     bestseller: asBoolean(row.bestseller), available: asBoolean(row.available), displayOrder: Number(row.display_order),
-    weightOptions: row.weight_options_json ? safeJsonParse<string[] | undefined>(row.weight_options_json, undefined) : undefined,
+    weightOptions,
+    weightPrices,
     selectedWeight: row.selected_weight ? String(row.selected_weight) : undefined,
     allowCustomMessage: row.allow_custom_message == null ? undefined : asBoolean(row.allow_custom_message),
     customMessagePlaceholder: row.custom_message_placeholder ? String(row.custom_message_placeholder) : undefined,
@@ -175,13 +204,20 @@ function categoryFromRow(row: Record<string, unknown>): Category {
   return { id: String(row.id), name: String(row.name), slug: String(row.slug), description: String(row.description || ''), image: String(row.image || ''), active: asBoolean(row.active), displayOrder: Number(row.display_order) };
 }
 
+function serializeWeightOptions(item: Product): string | null {
+  if (item.weightPrices && item.weightPrices.length > 0) {
+    return JSON.stringify(item.weightPrices);
+  }
+  return item.weightOptions ? JSON.stringify(item.weightOptions) : null;
+}
+
 async function seedIfEmpty(env: Env): Promise<void> {
   const existing = await env.DB.prepare('SELECT id FROM products LIMIT 1').first();
   if (existing) return;
   const now = new Date().toISOString();
   const statements = [
     ...INITIAL_CATEGORIES.map((item) => env.DB.prepare('INSERT OR IGNORE INTO categories (id,name,slug,description,image,active,display_order) VALUES (?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.image, item.active ? 1 : 0, item.displayOrder)),
-    ...INITIAL_PRODUCTS.map((item) => env.DB.prepare('INSERT OR IGNORE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, item.weightOptions ? JSON.stringify(item.weightOptions) : null, item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, item.updatedAt || now)),
+    ...INITIAL_PRODUCTS.map((item) => env.DB.prepare('INSERT OR IGNORE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, item.updatedAt || now)),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('store', JSON.stringify(INITIAL_SETTINGS), now),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('delivery', JSON.stringify(INITIAL_DELIVERY_SETTINGS), now),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('homepage', JSON.stringify(INITIAL_HOMEPAGE_CONFIG), now),
@@ -268,7 +304,9 @@ function withCors(response: Response, request: Request, env: Env): Response {
 async function readJson<T>(request: Request): Promise<T> {
   const length = Number(request.headers.get('content-length') || 0);
   if (length > MAX_JSON_BYTES) throw new Error('Payload too large.');
-  return await request.json<T>();
+  const rawText = await request.text();
+  if (rawText.length > MAX_JSON_BYTES) throw new Error('Payload too large.');
+  return JSON.parse(rawText) as T;
 }
 
 function requestRateKeys(request: Request, email: string): string[] {
@@ -337,7 +375,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   if (path === 'products' && method === 'PUT' && body) {
     const item = validateProduct(body);
     if (!item) return error('Invalid product payload.', 422);
-    await env.DB.prepare('INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, item.weightOptions ? JSON.stringify(item.weightOptions) : null, item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
+    await env.DB.prepare('INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
     return json({ ok: true });
   }
   if (path.startsWith('products/') && method === 'DELETE') { await env.DB.prepare('DELETE FROM products WHERE id = ?').bind(path.slice(9)).run(); return json({ ok: true }); }
@@ -353,6 +391,29 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   if (path === 'homepage/config' && method === 'PUT' && body) { const item = validateHomepage(body); return item ? saveSetting(env, 'homepage', item) : error('Invalid homepage payload.', 422); }
 
   if (path === 'admin/menu-import/history' && method === 'GET') {
+    try {
+      const rows = await env.DB.prepare(
+        'SELECT id, imported_at, file_name, file_format, total_items, created_count, updated_count, skipped_count, categories_created_count, errors_json FROM menu_import_history ORDER BY imported_at DESC LIMIT 50'
+      ).all();
+      if (rows && rows.results && rows.results.length > 0) {
+        return json(
+          rows.results.map((r) => ({
+            id: String(r.id),
+            importedAt: String(r.imported_at),
+            fileName: r.file_name ? String(r.file_name) : undefined,
+            fileFormat: String(r.file_format),
+            totalItems: Number(r.total_items),
+            createdCount: Number(r.created_count),
+            updatedCount: Number(r.updated_count),
+            skippedCount: Number(r.skipped_count),
+            categoriesCreatedCount: Number(r.categories_created_count),
+            errors: safeJsonParse<string[]>(r.errors_json, []),
+          }))
+        );
+      }
+    } catch {
+      // Fallback to settings if table not available or empty
+    }
     const history = await setting<Record<string, unknown>[]>(env, 'menu_import_history', []);
     return json(history);
   }
@@ -365,22 +426,47 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     const rawProductsToUpdate = Array.isArray(body.productsToUpdate) ? body.productsToUpdate : [];
     const skippedCount = typeof body.skippedCount === 'number' && Number.isFinite(body.skippedCount) ? body.skippedCount : 0;
 
+    // Pre-validate all items before executing any SQL statements
+    const validationErrors: string[] = [];
+
     const validatedCategories: Category[] = [];
-    for (const cat of rawCategories) {
-      const valid = validateCategory(cat);
-      if (valid) validatedCategories.push(valid);
+    for (let i = 0; i < rawCategories.length; i++) {
+      const valid = validateCategory(rawCategories[i]);
+      if (!valid) {
+        validationErrors.push(`Category at index ${i} failed validation`);
+      } else {
+        validatedCategories.push(valid);
+      }
     }
 
     const validatedProductsToCreate: Product[] = [];
-    for (const prod of rawProductsToCreate) {
-      const valid = validateProduct(prod);
-      if (valid) validatedProductsToCreate.push(valid);
+    for (let i = 0; i < rawProductsToCreate.length; i++) {
+      const valid = validateProduct(rawProductsToCreate[i]);
+      if (!valid) {
+        const name = (rawProductsToCreate[i] as JsonObject)?.name || `item #${i}`;
+        validationErrors.push(`Product to create at index ${i} ("${name}") failed validation`);
+      } else {
+        validatedProductsToCreate.push(valid);
+      }
     }
 
     const validatedProductsToUpdate: Product[] = [];
-    for (const prod of rawProductsToUpdate) {
-      const valid = validateProduct(prod);
-      if (valid) validatedProductsToUpdate.push(valid);
+    for (let i = 0; i < rawProductsToUpdate.length; i++) {
+      const valid = validateProduct(rawProductsToUpdate[i]);
+      if (!valid) {
+        const name = (rawProductsToUpdate[i] as JsonObject)?.name || `item #${i}`;
+        validationErrors.push(`Product to update at index ${i} ("${name}") failed validation`);
+      } else {
+        validatedProductsToUpdate.push(valid);
+      }
+    }
+
+    // Fail early: if any item across any chunk is invalid, reject the import before any D1 writes occur
+    if (validationErrors.length > 0) {
+      return error(
+        `Import validation failed (${validationErrors.length} errors): ${validationErrors.slice(0, 5).join('; ')}`,
+        422
+      );
     }
 
     const statements: D1PreparedStatement[] = [];
@@ -412,7 +498,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
           item.bestseller ? 1 : 0,
           item.available ? 1 : 0,
           item.displayOrder,
-          item.weightOptions ? JSON.stringify(item.weightOptions) : null,
+          serializeWeightOptions(item),
           item.selectedWeight ?? null,
           item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0,
           item.customMessagePlaceholder ?? null,
@@ -439,8 +525,27 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
       updatedCount: validatedProductsToUpdate.length,
       skippedCount,
       categoriesCreatedCount: validatedCategories.length,
-      errors: [],
+      errors: [] as string[],
     };
+
+    try {
+      await env.DB.prepare(
+        'INSERT INTO menu_import_history (id, imported_at, file_name, file_format, total_items, created_count, updated_count, skipped_count, categories_created_count, errors_json) VALUES (?,?,?,?,?,?,?,?,?,?)'
+      ).bind(
+        historyRecord.id,
+        historyRecord.importedAt,
+        historyRecord.fileName,
+        historyRecord.fileFormat,
+        historyRecord.totalItems,
+        historyRecord.createdCount,
+        historyRecord.updatedCount,
+        historyRecord.skippedCount,
+        historyRecord.categoriesCreatedCount,
+        JSON.stringify(historyRecord.errors)
+      ).run();
+    } catch (err) {
+      console.error('Failed to insert into menu_import_history table:', err);
+    }
 
     const existingHistory = await setting<Record<string, unknown>[]>(env, 'menu_import_history', []);
     const updatedHistory = [historyRecord, ...existingHistory].slice(0, 50);

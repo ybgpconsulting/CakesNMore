@@ -34,6 +34,7 @@ import {
   Product,
 } from '../../types';
 import {
+  cleanImageUrls,
   generateSampleCsvTemplate,
   generateSampleJsonTemplate,
   parseCsvMenu,
@@ -55,10 +56,11 @@ export const AdminMenuImportPage: React.FC = () => {
   const [fileFormat, setFileFormat] = useState<'csv' | 'json'>('csv');
   const [parsedItems, setParsedItems] = useState<ParsedImportItem[]>([]);
   const [parseError, setParseError] = useState<string | null>(null);
+  const [allowGenericFallback, setAllowGenericFallback] = useState(false);
 
   // Filters & Table Controls
   const [searchFilter, setSearchFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'valid_new' | 'duplicate' | 'invalid'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'valid_new' | 'duplicate' | 'missing_image' | 'invalid'>('all');
   const [globalDuplicateAction, setGlobalDuplicateAction] = useState<DuplicateResolutionAction>('skip');
 
   // Import Execution state
@@ -87,7 +89,12 @@ export const AdminMenuImportPage: React.FC = () => {
   };
 
   // Handle parsing raw text
-  const processRawData = (text: string, name: string, format: 'csv' | 'json') => {
+  const processRawData = (
+    text: string,
+    name: string,
+    format: 'csv' | 'json',
+    useGenericFallback = allowGenericFallback
+  ) => {
     setParseError(null);
     setImportResult(null);
 
@@ -98,7 +105,9 @@ export const AdminMenuImportPage: React.FC = () => {
         return;
       }
 
-      const { items } = validateAndMatchImportItems(rawItems, products, categories);
+      const { items } = validateAndMatchImportItems(rawItems, products, categories, {
+        allowGenericFallback: useGenericFallback,
+      });
       setParsedItems(items);
       setFileName(name);
       setFileFormat(format);
@@ -215,6 +224,7 @@ export const AdminMenuImportPage: React.FC = () => {
     const total = parsedItems.length;
     const newItems = parsedItems.filter((i) => i.status === 'valid_new').length;
     const duplicates = parsedItems.filter((i) => i.status === 'duplicate').length;
+    const missingImages = parsedItems.filter((i) => i.hasMissingImage).length;
     const invalid = parsedItems.filter((i) => i.status === 'invalid').length;
     const selectedCount = parsedItems.filter((i) => i.selected).length;
 
@@ -223,7 +233,7 @@ export const AdminMenuImportPage: React.FC = () => {
       new Set(parsedItems.filter((i) => i.isNewCategory).map((i) => i.categoryName))
     );
 
-    return { total, newItems, duplicates, invalid, selectedCount, newCategories };
+    return { total, newItems, duplicates, missingImages, invalid, selectedCount, newCategories };
   }, [parsedItems]);
 
   // Bulk Selection Handlers
@@ -274,7 +284,9 @@ export const AdminMenuImportPage: React.FC = () => {
   const displayedItems = useMemo(() => {
     return parsedItems.filter((item) => {
       // Status filter
-      if (statusFilter !== 'all' && item.status !== statusFilter) {
+      if (statusFilter === 'missing_image') {
+        if (!item.hasMissingImage) return false;
+      } else if (statusFilter !== 'all' && item.status !== statusFilter) {
         return false;
       }
       // Search filter
@@ -346,6 +358,7 @@ export const AdminMenuImportPage: React.FC = () => {
                 images: item.images.length > 0 ? item.images : existing.images,
                 available: item.available,
                 weightOptions: item.weightOptions || existing.weightOptions,
+                weightPrices: item.weightPrices || existing.weightPrices,
                 updatedAt: now,
               });
               return;
@@ -381,6 +394,7 @@ export const AdminMenuImportPage: React.FC = () => {
           available: item.available,
           displayOrder: products.length + idx + 1,
           weightOptions: item.weightOptions,
+          weightPrices: item.weightPrices,
           createdAt: now,
           updatedAt: now,
         });
@@ -693,7 +707,7 @@ export const AdminMenuImportPage: React.FC = () => {
           </div>
 
           {/* Metric Summary Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
             <div
               onClick={() => setStatusFilter('all')}
               className={`p-4 rounded-2xl border cursor-pointer transition-all ${
@@ -728,9 +742,22 @@ export const AdminMenuImportPage: React.FC = () => {
                   : 'bg-white border-gray-200 hover:border-amber-300'
               }`}
             >
-              <span className="text-[10px] uppercase font-bold text-amber-700 block">Duplicates Found</span>
+              <span className="text-[10px] uppercase font-bold text-amber-700 block">Duplicates</span>
               <span className="text-2xl font-extrabold text-amber-800">{summary.duplicates}</span>
               <span className="text-[11px] text-amber-600 block mt-0.5">Matches existing</span>
+            </div>
+
+            <div
+              onClick={() => setStatusFilter('missing_image')}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                statusFilter === 'missing_image'
+                  ? 'bg-orange-50/70 border-orange-500 ring-2 ring-orange-500/20 shadow'
+                  : 'bg-white border-gray-200 hover:border-orange-300'
+              }`}
+            >
+              <span className="text-[10px] uppercase font-bold text-orange-700 block">Missing Image</span>
+              <span className="text-2xl font-extrabold text-orange-800">{summary.missingImages}</span>
+              <span className="text-[11px] text-orange-600 block mt-0.5">Needs Admin Review</span>
             </div>
 
             <div
@@ -795,6 +822,41 @@ export const AdminMenuImportPage: React.FC = () => {
               >
                 Valid Only
               </button>
+
+              {/* Requirement 6: Approved fallback images toggle */}
+              <label className="flex items-center gap-1.5 ml-2 px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={allowGenericFallback}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setAllowGenericFallback(checked);
+                    setParsedItems((prev) =>
+                      prev.map((item) => {
+                        const images = cleanImageUrls(item.raw.images, {
+                          allowGenericFallback: checked,
+                          categorySlug: item.categorySlug,
+                        });
+                        const hasMissingImage = images.length === 0;
+                        return {
+                          ...item,
+                          images,
+                          hasMissingImage,
+                          needsImageReview: hasMissingImage,
+                          warnings: hasMissingImage
+                            ? [
+                                ...item.warnings.filter((w) => !w.includes('No product image')),
+                                'No product image provided. Flagged for admin review (generic fallback will not be auto-published).',
+                              ]
+                            : item.warnings.filter((w) => !w.includes('No product image')),
+                        };
+                      })
+                    );
+                  }}
+                  className="rounded text-[#831843] focus:ring-[#831843]"
+                />
+                <span>Allow fallback images</span>
+              </label>
             </div>
 
             {/* Global Duplicate Action */}
@@ -1030,7 +1092,14 @@ export const AdminMenuImportPage: React.FC = () => {
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-[11px]">—</span>
+                          <div className="flex flex-col items-start gap-1">
+                            <div className="w-10 h-10 rounded-lg bg-orange-50 border border-dashed border-orange-300 flex items-center justify-center text-orange-500" title="No image provided. Generic fallback will not be auto-published.">
+                              <AlertTriangle className="w-4 h-4" />
+                            </div>
+                            <span className="text-[9px] font-bold text-orange-700 bg-orange-100/70 px-1 py-0.5 rounded leading-none whitespace-nowrap">
+                              Needs Image
+                            </span>
+                          </div>
                         )}
                       </td>
 

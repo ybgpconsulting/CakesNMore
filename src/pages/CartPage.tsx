@@ -25,7 +25,7 @@ import { formatDistanceKm } from '../utils/distance';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 
 export const CartPage: React.FC = () => {
-  const { cart, removeFromCart, updateQuantity, clearCart, subtotal, totalQuantity, generateWhatsAppOrderUrl } =
+  const { cart, removeFromCart, updateQuantity, clearCart, subtotal, totalQuantity, generateWhatsAppOrderUrl, getItemUnitPrice } =
     useCart();
   const { settings } = useStore();
   const { verifiedLocation, deliverySettings, openDeliveryGate } = useDeliveryAvailability();
@@ -173,7 +173,8 @@ export const CartPage: React.FC = () => {
           <div className="lg:col-span-8 space-y-4">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm divide-y divide-gray-100">
               {cart.map((item, index) => {
-                const itemSubtotal = item.product.price * item.quantity;
+                const itemPrice = getItemUnitPrice(item);
+                const itemSubtotal = itemPrice * item.quantity;
                 const imageSrc =
                   item.product.images?.[0] ||
                   'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=300&auto=format&fit=crop';
@@ -214,7 +215,7 @@ export const CartPage: React.FC = () => {
                           )}
                         </div>
 
-                        <p className="text-xs text-gray-400">₹{item.product.price} each</p>
+                        <p className="text-xs text-gray-400">₹{itemPrice} each</p>
                       </div>
                     </div>
 

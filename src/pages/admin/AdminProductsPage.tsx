@@ -197,11 +197,27 @@ export const AdminProductsPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-gray-600">{p.categoryName || 'General'}</td>
 
                     <td className="py-3.5 px-4">
-                      <span className="font-bold text-gray-900">₹{p.price}</span>
-                      {p.oldPrice && (
-                        <span className="text-[10px] text-gray-400 line-through ml-1">
-                          ₹{p.oldPrice}
-                        </span>
+                      {p.weightPrices && p.weightPrices.length > 0 ? (
+                        <div>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-[10px] text-gray-500 font-medium">From</span>
+                            <span className="font-bold text-gray-900">
+                              ₹{Math.min(...p.weightPrices.map((wp) => wp.price))}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-semibold inline-block mt-0.5">
+                            {p.weightPrices.length} sizes
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="font-bold text-gray-900">₹{p.price}</span>
+                          {p.oldPrice && (
+                            <span className="text-[10px] text-gray-400 line-through ml-1">
+                              ₹{p.oldPrice}
+                            </span>
+                          )}
+                        </>
                       )}
                     </td>
 

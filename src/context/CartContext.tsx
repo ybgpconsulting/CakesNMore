@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, CustomerDeliveryAddress, Product, StoreSettings, VerifiedLocation } from '../types';
 import { formatDistanceKm, getGoogleMapsLocationUrl } from '../utils/distance';
+import { getWeightPrice } from '../utils/productPricing';
 import { generateWhatsAppUrl, normalizeWhatsAppNumber } from '../utils/urls';
 import { useStore } from './StoreContext';
 
@@ -10,7 +11,8 @@ interface CartContextType {
     product: Product,
     quantity?: number,
     selectedWeight?: string,
-    customMessage?: string
+    customMessage?: string,
+    unitPrice?: number
   ) => void;
   removeFromCart: (index: number) => void;
   updateQuantity: (index: number, quantity: number) => void;
@@ -19,6 +21,7 @@ interface CartContextType {
   totalQuantity: number;
   toastMessage: string | null;
   hideToast: () => void;
+  getItemUnitPrice: (item: CartItem) => number;
   generateWhatsAppOrderUrl: (
     settings: StoreSettings,
     customerNotes?: string,
@@ -33,7 +36,8 @@ interface CartContextType {
     settings: StoreSettings,
     quantity?: number,
     weight?: string,
-    customMessage?: string
+    customMessage?: string,
+    unitPrice?: number
   ) => string;
 }
 
@@ -107,11 +111,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const hideToast = () => setToastMessage(null);
 
+  const getItemUnitPrice = (item: CartItem): number => {
+    if (typeof item.unitPrice === 'number' && Number.isFinite(item.unitPrice) && item.unitPrice >= 0) {
+      return item.unitPrice;
+    }
+    return getWeightPrice(item.product, item.selectedWeight).price;
+  };
+
   const addToCart = (
     product: Product,
     quantity = 1,
     selectedWeight?: string,
-    customMessage?: string
+    customMessage?: string,
+    unitPrice?: number
   ) => {
     if (!product.available) {
       showToast(`"${product.name}" is currently unavailable`);
@@ -122,6 +134,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...product,
       price: Math.max(0, Number(product.price) || 0),
     };
+    const effectiveUnitPrice = typeof unitPrice === 'number' && Number.isFinite(unitPrice) && unitPrice >= 0
+      ? unitPrice
+      : getWeightPrice(product, selectedWeight).price;
 
     setCart((prev) => {
       // Find if identical product with exact same variations already in cart
@@ -135,6 +150,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (existingIndex > -1) {
         const updated = [...prev];
         updated[existingIndex].quantity = Math.min(99, updated[existingIndex].quantity + safeQuantity);
+        if (updated[existingIndex].unitPrice === undefined) {
+          updated[existingIndex].unitPrice = effectiveUnitPrice;
+        }
         return updated;
       } else {
         return [
@@ -144,6 +162,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             quantity: safeQuantity,
             selectedWeight,
             customMessage,
+            unitPrice: effectiveUnitPrice,
           },
         ];
       }
@@ -176,7 +195,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const subtotal = cart.reduce(
-    (sum, item) => sum + Math.max(0, Number(item.product.price) || 0) * Math.max(1, Math.floor(item.quantity) || 1),
+    (sum, item) => sum + getItemUnitPrice(item) * Math.max(1, Math.floor(item.quantity) || 1),
     0
   );
   const totalQuantity = cart.reduce((sum, item) => sum + Math.max(1, Math.floor(item.quantity) || 1), 0);
@@ -205,8 +224,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (item.customMessage) optionsParts.push(`Message on Cake/Card: "${item.customMessage}"`);
       const optionsText = optionsParts.length > 0 ? `\n   (${optionsParts.join(', ')})` : '';
 
-      const itemSubtotal = item.product.price * item.quantity;
-      return `${index + 1}. ${item.product.name}${optionsText}\n   Qty: ${item.quantity}\n   Price: ₹${item.product.price}\n   Subtotal: ₹${itemSubtotal}`;
+      const itemPrice = getItemUnitPrice(item);
+      const itemSubtotal = itemPrice * item.quantity;
+      return `${index + 1}. ${item.product.name}${optionsText}\n   Qty: ${item.quantity}\n   Price: ₹${itemPrice}\n   Subtotal: ₹${itemSubtotal}`;
     });
 
     const productsBlock = productLines.join('\n\n');
@@ -278,9 +298,14 @@ ${mapsUrl}
     settings: StoreSettings,
     quantity = 1,
     weight?: string,
-    customMessage?: string
+    customMessage?: string,
+    unitPrice?: number
   ): string => {
     const cleanNumber = normalizeWhatsAppNumber(settings?.whatsappNumber);
+
+    const effectiveUnitPrice = typeof unitPrice === 'number' && Number.isFinite(unitPrice) && unitPrice >= 0
+      ? unitPrice
+      : getWeightPrice(product, weight).price;
 
     const optionsParts = [];
     if (weight) optionsParts.push(`Weight: ${weight}`);
@@ -290,13 +315,13 @@ ${mapsUrl}
     if (customMessage) optionsParts.push(`Message: "${customMessage}"`);
     const optionsText = optionsParts.length > 0 ? `\n   (${optionsParts.join(', ')})` : '';
 
-    const total = product.price * quantity;
+    const total = effectiveUnitPrice * quantity;
 
     const message = `Hi, I would like to order directly from Cakes N More (Sector 76 Noida).
 
 Product: ${product.name}${optionsText}
 Quantity: ${quantity}
-Price: ₹${product.price} each
+Price: ₹${effectiveUnitPrice} each
 Total Amount: ₹${total}
 
 Please confirm availability and delivery to Sector 76, Noida.`;
@@ -316,6 +341,7 @@ Please confirm availability and delivery to Sector 76, Noida.`;
         totalQuantity,
         toastMessage,
         hideToast,
+        getItemUnitPrice,
         generateWhatsAppOrderUrl,
         generateSingleProductWhatsAppUrl,
       }}

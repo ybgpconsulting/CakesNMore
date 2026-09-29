@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Eye, Plus } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Product } from '../../types';
+import { getLowestPrice, hasMultipleWeightPrices } from '../../utils/productPricing';
 import { QuickViewModal } from './QuickViewModal';
 
 interface ProductCardProps {
@@ -14,17 +15,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  const lowest = getLowestPrice(product);
+  const hasVariants = hasMultipleWeightPrices(product);
+
   const discountPercent =
-    product.oldPrice && product.oldPrice > product.price
-      ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    lowest.oldPrice && lowest.oldPrice > lowest.price
+      ? Math.round(((lowest.oldPrice - lowest.price) / lowest.oldPrice) * 100)
       : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!product.available) return;
+    if (hasVariants) {
+      setQuickViewOpen(true);
+      return;
+    }
     const defaultWeight = product.weightOptions?.[0];
-    addToCart(product, 1, defaultWeight);
+    addToCart(product, 1, defaultWeight, undefined, lowest.price);
   };
 
   const primaryImage =
@@ -127,21 +135,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Price & Action Row */}
           <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
             <div className="flex items-baseline gap-1.5 flex-wrap">
+              {hasVariants && (
+                <span className="text-[11px] sm:text-xs text-gray-500 font-medium">From</span>
+              )}
               <span className="text-sm sm:text-base lg:text-lg font-bold text-gray-900">
-                ₹{product.price}
+                ₹{lowest.price}
               </span>
-              {product.oldPrice && product.oldPrice > product.price && (
+              {lowest.oldPrice && lowest.oldPrice > lowest.price && (
                 <span className="text-[11px] sm:text-xs text-gray-400 line-through">
-                  ₹{product.oldPrice}
+                  ₹{lowest.oldPrice}
                 </span>
               )}
             </div>
 
-            {/* Ergonomic Touch-friendly Add Button (min-h-[38px] on mobile) */}
+            {/* Ergonomic Touch-friendly Add/Select Button */}
             <button
               onClick={handleAddToCart}
               disabled={!product.available}
-              aria-label={`Add ${product.name} to cart`}
+              aria-label={hasVariants ? `Select options for ${product.name}` : `Add ${product.name} to cart`}
               className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 min-h-[38px] sm:min-h-0 sm:py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 ${
                 product.available
                   ? 'bg-[#FDF2F8] hover:bg-[#831843] text-[#831843] hover:text-white'
@@ -149,7 +160,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }`}
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add</span>
+              <span>{hasVariants ? 'Select' : 'Add'}</span>
             </button>
           </div>
         </div>

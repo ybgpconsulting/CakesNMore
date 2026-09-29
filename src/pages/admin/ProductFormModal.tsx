@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { deleteProductImage, mediaKeyFromUrl, uploadProductImage } from '../../services/mediaApi';
-import { Category, Product } from '../../types';
+import { Category, Product, WeightPriceOption } from '../../types';
 
 interface ProductFormModalProps {
   product?: Product | null;
@@ -45,6 +45,27 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [displayOrder, setDisplayOrder] = useState<number>(product?.displayOrder || 1);
 
   // Variations & Options
+  const [hasWeightPricing, setHasWeightPricing] = useState<boolean>(() => {
+    return Boolean(product?.weightPrices && product.weightPrices.length > 0);
+  });
+
+  const [weightPrices, setWeightPrices] = useState<WeightPriceOption[]>(() => {
+    if (product?.weightPrices && product.weightPrices.length > 0) {
+      return product.weightPrices.map((wp) => ({ ...wp }));
+    }
+    if (product?.weightOptions && product.weightOptions.length > 0) {
+      return product.weightOptions.map((w) => ({
+        weight: w,
+        price: product.price || 599,
+        oldPrice: product.oldPrice,
+      }));
+    }
+    return [
+      { weight: '500g', price: product?.price || 599 },
+      { weight: '1kg', price: (product?.price || 599) * 2 - 100 },
+    ];
+  });
+
   const [weightOptionsStr, setWeightOptionsStr] = useState(
     product?.weightOptions?.join(', ') || '500g, 1kg, 1.5kg'
   );
@@ -150,10 +171,38 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           '-' +
           Math.floor(100 + Math.random() * 900);
 
-      const parsedWeights = weightOptionsStr
-        .split(',')
-        .map((w) => w.trim())
-        .filter(Boolean);
+      let finalWeightPrices: WeightPriceOption[] | undefined;
+      let finalWeightOptions: string[] | undefined;
+      let finalPrice = Number(price);
+      let finalOldPrice = oldPrice ? Number(oldPrice) : undefined;
+
+      if (hasWeightPricing) {
+        const validOptions = weightPrices
+          .map((wp) => ({
+            weight: wp.weight.trim(),
+            price: Number(wp.price),
+            oldPrice: wp.oldPrice ? Number(wp.oldPrice) : undefined,
+          }))
+          .filter((wp) => wp.weight.length > 0 && !isNaN(wp.price) && wp.price >= 0);
+
+        if (validOptions.length === 0) {
+          setFormError('Please configure at least one valid weight/size with price, or disable weight pricing.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        finalWeightPrices = validOptions;
+        finalWeightOptions = validOptions.map((wp) => wp.weight);
+        // Base price is lowest variant price so catalog defaults to lowest rate
+        const minRate = Math.min(...validOptions.map((wp) => wp.price));
+        finalPrice = minRate;
+      } else {
+        const parsedWeights = weightOptionsStr
+          .split(',')
+          .map((w) => w.trim())
+          .filter(Boolean);
+        finalWeightOptions = parsedWeights.length > 0 ? parsedWeights : undefined;
+      }
 
       const updatedProduct: Product = {
         id: product?.id || `prod_${Date.now()}`,
@@ -162,14 +211,15 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         categoryId: categoryId,
         categoryName: selectedCategoryObj?.name || 'Cakes',
         categorySlug: selectedCategoryObj?.slug || 'cakes',
-        price: Number(price),
-        oldPrice: oldPrice ? Number(oldPrice) : undefined,
+        price: finalPrice,
+        oldPrice: finalOldPrice,
         description: description.trim(),
         images,
         available,
         featured,
         bestseller,
-        weightOptions: parsedWeights.length > 0 ? parsedWeights : undefined,
+        weightOptions: finalWeightOptions,
+        weightPrices: finalWeightPrices,
         allowCustomMessage,
         customMessagePlaceholder: customMessagePlaceholder.trim() || undefined,
         displayOrder: Number(displayOrder),
@@ -422,20 +472,132 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Row 5: Options (Weight) */}
-          <div>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-                Weight / Size Options (Comma-separated)
+          {/* Row 5: Weight-Wise Pricing / Size Options */}
+          <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-gray-200 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                  Weight-Wise Pricing Options
+                </h4>
+                <p className="text-[11px] text-gray-500">
+                  Set separate rates for weights (e.g. 500gm, 1kg, 2kg). The lowest rate will automatically show in the menu as &ldquo;From ₹...&rdquo;.
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasWeightPricing}
+                  onChange={(e) => setHasWeightPricing(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#831843]"></div>
+                <span className="ml-2 text-xs font-semibold text-gray-700">Separate Rates</span>
               </label>
-              <input
-                type="text"
-                placeholder="500g, 1kg, 2kg"
-                value={weightOptionsStr}
-                onChange={(e) => setWeightOptionsStr(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
-              />
             </div>
+
+            {hasWeightPricing ? (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  {weightPrices.map((wp, idx) => (
+                    <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-gray-200">
+                      <div className="flex-1">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                          Size / Weight
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 500g, 1kg"
+                          value={wp.weight}
+                          onChange={(e) => {
+                            const copy = [...weightPrices];
+                            copy[idx].weight = e.target.value;
+                            setWeightPrices(copy);
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold focus:ring-1 focus:ring-[#831843] focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="w-28 sm:w-32">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                          Rate (₹) *
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Rate"
+                          min={0}
+                          value={wp.price}
+                          onChange={(e) => {
+                            const copy = [...weightPrices];
+                            copy[idx].price = Number(e.target.value);
+                            setWeightPrices(copy);
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-900 focus:ring-1 focus:ring-[#831843] focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="w-28 sm:w-32">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                          Old Rate (₹)
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Optional"
+                          min={0}
+                          value={wp.oldPrice || ''}
+                          onChange={(e) => {
+                            const copy = [...weightPrices];
+                            copy[idx].oldPrice = e.target.value ? Number(e.target.value) : undefined;
+                            setWeightPrices(copy);
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#831843] focus:outline-none text-gray-500"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (weightPrices.length > 1) {
+                            setWeightPrices(weightPrices.filter((_, i) => i !== idx));
+                          }
+                        }}
+                        disabled={weightPrices.length <= 1}
+                        className="p-2 text-gray-400 hover:text-rose-600 disabled:opacity-30 rounded-lg self-end mb-0.5"
+                        aria-label="Remove option"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWeightPrices([...weightPrices, { weight: '', price: price || 599 }]);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#831843] bg-pink-50 hover:bg-pink-100 rounded-xl transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Another Weight Option</span>
+                </button>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  Weight / Size Options (Comma-separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="500g, 1kg, 2kg"
+                  value={weightOptionsStr}
+                  onChange={(e) => setWeightOptionsStr(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                />
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Customers can select among these weights at the base price of ₹{price}.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Row 6: Custom Message Toggle */}

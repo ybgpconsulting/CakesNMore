@@ -21,6 +21,7 @@ import { useCart } from '../context/CartContext';
 import { useStore } from '../context/StoreContext';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getProductionUrl } from '../utils/seo';
+import { getWeightPrice } from '../utils/productPricing';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -49,6 +50,11 @@ export const ProductDetailPage: React.FC = () => {
     }
   }, [product]);
 
+  const currentPricing = useMemo(() => {
+    if (!product) return { price: 0 };
+    return getWeightPrice(product, selectedWeight);
+  }, [product, selectedWeight]);
+
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
@@ -65,13 +71,13 @@ export const ProductDetailPage: React.FC = () => {
   }
 
   const discountPercent =
-    product.oldPrice && product.oldPrice > product.price
-      ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    currentPricing.oldPrice && currentPricing.oldPrice > currentPricing.price
+      ? Math.round(((currentPricing.oldPrice - currentPricing.price) / currentPricing.oldPrice) * 100)
       : 0;
 
   const handleAddToCart = () => {
     if (!product.available) return;
-    addToCart(product, quantity, selectedWeight, customMessage);
+    addToCart(product, quantity, selectedWeight, customMessage, currentPricing.price);
   };
 
   const directWhatsAppUrl = generateSingleProductWhatsAppUrl(
@@ -79,7 +85,8 @@ export const ProductDetailPage: React.FC = () => {
     settings,
     quantity,
     selectedWeight,
-    customMessage
+    customMessage,
+    currentPricing.price
   );
 
   // Related products from same category
@@ -123,7 +130,7 @@ export const ProductDetailPage: React.FC = () => {
           '@type': 'Offer',
           url: productUrl,
           priceCurrency: 'INR',
-          price: product.price,
+          price: currentPricing.price,
           availability: product.available
             ? 'https://schema.org/InStock'
             : 'https://schema.org/OutOfStock',
@@ -263,12 +270,12 @@ export const ProductDetailPage: React.FC = () => {
 
                 {/* Price Display */}
                 <div className="flex items-baseline gap-3 mt-3">
-                  <span className="text-3xl font-extrabold text-gray-950">₹{product.price}</span>
-                  {product.oldPrice && product.oldPrice > product.price && (
+                  <span className="text-3xl font-extrabold text-gray-950">₹{currentPricing.price}</span>
+                  {currentPricing.oldPrice && currentPricing.oldPrice > currentPricing.price && (
                     <>
-                      <span className="text-base text-gray-400 line-through">₹{product.oldPrice}</span>
+                      <span className="text-base text-gray-400 line-through">₹{currentPricing.oldPrice}</span>
                       <span className="text-xs bg-[#FCE7F3] text-[#831843] font-bold px-2 py-0.5 rounded">
-                        Save ₹{product.oldPrice - product.price}
+                        Save ₹{currentPricing.oldPrice - currentPricing.price}
                       </span>
                     </>
                   )}
@@ -296,20 +303,29 @@ export const ProductDetailPage: React.FC = () => {
                       Select Size / Weight
                     </label>
                     <div className="flex flex-wrap gap-2.5">
-                      {product.weightOptions.map((weight) => (
-                        <button
-                          key={weight}
-                          type="button"
-                          onClick={() => setSelectedWeight(weight)}
-                          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                            selectedWeight === weight
-                              ? 'bg-[#831843] text-white border-[#831843] shadow-sm'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
-                          }`}
-                        >
-                          {weight}
-                        </button>
-                      ))}
+                      {product.weightOptions.map((weight) => {
+                        const wp = getWeightPrice(product, weight);
+                        const hasCustomRate = Boolean(product.weightPrices && product.weightPrices.length > 0);
+                        return (
+                          <button
+                            key={weight}
+                            type="button"
+                            onClick={() => setSelectedWeight(weight)}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                              selectedWeight === weight
+                                ? 'bg-[#831843] text-white border-[#831843] shadow-sm'
+                                : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
+                            }`}
+                          >
+                            <span>{weight}</span>
+                            {hasCustomRate && (
+                              <span className={`text-[11px] font-semibold ${selectedWeight === weight ? 'text-pink-100' : 'text-gray-500'}`}>
+                                (₹{wp.price})
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -370,7 +386,7 @@ export const ProductDetailPage: React.FC = () => {
                     className="w-full py-4 px-6 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                   >
                     <ShoppingBag className="w-5 h-5" />
-                    <span>Add to Cart (₹{product.price * quantity})</span>
+                    <span>Add to Cart (₹{currentPricing.price * quantity})</span>
                   </button>
 
                   {/* Order on WhatsApp Prominent Button */}
