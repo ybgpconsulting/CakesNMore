@@ -210,15 +210,20 @@ export const Footer: React.FC = () => {
         {/* Bottom Sub-bar */}
         <div className="pt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
           <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#D8C7C5]">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
-            <span className="text-gray-600">•</span>
-            <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
-          </div>
+          <a
+            href="https://ybgp.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Looking to grow your business? Your business growth partner. Designed and developed by YBGP. Visit ybgp.in"
+            className="flex items-center gap-3 rounded-md text-right text-[#D8C7C5] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8A598] focus-visible:ring-offset-4 focus-visible:ring-offset-[#1C1618]"
+          >
+            <span className="flex flex-col items-end gap-1">
+              <span className="font-semibold text-white">Looking to grow your business?</span>
+              <span className="text-[#A89897]">Designed and developed by YBGP</span>
+            </span>
+            <img src="/ybgp-logo.png" alt="" className="h-9 w-auto rounded-sm bg-white px-1" />
+          </a>
+
         </div>
       </div>
     </footer>
