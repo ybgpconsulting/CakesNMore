@@ -53,28 +53,6 @@ Please let me know availability and pricing.`;
         url: getProductionUrl('/contact'),
       },
       {
-        '@type': ['Bakery', 'Florist', 'LocalBusiness'],
-        '@id': 'https://cakesnmorenoida.in/#localbusiness',
-        name: settings.businessName || 'Cakes N More',
-        telephone: settings.phone,
-        email: settings.email || 'contact@cakesnmorenoida.in',
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City',
-          addressLocality: 'Sector 76, Noida',
-          addressRegion: 'Uttar Pradesh',
-          postalCode: '201301',
-          addressCountry: 'IN',
-        },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: '28.5684',
-          longitude: '77.3824',
-        },
-        hasMap: 'https://maps.google.com/?q=28.5684,77.3824',
-        openingHours: 'Mo-Su 09:00-23:00',
-      },
-      {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
