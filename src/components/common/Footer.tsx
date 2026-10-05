@@ -221,7 +221,7 @@ export const Footer: React.FC = () => {
               <span className="font-semibold text-white">Looking to grow your business?</span>
               <span className="text-[#A89897]">Designed and developed by YBGP</span>
             </span>
-            <img src="/ybgp-logo.png" alt="" className="h-9 w-auto rounded-sm bg-white px-1" />
+            <img src="/ybgp-logo.png" alt="" className="h-9 w-auto" />
           </a>
 
         </div>

@@ -8,7 +8,7 @@
     "build": "node node_modules/vite/bin/vite.js build",
     "dev:worker": "node node_modules/wrangler/bin/wrangler.js dev",
     "wrangler": "node node_modules/wrangler/bin/wrangler.js",
-    "deploy": "node node_modules/wrangler/bin/wrangler.js deploy",
+    "deploy": "npm run build && node node_modules/wrangler/bin/wrangler.js deploy",
     "db:migrate": "node node_modules/wrangler/bin/wrangler.js d1 migrations apply cakesnmore",
     "preview": "vite preview",
     "clean": "node scripts/clean.mjs",
