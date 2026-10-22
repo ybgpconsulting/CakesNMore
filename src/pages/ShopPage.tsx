@@ -40,6 +40,16 @@ export const ShopPage: React.FC = () => {
           { '@type': 'ListItem', position: 2, name: 'Shop', item: getProductionUrl('/shop') },
         ],
       },
+      {
+        '@type': 'ItemList',
+        itemListElement: products.filter((item) => item.available).slice(0, 16).map((item, idx) => ({
+          '@type': 'ListItem',
+          position: idx + 1,
+          name: item.name,
+          url: getProductionUrl(`/product/${item.slug}`),
+          image: item.images?.[0] ? (item.images[0].startsWith('/') ? getProductionUrl(item.images[0]) : item.images[0]) : undefined,
+        })),
+      },
     ],
   };
 
@@ -52,7 +62,6 @@ export const ShopPage: React.FC = () => {
     'anniversary flower bouquets noida',
     'red velvet cake noida',
     'chocolate truffle cake noida 76',
-    'midnight cake delivery noida',
   ].join(', ');
 
   // Filter & Sort Logic
@@ -122,6 +131,7 @@ export const ShopPage: React.FC = () => {
         title="Shop Fresh Cakes, Flower Bouquets & Hampers | Cakes N More Sector 76 Noida"
         description="Browse our complete catalogue of freshly prepared celebration cakes, flower arrangements, indoor plants and luxury gifts in Sector 76, Noida with easy WhatsApp checkout."
         keywords={shopKeywords}
+        imageAlt="Online Bakery and Florist Shop in Sector 76 Noida - Cakes N More"
         schema={shopSchema}
       />
 
@@ -129,10 +139,10 @@ export const ShopPage: React.FC = () => {
         {/* Page Title & Breadcrumb */}
         <div className="mb-8">
           <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B] tracking-tight">
-            Our Complete Catalogue
+            Online Bakery &amp; Florist in Sector 76 Noida
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Artisanal bakery items, fresh floral stems, plants, and bespoke gifts in Sector 76 Noida.
+            Handcrafted 100% eggless celebration cakes, fresh floral arrangements, indoor plants, and celebration gift hampers with doorstep delivery.
           </p>
         </div>
 

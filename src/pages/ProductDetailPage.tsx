@@ -22,6 +22,7 @@ import { useStore } from '../context/StoreContext';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getProductionUrl } from '../utils/seo';
 import { getWeightPrice } from '../utils/productPricing';
+import { CAKE_FLAVOURS } from '../data/cakeFlavours';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -38,6 +39,7 @@ export const ProductDetailPage: React.FC = () => {
   const [activeImage, setActiveImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedWeight, setSelectedWeight] = useState<string | undefined>(undefined);
+  const [selectedFlavour, setSelectedFlavour] = useState<string | undefined>(undefined);
   const [customMessage, setCustomMessage] = useState<string>('');
 
   // Sync initial state when product loads
@@ -45,6 +47,7 @@ export const ProductDetailPage: React.FC = () => {
     if (product) {
       setActiveImage(product.images?.[0] || '');
       setSelectedWeight(product.weightOptions?.[0]);
+      setSelectedFlavour(undefined);
       setQuantity(1);
       setCustomMessage('');
     }
@@ -76,8 +79,8 @@ export const ProductDetailPage: React.FC = () => {
       : 0;
 
   const handleAddToCart = () => {
-    if (!product.available) return;
-    addToCart(product, quantity, selectedWeight, customMessage, currentPricing.price);
+    if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) return;
+    addToCart(product, quantity, selectedWeight, customMessage, currentPricing.price, selectedFlavour);
   };
 
   const directWhatsAppUrl = generateSingleProductWhatsAppUrl(
@@ -86,7 +89,8 @@ export const ProductDetailPage: React.FC = () => {
     quantity,
     selectedWeight,
     customMessage,
-    currentPricing.price
+    currentPricing.price,
+    selectedFlavour
   );
 
   // Related products from same category
@@ -100,10 +104,8 @@ export const ProductDetailPage: React.FC = () => {
     `${product.name.toLowerCase()} noida`,
     `order ${product.name.toLowerCase()} sector 76 noida`,
     `${product.name.toLowerCase()} price`,
-    `eggless ${product.name.toLowerCase()}`,
-    `online ${product.name.toLowerCase()} delivery noida`,
-    `fresh ${product.categoryName?.toLowerCase() || 'cakes'} sector 76 noida`,
-    'midnight cake delivery noida',
+    ...(isCake ? ['eggless cake delivery sector 76 noida', 'birthday cake delivery noida'] : []),
+    `fresh ${product.categoryName?.toLowerCase() || 'products'} delivery noida`,
     'cakes n more noida',
   ].join(', ');
 
@@ -119,13 +121,6 @@ export const ProductDetailPage: React.FC = () => {
         sku: product.id,
         brand: { '@type': 'Brand', name: 'Cakes N More' },
         itemCondition: 'https://schema.org/NewCondition',
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: '4.9',
-          reviewCount: '48',
-          bestRating: '5',
-          worstRating: '1',
-        },
         offers: {
           '@type': 'Offer',
           url: productUrl,
@@ -134,15 +129,12 @@ export const ProductDetailPage: React.FC = () => {
           availability: product.available
             ? 'https://schema.org/InStock'
             : 'https://schema.org/OutOfStock',
+          itemCondition: 'https://schema.org/NewCondition',
           seller: {
-            '@type': 'LocalBusiness',
+            '@type': 'Organization',
+            '@id': `${getProductionUrl('/')}#localbusiness`,
             name: 'Cakes N More',
             url: getProductionUrl('/'),
-          },
-          hasMerchantReturnPolicy: {
-            '@type': 'MerchantReturnPolicy',
-            applicableCountry: 'IN',
-            merchantReturnLink: getProductionUrl('/returns-policy'),
           },
         },
       },
@@ -163,10 +155,15 @@ export const ProductDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-36 sm:py-12">
       <SEO
-        title={`${product.name} in Sector 76 Noida | Cakes N More`}
-        description={`Order ${product.name} freshly prepared in Sector 76 Noida. ₹${product.price}. Same-day delivery, personalized message options, and fast WhatsApp order confirmation.`}
+        title={`${product.name} | Cakes N More, Sector 76 Noida`}
+        description={
+          isCake
+            ? `Order ${product.name}, a freshly prepared 100% eggless cake from Cakes N More in Sector 76, Noida. View prices, choose options, and check delivery availability.`
+            : `Order ${product.name} from Cakes N More in Sector 76, Noida. View product details, check delivery availability, and place your order via WhatsApp.`
+        }
         keywords={productKeywords}
         image={product.images?.[0]}
+        imageAlt={`${product.name} ${isCake ? 'eggless cake' : 'product'} from Cakes N More, Sector 76 Noida`}
         schema={productSchema}
       />
 
@@ -202,7 +199,12 @@ export const ProductDetailPage: React.FC = () => {
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF8F5] border border-gray-100 shadow-inner">
                 <img
                   src={activeImage || product.images?.[0]}
-                  alt={product.name}
+                  alt={`${product.name} - ${isCake ? '100% eggless cake' : product.categoryName || 'product'} from Cakes N More Sector 76 Noida`}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  width={600}
+                  height={600}
                   className="w-full h-full object-cover"
                 />
 
@@ -229,13 +231,22 @@ export const ProductDetailPage: React.FC = () => {
                       key={idx}
                       type="button"
                       onClick={() => setActiveImage(img)}
+                      aria-label={`View ${product.name} photo ${idx + 1}`}
                       className={`w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
                         activeImage === img
                           ? 'border-[#831843] scale-105 shadow-sm'
                           : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img
+                        src={img}
+                        alt={`${product.name} photo ${idx + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
@@ -330,6 +341,26 @@ export const ProductDetailPage: React.FC = () => {
                   </div>
                 )}
 
+                {product.allowFlavourSelection && (
+                  <div className="mt-5">
+                    <label htmlFor="cake-flavour" className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                      Select Cake Flavour *
+                    </label>
+                    <select
+                      id="cake-flavour"
+                      required
+                      value={selectedFlavour || ''}
+                      onChange={(event) => setSelectedFlavour(event.target.value || undefined)}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                    >
+                      <option value="" disabled>Choose a flavour</option>
+                      {CAKE_FLAVOURS.map((flavour) => (
+                        <option key={flavour} value={flavour}>{flavour}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 {/* Custom Message on Cake / Card */}
                 {product.allowCustomMessage && (
                   <div className="mt-5">
@@ -382,7 +413,7 @@ export const ProductDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    disabled={!product.available}
+                    disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
                     className="w-full py-4 px-6 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                   >
                     <ShoppingBag className="w-5 h-5" />
@@ -394,16 +425,16 @@ export const ProductDetailPage: React.FC = () => {
                     href={product.available ? directWhatsAppUrl : undefined}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-disabled={!product.available}
+                    aria-disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
                     onClick={(event) => {
-                      if (!product.available) event.preventDefault();
+                      if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
                     }}
                     className={`w-full py-4 px-6 rounded-2xl text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 ${
-                      product.available ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
+                      product.available && (!product.allowFlavourSelection || selectedFlavour) ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
                     }`}
                   >
                     <WhatsAppIcon className="w-5 h-5" />
-                    <span>{product.available ? 'Order on WhatsApp' : 'Currently Unavailable'}</span>
+                    <span>{!product.available ? 'Currently Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Select a Flavour to Order' : 'Order on WhatsApp'}</span>
                   </a>
                 </div>
 
@@ -465,7 +496,7 @@ export const ProductDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={handleAddToCart}
-              disabled={!product.available}
+              disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
               className="flex-1 py-2.5 px-3 rounded-xl bg-[#831843] hover:bg-[#6b1336] active:scale-95 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
             >
               <ShoppingBag className="w-4 h-4" />
@@ -476,16 +507,16 @@ export const ProductDetailPage: React.FC = () => {
               href={product.available ? directWhatsAppUrl : undefined}
               target="_blank"
               rel="noopener noreferrer"
-              aria-disabled={!product.available}
+              aria-disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
               onClick={(event) => {
-                if (!product.available) event.preventDefault();
+                if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
               }}
               className={`py-2.5 px-3.5 rounded-xl text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all ${
-                product.available ? 'bg-[#25D366] hover:bg-[#20bd5a] active:scale-95' : 'bg-gray-300 cursor-not-allowed'
+                product.available && (!product.allowFlavourSelection || selectedFlavour) ? 'bg-[#25D366] hover:bg-[#20bd5a] active:scale-95' : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
               <WhatsAppIcon className="w-4 h-4" />
-              <span>{product.available ? 'WhatsApp' : 'Unavailable'}</span>
+              <span>{!product.available ? 'Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Choose Flavour' : 'WhatsApp'}</span>
             </a>
           </div>
         </div>

@@ -7,6 +7,7 @@ export interface SEOProps {
   keywords?: string;
   canonical?: string;
   image?: string;
+  imageAlt?: string;
   type?: string;
   robots?: string;
   noindex?: boolean;
@@ -15,10 +16,11 @@ export interface SEOProps {
 
 export const SEO: React.FC<SEOProps> = ({
   title = 'Cakes N More in Sector 76 Noida | 100% Eggless Cakes, Flowers & Gifts',
-  description = 'Best bakery and florist in Sector 76 Noida. 100% eggless celebration cakes, exotic flowers, and luxury hampers with same-day and midnight delivery. WhatsApp ordering.',
-  keywords = 'cake delivery sector 76 noida, best bakery in sector 76 noida, 100% eggless cakes noida, online cake delivery noida, midnight cake delivery noida, flower delivery sector 76 noida, florist noida',
+  description = 'Bakery and florist in Sector 76 Noida. Shop eggless cakes, fresh flowers, and gift hampers. Check delivery availability and order on WhatsApp.',
+  keywords = 'cake delivery sector 76 noida, bakery in sector 76 noida, eggless cakes noida, online cake delivery noida, flower delivery sector 76 noida, florist noida, gift hampers noida',
   canonical,
   image = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop',
+  imageAlt = 'Artisan 100% Eggless Cake from Cakes N More Sector 76 Noida',
   type = 'website',
   robots,
   noindex = false,
@@ -46,13 +48,18 @@ export const SEO: React.FC<SEOProps> = ({
     updateMeta('property', 'og:title', title);
     updateMeta('property', 'og:description', description);
     updateMeta('property', 'og:image', image);
+    updateMeta('property', 'og:image:alt', imageAlt);
     updateMeta('property', 'og:type', type);
     updateMeta('property', 'og:site_name', 'Cakes N More');
     updateMeta('property', 'og:locale', 'en_IN');
     updateMeta('property', 'og:url', getProductionUrl(window.location.pathname));
+    updateMeta('name', 'twitter:card', 'summary_large_image');
+    updateMeta('name', 'twitter:site', '@cakesnmore_noida');
+    updateMeta('name', 'twitter:creator', '@cakesnmore_noida');
     updateMeta('name', 'twitter:title', title);
     updateMeta('name', 'twitter:description', description);
     updateMeta('name', 'twitter:image', image);
+    updateMeta('name', 'twitter:image:alt', imageAlt);
 
     // Keep each client-side route canonical instead of inheriting index.html's URL.
     let link = document.querySelector('link[rel="canonical"]');
@@ -71,7 +78,11 @@ export const SEO: React.FC<SEOProps> = ({
       : (robots || 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
     updateMeta('name', 'robots', effectiveRobots);
 
-    // Clean up any previously attached dynamic page schema
+    // Clean up any previously attached server or dynamic page schema
+    const existingServerScript = document.getElementById('server-page-schema');
+    if (existingServerScript) {
+      existingServerScript.remove();
+    }
     const existingScript = document.getElementById('dynamic-page-schema');
     if (existingScript) {
       existingScript.remove();
@@ -92,7 +103,7 @@ export const SEO: React.FC<SEOProps> = ({
         scriptEl.parentNode.removeChild(scriptEl);
       }
     };
-  }, [title, description, keywords, canonical, image, type, robots, noindex, schema]);
+  }, [title, description, keywords, canonical, image, imageAlt, type, robots, noindex, schema]);
 
   return null;
 };

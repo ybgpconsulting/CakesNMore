@@ -17,6 +17,9 @@ export const AboutPage: React.FC = () => {
         name: 'About Cakes N More Sector 76 Noida',
         description: 'About Cakes N More - premier 100% eggless bakery and boutique florist in Sector 76 Noida.',
         url: getProductionUrl('/about'),
+        mainEntity: {
+          '@id': `${getProductionUrl('/')}#localbusiness`,
+        },
       },
       {
         '@type': 'BreadcrumbList',
@@ -35,7 +38,6 @@ export const AboutPage: React.FC = () => {
     'cake shop near mithaas amrapali silicon city',
     'florist in sector 76 noida',
     'flower shop noida 201301',
-    'midnight cake delivery noida',
   ].join(', ');
 
   return (
@@ -44,6 +46,7 @@ export const AboutPage: React.FC = () => {
         title="About Us | Cakes N More Noida Sector 76"
         description="Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home."
         keywords={aboutKeywords}
+        imageAlt="About Cakes N More Bakery & Florist Sector 76 Noida"
         schema={aboutSchema}
       />
 
@@ -87,7 +90,11 @@ export const AboutPage: React.FC = () => {
           <div className="md:col-span-5 aspect-[4/5] rounded-2xl overflow-hidden shadow-md">
             <img
               src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
-              alt="Artisan cake preparation"
+              alt="Artisan 100% eggless cake preparation at Cakes N More Sector 76 Noida"
+              loading="lazy"
+              decoding="async"
+              width={600}
+              height={750}
               className="w-full h-full object-cover"
             />
           </div>

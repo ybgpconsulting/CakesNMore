@@ -28,7 +28,7 @@ Delivery Address / Notes:
 
 Please confirm availability and delivery time.`,
   websiteTitle: 'Cakes N More in Sector 76 Noida | 100% Eggless Cakes, Flowers & Gifts',
-  metaDescription: 'Best bakery & florist in Sector 76 Noida. 100% eggless designer celebration cakes, fresh flower bouquets, and luxury gift hampers with same-day & midnight delivery. WhatsApp ordering.',
+  metaDescription: 'Bakery and florist in Sector 76 Noida. Shop eggless cakes, fresh flower bouquets, and gift hampers. Check delivery availability and order on WhatsApp.',
   logo: '',
   bannerAnnouncement: '🌸 Same-Day Fresh Cake & Flower Delivery in Sector 76 & Central Noida | Order Directly on WhatsApp!',
 };
@@ -421,4 +421,3 @@ export const INITIAL_DELIVERY_SETTINGS: import('../types').DeliverySettings = {
   allowedPincodes: ['201301', '201304', '201305', '201306', '201307', '201308'],
   specialDeliveryAreas: ['Sector 76', 'Sector 75', 'Sector 77', 'Sector 78', 'Sector 74', 'Sector 79', 'Sector 50', 'Sector 51', 'Sector 72', 'Sector 115', 'Sector 116', 'Sector 117', 'Sector 118', 'Sector 119', 'Sector 120', 'Sector 121', 'Sector 122'],
 };
-

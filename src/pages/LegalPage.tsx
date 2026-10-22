@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
+import { getProductionUrl } from '../utils/seo';
 
 type PolicyKey = 'privacy' | 'terms' | 'shipping' | 'returns';
 
@@ -159,12 +160,33 @@ const canonicalMap: Record<PolicyKey, string> = {
 export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
   const content = policyContent[page];
 
+  const legalSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': getProductionUrl(canonicalMap[page]),
+        name: `${content.title} | Cakes N More Sector 76 Noida`,
+        description: content.description,
+        url: getProductionUrl(canonicalMap[page]),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: getProductionUrl('/') },
+          { '@type': 'ListItem', position: 2, name: content.title, item: getProductionUrl(canonicalMap[page]) },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
         title={`${content.title} | Cakes N More Sector 76 Noida`}
         description={content.description}
         canonical={canonicalMap[page]}
+        schema={legalSchema}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

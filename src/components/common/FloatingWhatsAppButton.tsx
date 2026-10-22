@@ -16,6 +16,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
 
   // On product detail page, mobile already provides a dedicated sticky purchase bar with WhatsApp
   const isProductPage = location.pathname.startsWith('/product/');
+  const isHomePage = location.pathname === '/';
 
   const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(PREFILLED_MESSAGE)}`;
@@ -28,7 +29,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
       aria-label="Chat on WhatsApp with Cakes N More"
       title="Place an order on WhatsApp"
       className={`fixed right-4 sm:right-6 bottom-[calc(64px+max(0.4rem,env(safe-area-inset-bottom,0px)))] sm:bottom-6 z-40 h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-emerald-950/20 transition-all hover:scale-105 hover:bg-[#20bd5a] focus:outline-none focus:ring-4 focus:ring-[#25D366]/30 active:scale-95 ${
-        isProductPage ? 'hidden lg:flex' : 'flex'
+        isProductPage ? 'hidden lg:flex' : isHomePage ? 'hidden sm:flex' : 'flex'
       }`}
     >
       <WhatsAppIcon className="h-6 w-6 sm:h-7 sm:w-7" />

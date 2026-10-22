@@ -29,8 +29,8 @@ export const CategoryPage: React.FC = () => {
 
   const categoryKeywordsMap: Record<string, string> = {
     cakes: 'eggless cake delivery sector 76 noida, birthday cakes noida 76, anniversary cakes noida, chocolate truffle cake noida, red velvet cake noida, photo cake noida, bento cake noida, pinata cake noida, best cake shop sector 76 noida',
-    flowers: 'fresh flower delivery sector 76 noida, florist in sector 76 noida, rose bouquet delivery noida, lilies bouquet noida, orchids delivery noida, midnight flower delivery noida, exotic flowers noida',
-    combos: 'cake and flower combo noida, birthday combo delivery noida sector 76, flowers and teddy hamper noida, midnight surprise gift combo noida',
+    flowers: 'fresh flower delivery sector 76 noida, florist in sector 76 noida, rose bouquet delivery noida, lilies bouquet noida, orchids delivery noida, exotic flowers noida',
+    combos: 'cake and flower combo noida, birthday combo delivery noida sector 76, flowers and teddy hamper noida',
     plants: 'indoor plants delivery noida, air purifying plants noida 76, lucky bamboo money plant noida, potted plant gifts noida',
     chocolates: 'artisanal chocolates noida, chocolate gift hampers noida, premium chocolate delivery sector 76 noida',
     gifts: 'gift hampers sector 76 noida, birthday gifts delivery noida, anniversary personalized gifts noida',
@@ -40,6 +40,7 @@ export const CategoryPage: React.FC = () => {
     ? categoryKeywordsMap[currentCategory.slug.toLowerCase()] ||
       `${currentCategory.name.toLowerCase()} delivery sector 76 noida, best ${currentCategory.name.toLowerCase()} noida, online ${currentCategory.name.toLowerCase()} shop noida`
     : '';
+  const isCakeCategory = currentCategory?.slug === 'cakes' || currentCategory?.id === 'cat-cakes';
 
   const categorySchema = currentCategory
     ? {
@@ -65,6 +66,20 @@ export const CategoryPage: React.FC = () => {
               },
             ],
           },
+          ...(categoryProducts.length > 0
+            ? [
+                {
+                  '@type': 'ItemList',
+                  itemListElement: categoryProducts.slice(0, 16).map((item, idx) => ({
+                    '@type': 'ListItem',
+                    position: idx + 1,
+                    name: item.name,
+                    url: getProductionUrl(`/product/${item.slug}`),
+                    image: item.images?.[0] ? (item.images[0].startsWith('/') ? getProductionUrl(item.images[0]) : item.images[0]) : undefined,
+                  })),
+                },
+              ]
+            : []),
         ],
       }
     : undefined;
@@ -88,9 +103,10 @@ export const CategoryPage: React.FC = () => {
     <div className="min-h-screen bg-[#FAF8F5] py-8 sm:py-12">
       <SEO
         title={`${currentCategory.name} Delivery in Sector 76 Noida | Cakes N More`}
-        description={`Order fresh ${currentCategory.name.toLowerCase()} in Sector 76, Noida. ${currentCategory.description} Handcrafted and delivered with love via WhatsApp order.`}
+        description={`Order ${isCakeCategory ? 'fresh 100% eggless cakes' : `fresh ${currentCategory.name.toLowerCase()}`} in Sector 76, Noida. ${currentCategory.description} Check delivery availability and order via WhatsApp.`}
         keywords={categoryKeywords}
         image={currentCategory.image}
+        imageAlt={`${currentCategory.name} Delivery in Sector 76 Noida - Cakes N More`}
         schema={categorySchema}
       />
 
@@ -124,14 +140,14 @@ export const CategoryPage: React.FC = () => {
                 {currentCategory.description}
               </p>
               <div className="pt-2 text-xs text-gray-500">
-                Same-day doorstep delivery available throughout Sector 76 and nearby Noida sectors.
+                Same-day delivery availability depends on your address and order timing.
               </div>
             </div>
 
             <div className="md:col-span-4 h-48 md:h-full min-h-[180px] bg-gray-100 overflow-hidden">
               <img
                 src={currentCategory.image}
-                alt={currentCategory.name}
+                alt={`${currentCategory.name} in Sector 76 Noida - Cakes N More`}
                 loading="lazy"
                 decoding="async"
                 width={400}
@@ -201,6 +217,26 @@ export const CategoryPage: React.FC = () => {
             ))}
           </div>
         )}
+
+        {/* Local Category SEO Reassurance Block */}
+        <section className="mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-[#EADBDA] shadow-xs">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#29141B] mb-3">
+            Why Order {currentCategory.name} from Cakes N More Sector 76 Noida?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700 leading-relaxed">
+            <p>
+              At <strong>Cakes N More</strong>, our {currentCategory.name.toLowerCase()} are curated with pure artisanal dedication.
+              Conveniently located at <em>Shop 29, Ground Floor, Amrapali Crystal Home Shopping Arcade</em> (Sector 76 Noida),
+              we serve families and celebration hosts across Amrapali Silicon City, Amrapali Crystal Homes, Aditya Urban Casa,
+              JM Orchid, and surrounding Noida sectors (74, 75, 77, 78, 79, 50).
+            </p>
+            <p>
+              Need delivery or a custom order? Check out through the cart, or ask our team on WhatsApp
+              (<a href="tel:+919999517599" className="text-[#831843] font-bold hover:underline">+91 9999517599</a>)
+              about delivery availability for your address, order timing, and product customizations.
+            </p>
+          </div>
+        </section>
       </div>
     </div>
   );

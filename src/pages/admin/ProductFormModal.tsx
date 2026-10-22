@@ -31,6 +31,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   const [name, setName] = useState(product?.name || '');
   const [categoryId, setCategoryId] = useState(product?.categoryId || categories[0]?.id || 'cakes');
+  const selectedCategory = categories.find((category) => category.id === categoryId);
+  const isCakeCategory = selectedCategory?.id === 'cat-cakes' || selectedCategory?.slug === 'cakes';
   const [price, setPrice] = useState<number>(product?.price || 599);
   const [oldPrice, setOldPrice] = useState<number | undefined>(product?.oldPrice);
   const [description, setDescription] = useState(product?.description || '');
@@ -71,6 +73,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   );
   const [allowCustomMessage, setAllowCustomMessage] = useState(
     product?.allowCustomMessage ?? true
+  );
+  const [allowFlavourSelection, setAllowFlavourSelection] = useState(
+    product?.allowFlavourSelection ?? false
   );
   const [customMessagePlaceholder, setCustomMessagePlaceholder] = useState(
     product?.customMessagePlaceholder || 'Name or greeting on cake/card'
@@ -220,6 +225,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         bestseller,
         weightOptions: finalWeightOptions,
         weightPrices: finalWeightPrices,
+        allowFlavourSelection: isCakeCategory && allowFlavourSelection,
         allowCustomMessage,
         customMessagePlaceholder: customMessagePlaceholder.trim() || undefined,
         displayOrder: Number(displayOrder),
@@ -599,6 +605,24 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </div>
             )}
           </div>
+
+          {isCakeCategory && (
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-xs font-bold text-gray-900 block">Offer Cake Flavour Selection</span>
+                <span className="text-[11px] text-gray-500">Customers must choose from the predefined cake flavours when ordering this product.</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={allowFlavourSelection}
+                  onChange={(e) => setAllowFlavourSelection(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#831843]"></div>
+              </label>
+            </div>
+          )}
 
           {/* Row 6: Custom Message Toggle */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

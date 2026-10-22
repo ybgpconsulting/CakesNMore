@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, Cake, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { safeCtaUrl } from '../../utils/urls';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
@@ -14,15 +14,15 @@ export const Hero: React.FC = () => {
   )}`;
 
   return (
-    <section className="premium-hero relative overflow-hidden py-8 sm:py-14 lg:py-20 border-b border-[#F0E6E1]">
+    <section className="premium-hero relative overflow-hidden py-6 sm:py-14 lg:py-20 border-b border-[#F0E6E1]">
       {/* Subtle organic background aura */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FCE7F3]/40 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FEF3C7]/30 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Text Column */}
-          <div className="premium-reveal lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
+          <div className="premium-reveal lg:col-span-7 space-y-3 sm:space-y-6 text-center lg:text-left">
             {/* Sector 76 Local Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FCE7F3] text-[#831843] text-[11px] sm:text-xs font-bold tracking-wide uppercase shadow-sm">
               <Sparkles className="w-3.5 h-3.5 fill-[#831843]" />
@@ -83,7 +83,7 @@ export const Hero: React.FC = () => {
           </div>
 
           {/* Right Visual Column (Hero Image with Organic Badge & Customer Rating) */}
-          <div className="premium-reveal lg:col-span-5 relative mt-4 lg:mt-0">
+          <div className="premium-reveal lg:col-span-5 relative mt-3 lg:mt-0">
             <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
               {/* Decorative Frame with Optimized Aspect Ratio */}
               <div className="premium-image-frame relative rounded-3xl overflow-hidden border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100 shadow-xl">
@@ -107,26 +107,22 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
 
-              {/* Floating Rating Card */}
+              {/* Freshness Card */}
               <div className="absolute -bottom-5 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2.5 sm:gap-3 z-10">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#FEF3C7] text-[#B45309] flex items-center justify-center font-bold text-base sm:text-lg">
-                  ★
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#FCE7F3] text-[#831843] flex items-center justify-center">
+                  <Cake className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-xs font-bold text-gray-900 mt-0.5">Top-Rated Local Store</p>
-                  <p className="text-[10px] text-gray-500">500+ celebrations in Sector 76</p>
+                  <p className="text-xs font-bold text-gray-900">Made for Your Moment</p>
+                  <p className="text-[10px] text-gray-500">Fresh cakes &amp; blooms, made with care</p>
                 </div>
               </div>
 
-              {/* Floating Express Delivery Pill - Smooth subtle pulse instead of jarring bounce */}
+              {/* Floating Delivery Pill */}
               <div className="absolute -top-3 -right-2 sm:-right-3 bg-[#831843] text-white px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-lg text-[11px] sm:text-xs font-bold flex items-center gap-1.5 z-10">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>⚡ 60-Min Express Delivery</span>
+                <Clock className="w-3.5 h-3.5" />
+                <span>Same-Day Delivery Available</span>
               </div>
             </div>
           </div>

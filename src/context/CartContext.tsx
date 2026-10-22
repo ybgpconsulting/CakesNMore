@@ -12,7 +12,8 @@ interface CartContextType {
     quantity?: number,
     selectedWeight?: string,
     customMessage?: string,
-    unitPrice?: number
+    unitPrice?: number,
+    selectedFlavour?: string
   ) => void;
   removeFromCart: (index: number) => void;
   updateQuantity: (index: number, quantity: number) => void;
@@ -37,7 +38,8 @@ interface CartContextType {
     quantity?: number,
     weight?: string,
     customMessage?: string,
-    unitPrice?: number
+    unitPrice?: number,
+    selectedFlavour?: string
   ) => string;
 }
 
@@ -123,10 +125,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     quantity = 1,
     selectedWeight?: string,
     customMessage?: string,
-    unitPrice?: number
+    unitPrice?: number,
+    selectedFlavour?: string
   ) => {
     if (!product.available) {
       showToast(`"${product.name}" is currently unavailable`);
+      return;
+    }
+    if (product.allowFlavourSelection && !selectedFlavour) {
+      showToast(`Please select a flavour for "${product.name}"`);
       return;
     }
     const safeQuantity = Math.max(1, Math.min(99, Math.floor(quantity || 1)));
@@ -144,6 +151,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         (item) =>
           item.product.id === product.id &&
           item.selectedWeight === selectedWeight &&
+          item.selectedFlavour === selectedFlavour &&
           item.customMessage === customMessage
       );
 
@@ -161,6 +169,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             product: sanitizedProduct,
             quantity: safeQuantity,
             selectedWeight,
+            selectedFlavour,
             customMessage,
             unitPrice: effectiveUnitPrice,
           },
@@ -218,6 +227,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const productLines = cart.map((item, index) => {
       const optionsParts = [];
       if (item.selectedWeight) optionsParts.push(`Weight: ${item.selectedWeight}`);
+      if (item.selectedFlavour) optionsParts.push(`Flavour: ${item.selectedFlavour}`);
       if (item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') {
         optionsParts.push(`Type: 100% Eggless`);
       }
@@ -299,7 +309,8 @@ ${mapsUrl}
     quantity = 1,
     weight?: string,
     customMessage?: string,
-    unitPrice?: number
+    unitPrice?: number,
+    selectedFlavour?: string
   ): string => {
     const cleanNumber = normalizeWhatsAppNumber(settings?.whatsappNumber);
 
@@ -309,6 +320,7 @@ ${mapsUrl}
 
     const optionsParts = [];
     if (weight) optionsParts.push(`Weight: ${weight}`);
+    if (selectedFlavour) optionsParts.push(`Flavour: ${selectedFlavour}`);
     if (product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') {
       optionsParts.push(`Type: 100% Eggless`);
     }

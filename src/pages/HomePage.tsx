@@ -32,7 +32,6 @@ export const HomePage: React.FC = () => {
     'best bakery in sector 76 noida',
     '100% eggless cakes noida',
     'online cake delivery noida',
-    'midnight cake delivery noida',
     'birthday cake delivery noida sector 76',
     'flower delivery sector 76 noida',
     'florist in sector 76 noida',

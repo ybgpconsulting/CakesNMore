@@ -29,13 +29,19 @@ export function getStoredAdminUser(): AdminUser | null { try { const raw = sessi
 
 export function subscribeToAuthChanges(callback: (user: AdminUser | null) => void): () => void {
   const cachedUser = getStoredAdminUser();
-  request<{ user: AdminUser }>('auth/me').then((result) => { sessionStorage.setItem(SESSION_KEY, JSON.stringify(result.user)); callback(result.user); }).catch((error) => {
-    if (cachedUser && (!(error instanceof ApiRequestError) || error.status >= 500)) {
-      callback(cachedUser);
-      return;
-    }
-    sessionStorage.removeItem(SESSION_KEY);
-    callback(null);
-  });
+  request<{ user: AdminUser | null }>('auth/me')
+    .then(({ user }) => {
+      if (user) sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+      else sessionStorage.removeItem(SESSION_KEY);
+      callback(user);
+    })
+    .catch((error) => {
+      if (cachedUser && (!(error instanceof ApiRequestError) || error.status >= 500)) {
+        callback(cachedUser);
+        return;
+      }
+      sessionStorage.removeItem(SESSION_KEY);
+      callback(null);
+    });
   return () => undefined;
 }

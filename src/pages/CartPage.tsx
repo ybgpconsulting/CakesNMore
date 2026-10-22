@@ -123,7 +123,7 @@ export const CartPage: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="min-h-[70vh] bg-[#FAF8F5] flex flex-col items-center justify-center p-6 text-center">
-        <SEO title="Your Cart is Empty | Cakes N More Sector 76 Noida" />
+        <SEO title="Your Cart is Empty | Cakes N More Sector 76 Noida" noindex={true} />
         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md border border-[#EADBDA] mb-4 text-[#831843]">
           <ShoppingBag className="w-10 h-10" />
         </div>
@@ -145,7 +145,7 @@ export const CartPage: React.FC = () => {
     <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-36 sm:py-12">
       <SEO
         title={`Review Order (${totalQuantity} items) | Cakes N More Noida Sector 76`}
-        description="Review your selected celebration cakes and flowers before WhatsApp confirmation. Fast delivery across Sector 76, Noida."
+        description="Review your selected items before confirming delivery availability and your order with Cakes N More via WhatsApp."
         noindex={true}
       />
 
@@ -201,6 +201,11 @@ export const CartPage: React.FC = () => {
                           {item.selectedWeight && (
                             <p>
                               Weight: <strong className="text-gray-700">{item.selectedWeight}</strong>
+                            </p>
+                          )}
+                          {item.selectedFlavour && (
+                            <p>
+                              Flavour: <strong className="text-gray-700">{item.selectedFlavour}</strong>
                             </p>
                           )}
                           {(item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') && (

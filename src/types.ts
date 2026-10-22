@@ -22,6 +22,7 @@ export interface Product {
   weightOptions?: string[]; // e.g. ['500g', '1kg', '2kg']
   weightPrices?: WeightPriceOption[]; // Weight-wise pricing options (e.g. 500g = ₹500, 1kg = ₹900)
   selectedWeight?: string;
+  allowFlavourSelection?: boolean;
   allowCustomMessage?: boolean;
   customMessagePlaceholder?: string;
   createdAt: string;
@@ -85,6 +86,7 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedWeight?: string;
+  selectedFlavour?: string;
   unitPrice?: number;
   customMessage?: string;
 }

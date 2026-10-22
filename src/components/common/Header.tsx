@@ -62,7 +62,9 @@ export const Header: React.FC = () => {
       {/* Top Announcement Bar */}
       {homepageConfig.promoBannerActive && (
         <div className="bg-[#581c2f] text-[#FDE8EF] text-xs font-medium py-1.5 px-4 text-center tracking-wide flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-          <span className="whitespace-normal">{settings.bannerAnnouncement || homepageConfig.promoBannerText}</span>
+          <span className="whitespace-normal min-w-0 max-w-full flex-1 text-center leading-snug">
+            {settings.bannerAnnouncement || homepageConfig.promoBannerText}
+          </span>
           <span className="hidden md:inline-flex items-center gap-1 text-[#FBCFE8] hover:underline cursor-pointer">
             <Phone className="w-3 h-3" /> {settings.phone}
           </span>
@@ -90,7 +92,7 @@ export const Header: React.FC = () => {
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
+                <span className="font-serif text-xl max-[360px]:text-lg sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
                   Cakes N More
                 </span>
                 <span
@@ -101,14 +103,8 @@ export const Header: React.FC = () => {
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-700" />
                 </span>
               </div>
-              <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#78350F] font-semibold font-sans mt-0.5">
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.12em] text-[#78350F] font-semibold font-sans mt-1">
                 Bakery &amp; Florist
-              </span>
-              <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">
-                Sector 76, Noida
-              </span>
-              <span className="text-[9px] sm:text-[10px] text-emerald-700 font-bold">
-                100% Pure Veg
               </span>
             </div>
           </Link>
@@ -215,7 +211,7 @@ export const Header: React.FC = () => {
             <button
               onClick={() => setShowSearchModal(true)}
               aria-label="Search cakes and flowers"
-              className="p-2.5 text-gray-600 hover:text-[#831843] hover:bg-white rounded-full transition-colors"
+              className="hidden sm:inline-flex p-2.5 text-gray-600 hover:text-[#831843] hover:bg-white rounded-full transition-colors"
             >
               <Search className="w-5 h-5" />
             </button>
@@ -224,7 +220,7 @@ export const Header: React.FC = () => {
             <Link
               to="/cart"
               aria-label={`Shopping cart with ${totalQuantity} items`}
-              className="relative p-2.5 text-gray-700 hover:text-[#831843] hover:bg-white rounded-full transition-colors"
+              className="relative p-2.5 max-[360px]:hidden text-gray-700 hover:text-[#831843] hover:bg-white rounded-full transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
               {totalQuantity > 0 && (
@@ -260,7 +256,7 @@ export const Header: React.FC = () => {
                       onClick={() => setOrderMenuOpen(false)}
                       className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-[#FDF2F8] hover:text-[#831843]"
                     >
-                      <img src={partner.logo} alt="" className="w-6 h-6 object-contain" />
+                      <img src={partner.logo} alt={`${partner.name} order online`} width={24} height={24} className="w-6 h-6 object-contain" />
                       <span>Order on {partner.name}</span>
                     </a>
                   ))}
@@ -368,7 +364,7 @@ export const Header: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 font-bold text-xs"
                 >
-                  <img src={partner.logo} alt="" className="w-5 h-5 object-contain" />
+                  <img src={partner.logo} alt={`${partner.name} order online`} width={20} height={20} className="w-5 h-5 object-contain" />
                   <span>{partner.name}</span>
                 </a>
               ))}

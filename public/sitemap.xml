@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Core Storefront Pages -->
+  <url>
+    <loc>https://cakesnmorenoida.in/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&amp;w=1200&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Cakes N More Sector 76 Noida - 100% Eggless Bakery &amp; Florist</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/shop</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Categories -->
+  <url>
+    <loc>https://cakesnmorenoida.in/category/cakes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>100% Eggless Cakes Delivery Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/category/flowers</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Fresh Flowers Delivery Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/category/bouquets</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Curated Floral Bouquets Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/category/gifts</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Celebration Gifts and Keepsakes Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/category/plants</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Indoor Air Purifying Plants Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/category/hampers</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Luxury Celebration Hampers Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+
+  <!-- Products -->
+  <url>
+    <loc>https://cakesnmorenoida.in/product/oreo-crunch-chocolate-cake</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Oreo Crunch Chocolate Cake - Cakes N More Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/classic-crimson-rose-bouquet</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Classic Crimson Rose Bouquet - Florist Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/belgian-chocolate-truffle-cake</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Belgian Chocolate Truffle Cake - 100% Eggless Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/velvet-dream-cream-cheese-cake</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Velvet Dream Cream Cheese Cake - Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/german-black-forest-cherry-cake</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>German Black Forest Cherry Cake - Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/sunshine-mixed-blossom-bouquet</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Sunshine Mixed Blossom Bouquet - Florist Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/grand-celebration-gift-hamper</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Grand Celebration Gift Hamper - Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/artisanal-ferrero-truffle-gift-box</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Artisanal Ferrero &amp; Truffle Gift Box - Cakes N More</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/sansevieria-air-purifying-plant</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Sansevieria Air-Purifying Plant - Green Gifts Noida</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/product/cuddly-teddy-rose-combo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1559454403-b8fb88521f11?q=80&amp;w=800&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Cuddly Teddy &amp; Rose Combo - Sector 76 Noida</image:title>
+    </image:image>
+  </url>
+
+  <!-- Informational & Trust Pages -->
+  <url>
+    <loc>https://cakesnmorenoida.in/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/shipping-and-delivery</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/returns-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/terms-and-conditions</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://cakesnmorenoida.in/privacy-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

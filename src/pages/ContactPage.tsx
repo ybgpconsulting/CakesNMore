@@ -51,6 +51,9 @@ Please let me know availability and pricing.`;
         '@id': getProductionUrl('/contact'),
         name: 'Contact Cakes N More Sector 76 Noida',
         url: getProductionUrl('/contact'),
+        mainEntity: {
+          '@id': `${getProductionUrl('/')}#localbusiness`,
+        },
       },
       {
         '@type': 'BreadcrumbList',
@@ -76,8 +79,9 @@ Please let me know availability and pricing.`;
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
         title="Contact & Location | Cakes N More Noida Sector 76"
-        description="Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 for quick WhatsApp orders and same-day delivery."
+        description="Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 to ask about products and delivery availability."
         keywords={contactKeywords}
+        imageAlt="Contact Cakes N More Sector 76 Noida Store and Map"
         schema={contactSchema}
       />
 
@@ -91,7 +95,7 @@ Please let me know availability and pricing.`;
             Get in Touch With Us
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-2">
-            We are here to assist you with customized celebration cakes, midnight flower deliveries, and corporate gifts.
+            We are here to assist you with customized celebration cakes, flower arrangements, and corporate gifts.
           </p>
         </div>
 
@@ -196,7 +200,7 @@ Please let me know availability and pricing.`;
                 <div className="grid grid-cols-3 gap-2">
                   {deliveryPartners.map((partner) => (
                     <a key={partner.name} href={safeExternalUrl(partner.url)} target="_blank" rel="noopener noreferrer" className="flex flex-col sm:flex-row items-center justify-center gap-1.5 rounded-xl bg-white border border-[#EADBDA] px-2 py-2.5 text-[11px] font-bold text-gray-800 hover:border-[#831843] hover:text-[#831843] transition-colors">
-                      <img src={partner.logo} alt="" className="w-5 h-5 object-contain" />
+                      <img src={partner.logo} alt={`${partner.name} delivery partner`} width={20} height={20} className="w-5 h-5 object-contain" />
                       <span>{partner.name}</span>
                     </a>
                   ))}

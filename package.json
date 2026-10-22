@@ -9,6 +9,7 @@
     "dev:worker": "node node_modules/wrangler/bin/wrangler.js dev",
     "wrangler": "node node_modules/wrangler/bin/wrangler.js",
     "deploy": "npm run build && node node_modules/wrangler/bin/wrangler.js deploy",
+    "test:worker": "node --import tsx --test tests/worker.test.mjs",
     "db:migrate": "node node_modules/wrangler/bin/wrangler.js d1 migrations apply cakesnmore",
     "preview": "vite preview",
     "clean": "node scripts/clean.mjs",

@@ -27,7 +27,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     if (!product.available) return;
-    if (hasVariants) {
+    if (hasVariants || product.allowFlavourSelection) {
       setQuickViewOpen(true);
       return;
     }
@@ -54,7 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#FAF8F5]">
           <img
             src={isHovered && secondaryImage !== primaryImage ? secondaryImage : primaryImage}
-            alt={product.name}
+            alt={`${product.name} - Cakes N More Sector 76 Noida`}
             loading="lazy"
             decoding="async"
             width={400}

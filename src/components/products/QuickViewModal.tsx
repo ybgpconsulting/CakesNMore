@@ -6,6 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
 import { Product } from '../../types';
 import { getWeightPrice } from '../../utils/productPricing';
+import { CAKE_FLAVOURS } from '../../data/cakeFlavours';
 
 interface QuickViewModalProps {
   product: Product;
@@ -22,6 +23,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   );
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedWeight, setSelectedWeight] = useState<string | undefined>(product.weightOptions?.[0]);
+  const [selectedFlavour, setSelectedFlavour] = useState<string | undefined>(undefined);
   const [customMessage, setCustomMessage] = useState<string>('');
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -42,8 +44,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
       : 0;
 
   const handleAddToCart = () => {
-    if (!product.available) return;
-    addToCart(product, quantity, selectedWeight, customMessage, currentPricing.price);
+    if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) return;
+    addToCart(product, quantity, selectedWeight, customMessage, currentPricing.price, selectedFlavour);
     onClose();
   };
 
@@ -53,7 +55,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
     quantity,
     selectedWeight,
     customMessage,
-    currentPricing.price
+    currentPricing.price,
+    selectedFlavour
   );
 
   return (
@@ -92,7 +95,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                       selectedImage === img ? 'border-[#831843] scale-105' : 'border-transparent opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt={`${product.name} thumbnail ${idx + 1}`} width={56} height={56} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -179,6 +182,26 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 </div>
               )}
 
+              {product.allowFlavourSelection && (
+                <div className="mt-3">
+                  <label htmlFor="quick-view-cake-flavour" className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                    Select Cake Flavour *
+                  </label>
+                  <select
+                    id="quick-view-cake-flavour"
+                    required
+                    value={selectedFlavour || ''}
+                    onChange={(event) => setSelectedFlavour(event.target.value || undefined)}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  >
+                    <option value="" disabled>Choose a flavour</option>
+                    {CAKE_FLAVOURS.map((flavour) => (
+                      <option key={flavour} value={flavour}>{flavour}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {/* Custom Message Field */}
               {product.allowCustomMessage && (
                 <div className="mt-3">
@@ -226,7 +249,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               <button
                 type="button"
                 onClick={handleAddToCart}
-                disabled={!product.available}
+                disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
                 className="w-full py-3 px-4 rounded-xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -237,16 +260,16 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 href={product.available ? directWhatsAppUrl : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-disabled={!product.available}
+                aria-disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
                 onClick={(event) => {
-                  if (!product.available) event.preventDefault();
+                  if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
                 }}
                 className={`w-full py-3 px-4 rounded-xl text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all ${
-                  product.available ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
+                  product.available && (!product.allowFlavourSelection || selectedFlavour) ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
                 }`}
               >
                 <WhatsAppIcon className="w-4 h-4" />
-                <span>{product.available ? 'Instant Order on WhatsApp' : 'Currently Unavailable'}</span>
+                <span>{!product.available ? 'Currently Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Select a Flavour to Order' : 'Instant Order on WhatsApp'}</span>
               </a>
 
               <div className="text-center pt-1">

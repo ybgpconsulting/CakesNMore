@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
             </div>
 
             <p className="text-sm text-[#A89897] leading-relaxed max-w-sm pt-1">
-              Fresh 100% eggless celebration cakes, exotic flower bouquets, indoor plants and luxury gift hampers from our neighborhood boutique bakery in Sector 76, Noida.
+              Fresh 100% eggless celebration cakes, flower bouquets, indoor plants, and gift hampers from our neighborhood bakery and florist in Sector 76, Noida.
             </p>
 
             <div className="pt-2 flex items-center gap-3">
@@ -120,8 +120,13 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/cart" className="hover:text-white transition-colors">
-                  Review Cart
+                <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">
+                  Shipping & Delivery
+                </Link>
+              </li>
+              <li>
+                <Link to="/returns-policy" className="hover:text-white transition-colors">
+                  Returns & Refunds
                 </Link>
               </li>
             </ul>
@@ -138,6 +143,16 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link to="/terms-and-conditions" className="text-xs text-[#A89897] hover:text-white transition-colors pt-1 block">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="text-xs text-[#A89897] hover:text-white transition-colors block">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -209,7 +224,18 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Sub-bar */}
         <div className="pt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
-          <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
+            <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
+            <div className="flex items-center gap-3 text-[11px] text-[#A89897]">
+              <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
+              <span>•</span>
+              <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
+              <span>•</span>
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
+              <span>•</span>
+              <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
+            </div>
+          </div>
           <a
             href="https://ybgp.in"
             target="_blank"
@@ -221,9 +247,8 @@ export const Footer: React.FC = () => {
               <span className="font-semibold text-white">Looking to grow your business?</span>
               <span className="text-[#A89897]">Designed and developed by YBGP</span>
             </span>
-            <img src="/ybgp-logo.png" alt="" className="h-9 w-auto rounded-sm bg-white px-1" />
+            <img src="/ybgp-logo.png" alt="YBGP - Your Business Growth Partner logo" width={72} height={36} className="h-9 w-auto rounded-sm bg-white px-1" />
           </a>
-
         </div>
       </div>
     </footer>

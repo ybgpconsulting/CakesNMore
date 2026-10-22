@@ -15,12 +15,12 @@ export const LOCAL_FAQS: FaqItem[] = [
   {
     question: 'How fast is your cake and flower delivery in Sector 76 Noida?',
     answer:
-      'We offer same-day express delivery within 2 hours across Sector 76 and nearby Noida sectors. Standard orders can also be scheduled for your preferred time slot, including morning, afternoon, or evening party timings.',
+      'Same-day delivery is available in our configured delivery areas, subject to product availability and order timing. Contact us to confirm delivery availability and the expected time for your address.',
   },
   {
     question: 'Do you offer midnight cake and flower delivery in Noida?',
     answer:
-      'Yes! We specialize in midnight surprise deliveries between 11:30 PM and 12:15 AM across Sector 76 and surrounding sectors (74, 75, 77, 78, 79, 120, 121, 50). We recommend booking your midnight order at least 4 hours in advance via WhatsApp.',
+      'Contact us on WhatsApp to ask about midnight delivery for your address and preferred date. Availability and order cut-off times may vary.',
   },
   {
     question: 'Which societies in Sector 76 Noida do you deliver to?',

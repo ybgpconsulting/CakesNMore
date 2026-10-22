@@ -1,0 +1,24 @@
+{
+  "name": "Cakes N More - Bakery & Florist Sector 76 Noida",
+  "short_name": "Cakes N More",
+  "description": "100% Eggless Cakes, Fresh Flowers & Gifts Delivery in Sector 76 Noida",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F5",
+  "theme_color": "#831843",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23831843'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' font-family='serif' fill='white'%3EC%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23831843'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' font-family='serif' fill='white'%3EC%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -44,40 +44,77 @@ function xmlEscape(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
-function sitemapUrl(path: string, lastmod?: string, changefreq = 'weekly', priority = '0.8'): string {
+function sitemapUrl(
+  path: string,
+  lastmod?: string,
+  changefreq = 'weekly',
+  priority = '0.8',
+  images?: Array<{ loc: string; title?: string }>
+): string {
   const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod.slice(0, 10))}</lastmod>` : '';
-  return `  <url>\n    <loc>${xmlEscape(`${PRODUCTION_ORIGIN}${path}`)}</loc>${lastmodXml}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+  const imagesXml = (images || [])
+    .filter((img) => img && img.loc)
+    .map(
+      (img) =>
+        `\n    <image:image>\n      <image:loc>${xmlEscape(
+          img.loc.startsWith('/') ? `${PRODUCTION_ORIGIN}${img.loc}` : img.loc
+        )}</image:loc>${img.title ? `\n      <image:title>${xmlEscape(img.title)}</image:title>` : ''}\n    </image:image>`
+    )
+    .join('');
+  return `  <url>\n    <loc>${xmlEscape(`${PRODUCTION_ORIGIN}${path}`)}</loc>${lastmodXml}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>${imagesXml}\n  </url>`;
 }
 
 async function buildSitemap(env: Env): Promise<Response> {
   await seedIfEmpty(env);
   const [categories, products, homepageSetting, storeSetting] = await Promise.all([
-    env.DB.prepare('SELECT slug FROM categories WHERE active = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string }>(),
-    env.DB.prepare('SELECT slug, updated_at FROM products WHERE available = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string; updated_at: string }>(),
+    env.DB.prepare('SELECT slug, name, image FROM categories WHERE active = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string; name: string; image?: string }>(),
+    env.DB.prepare('SELECT slug, name, images_json, updated_at FROM products WHERE available = 1 ORDER BY display_order ASC, name ASC').all<{ slug: string; name: string; images_json?: string; updated_at: string }>(),
     env.DB.prepare('SELECT updated_at FROM settings WHERE key = ?').bind('homepage').first<{ updated_at: string }>(),
     env.DB.prepare('SELECT updated_at FROM settings WHERE key = ?').bind('store').first<{ updated_at: string }>(),
   ]);
   const productLastmod = products.results.map((product) => product.updated_at).filter(Boolean).sort().at(-1);
+  const homeImage = [{ loc: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop', title: 'Cakes N More Sector 76 Noida' }];
   const urls = [
-    sitemapUrl('/', homepageSetting?.updated_at || storeSetting?.updated_at, 'daily', '1.0'),
+    sitemapUrl('/', homepageSetting?.updated_at || storeSetting?.updated_at, 'daily', '1.0', homeImage),
     sitemapUrl('/shop', productLastmod, 'daily', '0.9'),
-    ...categories.results.map((category) => sitemapUrl(`/category/${encodeURIComponent(category.slug)}`, undefined, 'weekly', '0.9')),
-    ...products.results.map((product) => sitemapUrl(`/product/${encodeURIComponent(product.slug)}`, product.updated_at, 'weekly', '0.8')),
-    sitemapUrl('/about', undefined, 'monthly', '0.6'),
-    sitemapUrl('/contact', undefined, 'monthly', '0.7'),
-    sitemapUrl('/shipping-and-delivery', undefined, 'monthly', '0.5'),
-    sitemapUrl('/returns-policy', undefined, 'monthly', '0.4'),
-    sitemapUrl('/terms-and-conditions', undefined, 'monthly', '0.4'),
-    sitemapUrl('/privacy-policy', undefined, 'monthly', '0.4'),
+    ...categories.results.map((category) => {
+      const images = category.image ? [{ loc: category.image, title: `${category.name} Sector 76 Noida` }] : undefined;
+      return sitemapUrl(`/category/${encodeURIComponent(category.slug)}`, undefined, 'weekly', '0.9', images);
+    }),
+    ...products.results.map((product) => {
+      let productImages: Array<{ loc: string; title?: string }> = [];
+      try {
+        const parsed = JSON.parse(product.images_json || '[]');
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          productImages = parsed.map((loc: string) => ({ loc, title: `${product.name} - Cakes N More Sector 76 Noida` }));
+        }
+      } catch {}
+      return sitemapUrl(`/product/${encodeURIComponent(product.slug)}`, product.updated_at, 'weekly', '0.8', productImages);
+    }),
+    sitemapUrl('/about', undefined, 'monthly', '0.7'),
+    sitemapUrl('/contact', undefined, 'monthly', '0.8'),
+    sitemapUrl('/shipping-and-delivery', undefined, 'monthly', '0.6'),
+    sitemapUrl('/returns-policy', undefined, 'monthly', '0.6'),
+    sitemapUrl('/terms-and-conditions', undefined, 'monthly', '0.5'),
+    sitemapUrl('/privacy-policy', undefined, 'monthly', '0.5'),
   ];
-  const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
+  const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`;
   return new Response(body, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=300' } });
 }
 
 function robotsResponse(): Response {
-  return new Response('User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/*\nDisallow: /api/\n\nUser-agent: Googlebot\nAllow: /\n\nUser-agent: Bingbot\nAllow: /\n\nSitemap: https://cakesnmorenoida.in/sitemap.xml\n', {
-    headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' },
-  });
+  return new Response(
+    `    User-agent: *
+    Allow: /
+    Disallow: /admin/
+    Disallow: /api/
+
+Sitemap: https://cakesnmorenoida.in/sitemap.xml
+`,
+    {
+      headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' },
+    }
+  );
 }
 
 function asBoolean(value: unknown): boolean {
@@ -109,7 +146,7 @@ function validateWeightPrices(val: unknown): WeightPriceOption[] | undefined {
 }
 
 function validateProduct(value: unknown): Product | null {
-  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'sku', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'weightPrices', 'selectedWeight', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
+  if (!isRecord(value) || !hasOnlyKeys(value, ['id', 'name', 'slug', 'description', 'price', 'oldPrice', 'sku', 'categoryId', 'categoryName', 'categorySlug', 'images', 'featured', 'bestseller', 'available', 'displayOrder', 'weightOptions', 'weightPrices', 'selectedWeight', 'allowFlavourSelection', 'allowCustomMessage', 'customMessagePlaceholder', 'createdAt', 'updatedAt'])) return null;
   const item = value;
   const id = text(item.id, 120); const name = text(item.name, 160); const slug = text(item.slug, 160); const description = text(item.description, 5000, false); const categoryId = text(item.categoryId, 120); const images = stringArray(item.images, 20, 2048);
   const price = numberValue(item.price, 0, 10000000); const oldPrice = item.oldPrice == null ? undefined : numberValue(item.oldPrice, 0, 10000000);
@@ -119,9 +156,9 @@ function validateProduct(value: unknown): Product | null {
   const categoryName = item.categoryName == null ? undefined : text(item.categoryName, 160, false); const categorySlug = item.categorySlug == null ? undefined : text(item.categorySlug, 160, false);
   const weightOptions = item.weightOptions == null ? undefined : stringArray(item.weightOptions, 20, 80);
   const weightPrices = item.weightPrices == null ? undefined : validateWeightPrices(item.weightPrices);
-  const selectedWeight = item.selectedWeight == null ? undefined : text(item.selectedWeight, 80, false); const allowCustomMessage = item.allowCustomMessage == null ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder == null ? undefined : text(item.customMessagePlaceholder, 300, false);
-  if ((item.sku != null && sku === undefined) || (item.categoryName != null && categoryName === undefined) || (item.categorySlug != null && categorySlug === undefined) || (item.weightOptions != null && !weightOptions) || (item.weightPrices != null && !weightPrices) || (item.selectedWeight != null && selectedWeight === undefined) || (item.allowCustomMessage != null && allowCustomMessage === undefined) || (item.customMessagePlaceholder != null && customMessagePlaceholder === undefined)) return null;
-  return { id, name, slug, description, price, oldPrice, sku, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, weightPrices, selectedWeight, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
+  const selectedWeight = item.selectedWeight == null ? undefined : text(item.selectedWeight, 80, false); const allowFlavourSelection = item.allowFlavourSelection == null ? undefined : booleanValue(item.allowFlavourSelection); const allowCustomMessage = item.allowCustomMessage == null ? undefined : booleanValue(item.allowCustomMessage); const customMessagePlaceholder = item.customMessagePlaceholder == null ? undefined : text(item.customMessagePlaceholder, 300, false);
+  if ((item.sku != null && sku === undefined) || (item.categoryName != null && categoryName === undefined) || (item.categorySlug != null && categorySlug === undefined) || (item.weightOptions != null && !weightOptions) || (item.weightPrices != null && !weightPrices) || (item.selectedWeight != null && selectedWeight === undefined) || (item.allowFlavourSelection != null && allowFlavourSelection === undefined) || (item.allowCustomMessage != null && allowCustomMessage === undefined) || (item.customMessagePlaceholder != null && customMessagePlaceholder === undefined)) return null;
+  return { id, name, slug, description, price, oldPrice, sku, categoryId, categoryName, categorySlug, images, featured, bestseller, available, displayOrder, weightOptions, weightPrices, selectedWeight, allowFlavourSelection, allowCustomMessage, customMessagePlaceholder, createdAt: String(item.createdAt), updatedAt: String(item.updatedAt) };
 }
 
 function validateCategory(value: unknown): Category | null {
@@ -195,6 +232,7 @@ function productFromRow(row: Record<string, unknown>): Product {
     weightPrices,
     selectedWeight: row.selected_weight ? String(row.selected_weight) : undefined,
     allowCustomMessage: row.allow_custom_message == null ? undefined : asBoolean(row.allow_custom_message),
+    allowFlavourSelection: row.allow_flavour_selection == null ? undefined : asBoolean(row.allow_flavour_selection),
     customMessagePlaceholder: row.custom_message_placeholder ? String(row.custom_message_placeholder) : undefined,
     createdAt: String(row.created_at), updatedAt: String(row.updated_at),
   };
@@ -217,7 +255,7 @@ async function seedIfEmpty(env: Env): Promise<void> {
   const now = new Date().toISOString();
   const statements = [
     ...INITIAL_CATEGORIES.map((item) => env.DB.prepare('INSERT OR IGNORE INTO categories (id,name,slug,description,image,active,display_order) VALUES (?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.image, item.active ? 1 : 0, item.displayOrder)),
-    ...INITIAL_PRODUCTS.map((item) => env.DB.prepare('INSERT OR IGNORE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, item.updatedAt || now)),
+    ...INITIAL_PRODUCTS.map((item) => env.DB.prepare('INSERT OR IGNORE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_flavour_selection,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowFlavourSelection == null ? null : item.allowFlavourSelection ? 1 : 0, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, item.updatedAt || now)),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('store', JSON.stringify(INITIAL_SETTINGS), now),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('delivery', JSON.stringify(INITIAL_DELIVERY_SETTINGS), now),
     env.DB.prepare('INSERT OR IGNORE INTO settings (key,value_json,updated_at) VALUES (?,?,?)').bind('homepage', JSON.stringify(INITIAL_HOMEPAGE_CONFIG), now),
@@ -349,7 +387,12 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     return json({ user: { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true } }, 200, { 'set-cookie': sessionCookie(session, SESSION_TTL_SECONDS, isSecure), 'cache-control': 'no-store' });
   }
   if (path === 'auth/logout' && method === 'POST') return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0, isSecure) });
-  if (path === 'auth/me' && method === 'GET') return (await isAdmin(request, env)) ? json({ user: { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true } }) : error('Unauthorized', 401);
+  if (path === 'auth/me' && method === 'GET') {
+    const user = await isAdmin(request, env)
+      ? { uid: 'cloudflare-admin', email: env.ADMIN_EMAIL, displayName: 'Store Admin', isAdmin: true }
+      : null;
+    return json({ user });
+  }
 
   if (path === 'products' && method === 'GET') {
     const rows = await env.DB.prepare('SELECT * FROM products ORDER BY display_order ASC, name ASC').all();
@@ -375,7 +418,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   if (path === 'products' && method === 'PUT' && body) {
     const item = validateProduct(body);
     if (!item) return error('Invalid product payload.', 422);
-    await env.DB.prepare('INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
+    await env.DB.prepare('INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_flavour_selection,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowFlavourSelection == null ? null : item.allowFlavourSelection ? 1 : 0, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
     return json({ ok: true });
   }
   if (path.startsWith('products/') && method === 'DELETE') { await env.DB.prepare('DELETE FROM products WHERE id = ?').bind(path.slice(9)).run(); return json({ ok: true }); }
@@ -482,7 +525,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     for (const item of [...validatedProductsToCreate, ...validatedProductsToUpdate]) {
       statements.push(
         env.DB.prepare(
-          'INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+          'INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_flavour_selection,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
         ).bind(
           item.id,
           item.name,
@@ -500,6 +543,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
           item.displayOrder,
           serializeWeightOptions(item),
           item.selectedWeight ?? null,
+          item.allowFlavourSelection == null ? null : item.allowFlavourSelection ? 1 : 0,
           item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0,
           item.customMessagePlaceholder ?? null,
           item.createdAt || now,
@@ -592,6 +636,461 @@ async function handleMedia(request: Request, env: Env, url: URL): Promise<Respon
   return error('Not found', 404);
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function injectSsrMeta(
+  html: string,
+  meta: {
+    title: string;
+    description: string;
+    keywords?: string;
+    canonical: string;
+    image?: string;
+    imageAlt?: string;
+    type?: string;
+    robots?: string;
+    schema?: Record<string, unknown>;
+  }
+): string {
+  let result = html;
+
+  result = result.replace(/<title>.*?<\/title>/i, `<title>${escapeHtml(meta.title)}</title>`);
+  result = result.replace(
+    /<meta\s+name=["']description["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta name="description" content="${escapeHtml(meta.description)}" />`
+  );
+  if (meta.keywords) {
+    result = result.replace(
+      /<meta\s+name=["']keywords["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta name="keywords" content="${escapeHtml(meta.keywords)}" />`
+    );
+  }
+  result = result.replace(
+    /<link\s+rel=["']canonical["']\s+href=["'][^"']*["']\s*\/?>/i,
+    `<link rel="canonical" href="${escapeHtml(meta.canonical)}" />`
+  );
+  if (meta.robots) {
+    result = result.replace(
+      /<meta\s+name=["']robots["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta name="robots" content="${escapeHtml(meta.robots)}" />`
+    );
+  }
+
+  result = result.replace(
+    /<meta\s+property=["']og:title["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta property="og:title" content="${escapeHtml(meta.title)}" />`
+  );
+  result = result.replace(
+    /<meta\s+property=["']og:description["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta property="og:description" content="${escapeHtml(meta.description)}" />`
+  );
+  result = result.replace(
+    /<meta\s+property=["']og:url["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta property="og:url" content="${escapeHtml(meta.canonical)}" />`
+  );
+  if (meta.image) {
+    result = result.replace(
+      /<meta\s+property=["']og:image["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta property="og:image" content="${escapeHtml(meta.image)}" />`
+    );
+    result = result.replace(
+      /<meta\s+property=["']og:image:secure_url["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta property="og:image:secure_url" content="${escapeHtml(meta.image)}" />`
+    );
+  }
+  if (meta.imageAlt) {
+    result = result.replace(
+      /<meta\s+property=["']og:image:alt["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta property="og:image:alt" content="${escapeHtml(meta.imageAlt)}" />`
+    );
+  }
+  if (meta.type) {
+    result = result.replace(
+      /<meta\s+property=["']og:type["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta property="og:type" content="${escapeHtml(meta.type)}" />`
+    );
+  }
+
+  result = result.replace(
+    /<meta\s+name=["']twitter:title["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta name="twitter:title" content="${escapeHtml(meta.title)}" />`
+  );
+  result = result.replace(
+    /<meta\s+name=["']twitter:description["']\s+content=["'][^"']*["']\s*\/?>/i,
+    `<meta name="twitter:description" content="${escapeHtml(meta.description)}" />`
+  );
+  if (meta.image) {
+    result = result.replace(
+      /<meta\s+name=["']twitter:image["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta name="twitter:image" content="${escapeHtml(meta.image)}" />`
+    );
+  }
+  if (meta.imageAlt) {
+    result = result.replace(
+      /<meta\s+name=["']twitter:image:alt["']\s+content=["'][^"']*["']\s*\/?>/i,
+      `<meta name="twitter:image:alt" content="${escapeHtml(meta.imageAlt)}" />`
+    );
+  }
+
+  if (meta.schema) {
+    const schemaJson = JSON.stringify(meta.schema).replace(/</g, '\\u003c');
+    const schemaScript = `\n    <!-- Server-rendered JSON-LD schema for ${escapeHtml(meta.title)} -->\n    <script type="application/ld+json" id="server-page-schema">${schemaJson}</script>\n  `;
+    result = result.replace('</head>', `${schemaScript}</head>`);
+  }
+
+  return result;
+}
+
+function htmlResponse(assetRes: Response, html: string): Response {
+  const headers = new Headers(assetRes.headers);
+  headers.delete('content-length');
+  headers.delete('content-encoding');
+  headers.delete('etag');
+  headers.set('content-type', 'text/html; charset=utf-8');
+  return new Response(html, { status: assetRes.status, statusText: assetRes.statusText, headers });
+}
+
+async function handleHtmlWithSsrSeo(request: Request, env: Env, url: URL): Promise<Response> {
+  const assetRes = await env.ASSETS.fetch(request);
+  const contentType = assetRes.headers.get('content-type') || '';
+  if (!contentType.includes('text/html')) {
+    return assetRes;
+  }
+
+  try {
+    const html = await assetRes.clone().text();
+    return await renderHtmlWithSsrSeo(assetRes, html, env, url);
+  } catch (err) {
+    console.error(`SSR SEO rendering failed for ${url.pathname}; returning the original asset response.`, err);
+    return assetRes;
+  }
+}
+
+async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env: Env, url: URL): Promise<Response> {
+  let html = sourceHtml;
+  const pathname = url.pathname.replace(/\/+$/, '') || '/';
+
+  // Admin routes: enforce noindex, nofollow
+  if (pathname.startsWith('/admin')) {
+    html = html.replace(
+      /<meta\s+name=["']robots["']\s+content=["'][^"']*["']\s*\/?>/i,
+      '<meta name="robots" content="noindex,nofollow" />'
+    );
+    return htmlResponse(assetRes, html);
+  }
+
+  // Product detail pages
+  if (pathname.startsWith('/product/')) {
+    const slug = decodeURIComponent(pathname.replace(/^\/product\//, ''));
+    let product: any = null;
+    try {
+      product = await env.DB.prepare('SELECT * FROM products WHERE slug = ? OR id = ?').bind(slug, slug).first();
+    } catch (err) {
+      console.warn('SSR product lookup failed; using initial product data when available.', err);
+    }
+    if (!product) {
+      product = INITIAL_PRODUCTS.find((p) => p.slug === slug || p.id === slug);
+    }
+
+    if (product) {
+      let images: string[] = [];
+      if (typeof product.images_json === 'string') {
+        try {
+          const parsedImages: unknown = JSON.parse(product.images_json);
+          if (Array.isArray(parsedImages)) images = parsedImages.filter((image): image is string => typeof image === 'string');
+        } catch (err) {
+          console.warn('SSR product image data could not be parsed.', err);
+        }
+      } else if (Array.isArray(product.images)) {
+        images = product.images;
+      }
+      const primaryImage = images[0] || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop';
+      const fullImageUrl = primaryImage.startsWith('/') ? `${PRODUCTION_ORIGIN}${primaryImage}` : primaryImage;
+      const productUrl = `${PRODUCTION_ORIGIN}/product/${encodeURIComponent(product.slug || slug)}`;
+      const categoryId = product.category_id || product.categoryId;
+      const categorySlug = product.category_slug || product.categorySlug;
+      const isCake = categoryId === 'cat-cakes' || categorySlug === 'cakes';
+      const title = `${product.name} | Cakes N More, Sector 76 Noida`;
+      const description = isCake
+        ? `Order ${product.name}, a freshly prepared 100% eggless cake from Cakes N More in Sector 76, Noida. View prices, choose options, and check delivery availability.`
+        : `Order ${product.name} from Cakes N More in Sector 76, Noida. View product details, check delivery availability, and place your order via WhatsApp.`;
+      const keywords = [
+        `${product.name.toLowerCase()} noida`,
+        `order ${product.name.toLowerCase()} sector 76 noida`,
+        ...(isCake ? ['eggless cake delivery sector 76 noida', 'birthday cake delivery noida'] : []),
+        `fresh ${String(product.category_name || product.categoryName || 'products').toLowerCase()} delivery noida`,
+      ].join(', ');
+
+      const productSchema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Product',
+            url: productUrl,
+            name: product.name,
+            image: images.map(img => img.startsWith('/') ? `${PRODUCTION_ORIGIN}${img}` : img),
+            description: product.description,
+            sku: product.id,
+            brand: { '@type': 'Brand', name: 'Cakes N More' },
+            itemCondition: 'https://schema.org/NewCondition',
+            offers: {
+              '@type': 'Offer',
+              url: productUrl,
+              priceCurrency: 'INR',
+              price: product.price,
+              availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+              seller: {
+                '@type': 'Organization',
+                '@id': `${PRODUCTION_ORIGIN}/#localbusiness`,
+                name: 'Cakes N More',
+                url: `${PRODUCTION_ORIGIN}/`,
+              },
+            },
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${PRODUCTION_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'Shop', item: `${PRODUCTION_ORIGIN}/shop` },
+              ...(product.category_slug || product.categorySlug
+                ? [{ '@type': 'ListItem', position: 3, name: product.category_name || product.categoryName || 'Category', item: `${PRODUCTION_ORIGIN}/category/${product.category_slug || product.categorySlug}` }]
+                : []),
+              { '@type': 'ListItem', position: (product.category_slug || product.categorySlug) ? 4 : 3, name: product.name, item: productUrl },
+            ],
+          },
+        ],
+      };
+
+      html = injectSsrMeta(html, {
+        title,
+        description,
+        keywords,
+        canonical: productUrl,
+        image: fullImageUrl,
+        imageAlt: `${product.name} from Cakes N More, Sector 76 Noida`,
+        type: 'product',
+        schema: productSchema,
+      });
+
+      return htmlResponse(assetRes, html);
+    }
+  }
+
+  // Category pages
+  if (pathname.startsWith('/category/')) {
+    const slug = decodeURIComponent(pathname.replace(/^\/category\//, ''));
+    let category: any = null;
+    try {
+      category = await env.DB.prepare('SELECT * FROM categories WHERE slug = ? OR id = ?').bind(slug, slug).first();
+    } catch (err) {
+      console.warn('SSR category lookup failed; using initial category data when available.', err);
+    }
+    if (!category) {
+      category = INITIAL_CATEGORIES.find((c) => c.slug === slug || c.id === slug);
+    }
+
+    if (category) {
+      const categoryUrl = `${PRODUCTION_ORIGIN}/category/${encodeURIComponent(category.slug || slug)}`;
+      const isCakeCategory = category.slug === 'cakes' || category.id === 'cat-cakes';
+      const title = `${category.name} Delivery in Sector 76 Noida | Cakes N More`;
+      const description = `Order ${isCakeCategory ? 'fresh 100% eggless cakes' : `fresh ${category.name.toLowerCase()}`} in Sector 76, Noida. ${category.description || ''} Check delivery availability and order via WhatsApp.`;
+      const keywords = [
+        `${category.name.toLowerCase()} delivery sector 76 noida`,
+        `best ${category.name.toLowerCase()} noida`,
+        `online ${category.name.toLowerCase()} shop noida`,
+        ...(isCakeCategory ? ['eggless cakes noida'] : []),
+      ].join(', ');
+      const fullImageUrl = category.image?.startsWith('/') ? `${PRODUCTION_ORIGIN}${category.image}` : category.image;
+
+      const categorySchema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'CollectionPage',
+            '@id': categoryUrl,
+            name: `${category.name} Delivery in Sector 76 Noida`,
+            description: category.description,
+            url: categoryUrl,
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${PRODUCTION_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'Shop', item: `${PRODUCTION_ORIGIN}/shop` },
+              { '@type': 'ListItem', position: 3, name: category.name, item: categoryUrl },
+            ],
+          },
+        ],
+      };
+
+      html = injectSsrMeta(html, {
+        title,
+        description,
+        keywords,
+        canonical: categoryUrl,
+        image: fullImageUrl,
+        imageAlt: `${category.name} in Sector 76 Noida - Cakes N More`,
+        type: 'website',
+        schema: categorySchema,
+      });
+
+      return htmlResponse(assetRes, html);
+    }
+  }
+
+  // Other standard public pages
+  const staticRouteMeta: Record<string, { title: string; description: string; keywords?: string; schema?: any }> = {
+    '/shop': {
+      title: 'Online Bakery & Florist in Sector 76 Noida | Cakes N More',
+      description: 'Browse eggless celebration cakes, fresh flowers, and gift hampers in Sector 76 Noida. Check delivery availability and order via WhatsApp.',
+      keywords: 'buy cakes online noida, order cakes online sector 76 noida, fresh flowers delivery noida, eggless birthday cakes noida, gift hampers noida',
+      schema: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'CollectionPage',
+            '@id': `${PRODUCTION_ORIGIN}/shop`,
+            name: 'Online Bakery & Flower Shop in Sector 76 Noida',
+            description: 'Browse our complete catalogue of 100% eggless celebration cakes, exotic flowers, and gift hampers in Sector 76, Noida.',
+            url: `${PRODUCTION_ORIGIN}/shop`,
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${PRODUCTION_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'Shop', item: `${PRODUCTION_ORIGIN}/shop` },
+            ],
+          },
+        ],
+      },
+    },
+    '/about': {
+      title: 'About Us | Cakes N More Sector 76 Noida',
+      description: 'Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home.',
+      keywords: 'about cakes n more noida, bakery in sector 76 noida, eggless patisserie noida, cake shop near mithaas amrapali silicon city',
+      schema: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'AboutPage',
+            '@id': `${PRODUCTION_ORIGIN}/about`,
+            name: 'About Cakes N More Sector 76 Noida',
+            description: 'About Cakes N More - premier 100% eggless bakery and boutique florist in Sector 76 Noida.',
+            url: `${PRODUCTION_ORIGIN}/about`,
+            mainEntity: {
+              '@id': `${PRODUCTION_ORIGIN}/#localbusiness`,
+            },
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${PRODUCTION_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'About Us', item: `${PRODUCTION_ORIGIN}/about` },
+            ],
+          },
+        ],
+      },
+    },
+    '/contact': {
+      title: 'Contact & Location | Cakes N More Noida Sector 76',
+      description: 'Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 to ask about products and delivery availability.',
+      keywords: 'contact cakes n more noida, bakery phone number sector 76 noida, shop 29 amrapali crystal home noida',
+      schema: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'ContactPage',
+            '@id': `${PRODUCTION_ORIGIN}/contact`,
+            name: 'Contact Cakes N More Sector 76 Noida',
+            url: `${PRODUCTION_ORIGIN}/contact`,
+            mainEntity: {
+              '@id': `${PRODUCTION_ORIGIN}/#localbusiness`,
+            },
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${PRODUCTION_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'Contact Us', item: `${PRODUCTION_ORIGIN}/contact` },
+            ],
+          },
+        ],
+      },
+    },
+    '/shipping-and-delivery': {
+      title: 'Shipping & Delivery Policy | Cakes N More Sector 76 Noida',
+      description: 'Learn about delivery availability, delivery areas, and packaging for orders from Cakes N More in Sector 76, Noida.',
+    },
+    '/returns-policy': {
+      title: 'Returns & Refunds Policy | Cakes N More Sector 76 Noida',
+      description: 'Return, refund, and replacement policy for fresh cakes, floral arrangements, and perishable gifts at Cakes N More Sector 76 Noida.',
+    },
+    '/terms-and-conditions': {
+      title: 'Terms & Conditions | Cakes N More Sector 76 Noida',
+      description: 'Terms and conditions governing online ordering, product fulfillment, and delivery at Cakes N More Sector 76 Noida.',
+    },
+    '/privacy-policy': {
+      title: 'Privacy Policy | Cakes N More Sector 76 Noida',
+      description: 'How Cakes N More collects, uses, and protects customer information on this website and order channels.',
+    },
+  };
+
+  if (pathname === '/') {
+    let storeSettings = INITIAL_SETTINGS;
+    try {
+      storeSettings = await setting(env, 'store', INITIAL_SETTINGS);
+    } catch (err) {
+      console.warn('SSR homepage metadata lookup failed; using initial store metadata.', err);
+    }
+    const canonical = `${PRODUCTION_ORIGIN}/`;
+    html = injectSsrMeta(html, {
+      title: storeSettings.websiteTitle,
+      description: storeSettings.metaDescription,
+      canonical,
+    });
+    return htmlResponse(assetRes, html);
+  }
+
+  if (pathname === '/cart') {
+    const canonical = `${PRODUCTION_ORIGIN}/cart`;
+    html = injectSsrMeta(html, {
+      title: 'Your Cart | Cakes N More Sector 76 Noida',
+      description: 'Review your selected items before contacting Cakes N More to confirm your order.',
+      canonical,
+      robots: 'noindex,nofollow',
+    });
+    return htmlResponse(assetRes, html);
+  }
+
+  const routeConfig = staticRouteMeta[pathname];
+  if (routeConfig) {
+    const canonical = `${PRODUCTION_ORIGIN}${pathname}`;
+    html = injectSsrMeta(html, {
+      title: routeConfig.title,
+      description: routeConfig.description,
+      keywords: routeConfig.keywords,
+      canonical,
+      schema: routeConfig.schema,
+    });
+    return htmlResponse(assetRes, html);
+  }
+
+  html = injectSsrMeta(html, {
+    title: 'Page Not Found | Cakes N More Sector 76 Noida',
+    description: 'This page could not be found. Browse cakes, flowers, and gifts from Cakes N More in Sector 76, Noida.',
+    canonical: `${PRODUCTION_ORIGIN}${pathname}`,
+    robots: 'noindex,follow',
+  });
+  return htmlResponse(assetRes, html);
+}
+
 export default { async fetch(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   try {
@@ -606,6 +1105,10 @@ export default { async fetch(request: Request, env: Env): Promise<Response> {
         ? await handleMedia(request, env, url)
         : await handleApi(request, env, url);
       return withCors(response, request, env);
+    }
+    const isStaticAsset = /\.(?:js|css|png|jpg|jpeg|gif|svg|ico|webp|avif|woff|woff2|ttf|eot|json|map|txt|xml)$/i.test(url.pathname);
+    if (!isStaticAsset && request.method === 'GET') {
+      return await handleHtmlWithSsrSeo(request, env, url);
     }
     return env.ASSETS.fetch(request);
   } catch (err) { console.error(err); return error('Internal server error', 500); }
