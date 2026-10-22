@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHmac } from 'node:crypto';
 import test from 'node:test';
 import worker from '../worker/index.ts';
 import { INITIAL_PRODUCTS, INITIAL_SETTINGS } from '../src/data/initialData.ts';
@@ -33,7 +34,7 @@ function createEnv({ database = {} } = {}) {
   };
   const env = {
     DB: {
-      prepare() { return database.prepare ? database.prepare() : { ...statement }; },
+      prepare(query) { return database.prepare ? database.prepare(query) : { ...statement }; },
       async batch() { return []; },
     },
     MEDIA: {},
@@ -56,15 +57,24 @@ function createEnv({ database = {} } = {}) {
     },
     ADMIN_EMAIL: 'admin@example.com',
     ADMIN_PASSWORD_HASH: '',
-    SESSION_SECRET: '',
+    SESSION_SECRET: 'worker-test-session-secret',
     assetResponses,
   };
   return env;
 }
 
-async function request(pathname, env = createEnv()) {
-  const response = await worker.fetch(new Request(`https://cakesnmorenoida.in${pathname}`), env);
+async function request(pathname, env = createEnv(), init = {}) {
+  const response = await worker.fetch(new Request(`https://cakesnmorenoida.in${pathname}`, init), env);
   return { response, env };
+}
+
+function adminCookie(env) {
+  const payload = Buffer.from(JSON.stringify({
+    email: env.ADMIN_EMAIL.toLowerCase(),
+    exp: Math.floor(Date.now() / 1000) + 3600,
+  })).toString('base64url');
+  const signature = createHmac('sha256', env.SESSION_SECRET).update(payload).digest('base64url');
+  return `fnp_admin_session=${payload}.${signature}`;
 }
 
 function jsonLdFrom(htmlText) {
@@ -182,6 +192,132 @@ test('GET /api/auth/me returns an empty user for a guest session without an auth
   const { response } = await request('/api/auth/me');
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { user: null });
+});
+
+test('product writes require an authenticated admin', async () => {
+  const product = { ...INITIAL_PRODUCTS[0] };
+  const { response } = await request('/api/products', createEnv(), {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(product),
+  });
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'Unauthorized' });
+});
+
+test('product writes use an atomic upsert and persist optional nulls', async () => {
+  let capturedQuery = '';
+  let capturedValues = [];
+  const env = createEnv({
+    database: {
+      prepare(query) {
+        return {
+          bind(...values) { capturedValues = values; return this; },
+          async first() { return { id: 'existing-product' }; },
+          async all() { return { results: [] }; },
+          async run() { capturedQuery = query; return { success: true }; },
+        };
+      },
+    },
+  });
+  const product = {
+    ...INITIAL_PRODUCTS[0],
+    id: 'existing-product',
+    price: 1234,
+    description: 'Updated product description',
+    categoryId: 'cat-cakes',
+    available: false,
+    images: ['https://example.com/product.webp'],
+    oldPrice: undefined,
+    weightOptions: undefined,
+    weightPrices: undefined,
+    selectedWeight: undefined,
+    allowFlavourSelection: false,
+    allowCustomMessage: undefined,
+    customMessagePlaceholder: undefined,
+  };
+  const { response } = await request('/api/products', env, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json', cookie: adminCookie(env) },
+    body: JSON.stringify(product),
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { ok: true });
+  assert.match(capturedQuery, /ON CONFLICT\(id\) DO UPDATE/);
+  assert.doesNotMatch(capturedQuery, /INSERT OR REPLACE/);
+  assert.equal(capturedValues[0], 'existing-product');
+  assert.equal(capturedValues[3], 'Updated product description');
+  assert.equal(capturedValues[4], 1234);
+  assert.equal(capturedValues[5], null);
+  assert.equal(capturedValues[6], 'cat-cakes');
+  assert.equal(capturedValues[9], JSON.stringify(['https://example.com/product.webp']));
+  assert.equal(capturedValues[12], 0);
+  assert.equal(capturedValues[14], null);
+  assert.equal(capturedValues[15], null);
+  assert.equal(capturedValues[17], null);
+  assert.equal(capturedValues[18], null);
+});
+
+test('product validation errors return 422 without executing a write', async () => {
+  let writeExecuted = false;
+  const env = createEnv({
+    database: {
+      prepare(query) {
+        return {
+          bind() { return this; },
+          async first() { return { id: 'existing-product' }; },
+          async all() { return { results: [] }; },
+          async run() { if (query.startsWith('INSERT INTO products')) writeExecuted = true; return { success: true }; },
+        };
+      },
+    },
+  });
+  const { response } = await request('/api/products', env, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json', cookie: adminCookie(env) },
+    body: JSON.stringify({ ...INITIAL_PRODUCTS[0], price: 'not-a-number' }),
+  });
+
+  assert.equal(response.status, 422);
+  assert.equal(writeExecuted, false);
+});
+
+test('product database errors are logged and return a safe migration diagnostic', async () => {
+  const env = createEnv({
+    database: {
+      prepare(query) {
+        return {
+          bind() { return this; },
+          async first() { return { id: 'existing-product' }; },
+          async all() { return { results: [] }; },
+          async run() {
+            if (query.startsWith('INSERT INTO products')) {
+              throw new Error('D1_ERROR: table products has no column named allow_flavour_selection: SQLITE_ERROR');
+            }
+            return { success: true };
+          },
+        };
+      },
+    },
+  });
+  const loggedErrors = [];
+  const originalConsoleError = console.error;
+  console.error = (...args) => loggedErrors.push(args);
+  try {
+    const { response } = await request('/api/products', env, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json', cookie: adminCookie(env) },
+      body: JSON.stringify({ ...INITIAL_PRODUCTS[0], id: 'existing-product' }),
+    });
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), {
+      error: 'Product storage needs a database migration. Please contact the administrator.',
+    });
+    assert.match(String(loggedErrors[0]?.[2]), /no column named allow_flavour_selection/);
+  } finally {
+    console.error = originalConsoleError;
+  }
 });
 
 test('GET /api/products returns valid JSON and propagates database failures as errors', async () => {

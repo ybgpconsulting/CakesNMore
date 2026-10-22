@@ -34,3 +34,8 @@ persist = true
 
 [previews.observability.issue_detection]
 enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true

@@ -418,7 +418,42 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   if (path === 'products' && method === 'PUT' && body) {
     const item = validateProduct(body);
     if (!item) return error('Invalid product payload.', 422);
-    await env.DB.prepare('INSERT OR REPLACE INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_flavour_selection,allow_custom_message,custom_message_placeholder,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowFlavourSelection == null ? null : item.allowFlavourSelection ? 1 : 0, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
+    try {
+      await env.DB.prepare(
+        `INSERT INTO products (id,name,slug,description,price,old_price,category_id,category_name,category_slug,images_json,featured,bestseller,available,display_order,weight_options_json,selected_weight,allow_flavour_selection,allow_custom_message,custom_message_placeholder,created_at,updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+         ON CONFLICT(id) DO UPDATE SET
+           name=excluded.name,
+           slug=excluded.slug,
+           description=excluded.description,
+           price=excluded.price,
+           old_price=excluded.old_price,
+           category_id=excluded.category_id,
+           category_name=excluded.category_name,
+           category_slug=excluded.category_slug,
+           images_json=excluded.images_json,
+           featured=excluded.featured,
+           bestseller=excluded.bestseller,
+           available=excluded.available,
+           display_order=excluded.display_order,
+           weight_options_json=excluded.weight_options_json,
+           selected_weight=excluded.selected_weight,
+           allow_flavour_selection=excluded.allow_flavour_selection,
+           allow_custom_message=excluded.allow_custom_message,
+           custom_message_placeholder=excluded.custom_message_placeholder,
+           updated_at=excluded.updated_at`
+      ).bind(item.id, item.name, item.slug, item.description, item.price, item.oldPrice ?? null, item.categoryId, item.categoryName ?? null, item.categorySlug ?? null, JSON.stringify(item.images), item.featured ? 1 : 0, item.bestseller ? 1 : 0, item.available ? 1 : 0, item.displayOrder, serializeWeightOptions(item), item.selectedWeight ?? null, item.allowFlavourSelection == null ? null : item.allowFlavourSelection ? 1 : 0, item.allowCustomMessage == null ? null : item.allowCustomMessage ? 1 : 0, item.customMessagePlaceholder ?? null, item.createdAt || now, now).run();
+    } catch (err) {
+      console.error('Product save failed.', { productId: item.id }, err);
+      const diagnostic = err instanceof Error ? `${err.message} ${String(err.cause ?? '')}` : String(err);
+      if (/no column named allow_flavour_selection/i.test(diagnostic)) {
+        return error('Product storage needs a database migration. Please contact the administrator.', 503);
+      }
+      if (/unique constraint failed:\s*products\.slug/i.test(diagnostic)) {
+        return error('Another product already uses this URL slug. Change the product slug and try again.', 409);
+      }
+      return error('Product could not be saved. No changes were made. Please try again.', 500);
+    }
     return json({ ok: true });
   }
   if (path.startsWith('products/') && method === 'DELETE') { await env.DB.prepare('DELETE FROM products WHERE id = ?').bind(path.slice(9)).run(); return json({ ok: true }); }
