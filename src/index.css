@@ -2,12 +2,30 @@
 @import "leaflet/dist/leaflet.css";
 
 :root {
-  --fnp-ink: #29141b;
-  --fnp-wine: #831843;
-  --fnp-rose: #fce7f3;
-  --fnp-paper: #faf8f5;
-  --fnp-line: #eadbd7;
-  --fnp-gold: #b45309;
+  /* ── Cakelab Editorial Palette ── */
+  --color-ivory: #FAF7F0;
+  --color-white: #FFFFFF;
+  --color-cocoa: #30251F;
+  --color-cocoa-light: #4A3B32;
+  --color-taupe: #81776C;
+  --color-taupe-light: #B4ACA2;
+  --color-gold: #C5A46D;
+  --color-gold-light: #DFC79E;
+  --color-blush: #E8CECB;
+  --color-blush-soft: #F7EFEF;
+  --color-rose: #F0447E;
+  --color-forest: #244438;
+  --color-border: #E8E2D5;
+  --color-border-subtle: #F0EBE1;
+
+  /* App semantic mappings */
+  --app-bg: #FAF7F0;
+  --app-surface: #FFFFFF;
+  --app-card: #FFFFFF;
+  --app-border: #E8E2D5;
+  --text-primary: #30251F;
+  --text-secondary: #81776C;
+  --text-muted: #9E958A;
 }
 
 @layer base {
@@ -17,83 +35,178 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    background-color: var(--color-ivory);
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--fnp-paper);
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(250, 248, 245, 0.92));
-    color: #1F2937;
+    font-family: 'DM Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-ivory);
+    color: var(--color-cocoa);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, .font-display {
-    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  h1, h2, h3, h4, .font-serif, .font-display {
+    font-family: 'Fraunces', 'DM Serif Display', Georgia, serif;
+    letter-spacing: -0.02em;
+    color: var(--color-cocoa);
   }
 
-  /* Optimize tap targets for mobile accessibility */
   button, a, input, select, textarea {
     touch-action: manipulation;
   }
 
   ::selection {
-    background: var(--fnp-rose);
-    color: var(--fnp-ink);
+    background: #E8CECB;
+    color: #30251F;
   }
 }
 
 :root :focus-visible {
-  outline: 3px solid rgba(131, 24, 67, 0.72);
+  outline: 2px solid var(--color-gold);
   outline-offset: 3px;
 }
 
-.premium-header {
-  box-shadow: 0 6px 24px rgba(74, 21, 37, 0.07);
+/* ── Refined Editorial Header ── */
+.editorial-header {
+  background-color: rgba(255, 249, 247, 0.94);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid rgba(232, 226, 213, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(48, 37, 31, 0.03);
 }
 
-.premium-hero {
+/* ── Editorial Hero ── */
+.editorial-hero {
   background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.88), rgba(253, 247, 244, 0.72)),
-    radial-gradient(circle at 88% 12%, rgba(252, 231, 243, 0.85), transparent 32%),
-    #fdfbf9;
+    radial-gradient(ellipse 60% 55% at 90% 10%, rgba(255, 255, 255, 0.72) 0%, transparent 62%),
+    radial-gradient(ellipse 50% 60% at 10% 100%, rgba(247, 190, 188, 0.48) 0%, transparent 58%),
+    linear-gradient(180deg, #FFF9F7 0%, #FBE7E3 100%);
 }
 
-.premium-card {
-  box-shadow: 0 10px 28px rgba(74, 21, 37, 0.055);
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+/* ── Editorial Card System ── */
+.editorial-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E2D5;
+  box-shadow: 0 2px 10px rgba(48, 37, 31, 0.03);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 300ms ease;
 }
 
-.premium-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 38px rgba(74, 21, 37, 0.11);
+.editorial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -8px rgba(48, 37, 31, 0.08);
+  border-color: #DFC79E;
 }
 
-.premium-image-frame {
-  box-shadow: 0 24px 60px rgba(74, 21, 37, 0.16);
+/* ── Primary Action Button (Dark Cocoa) ── */
+.btn-editorial-primary {
+  background: linear-gradient(135deg, #FF4F87 0%, #EA3671 100%);
+  color: #FFFFFF;
+  box-shadow: 0 5px 15px rgba(234, 54, 113, 0.22);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.premium-reveal {
-  animation: premium-reveal 600ms ease both;
+.btn-editorial-primary:hover {
+  background: linear-gradient(135deg, #FF6A99 0%, #F0447E 100%);
+  box-shadow: 0 7px 20px rgba(234, 54, 113, 0.3);
+  transform: translateY(-1px);
 }
 
-@keyframes premium-reveal {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn-editorial-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(234, 54, 113, 0.18);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none;
-    transition: none;
-    scroll-behavior: auto !important;
-  }
+/* ── Secondary Button (Warm Ivory / Cocoa Outline) ── */
+.btn-editorial-secondary {
+  background: rgba(255, 250, 248, 0.94);
+  color: #F0447E;
+  border: 1px solid rgba(197, 164, 109, 0.85);
+  box-shadow: 0 3px 10px rgba(130, 79, 65, 0.1);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hide scrollbar for clean horizontal scrolling on mobile */
+.btn-editorial-secondary:hover {
+  background-color: #FFFFFF;
+  border-color: #F0447E;
+  color: #E93670;
+  transform: translateY(-1px);
+}
+
+.btn-editorial-secondary:active {
+  transform: translateY(1px);
+}
+
+/* ── Champagne Gold Button ── */
+.btn-editorial-gold {
+  background: linear-gradient(135deg, #C5A46D 0%, #B69256 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(197, 164, 109, 0.3);
+  transition: all 240ms ease;
+}
+
+.btn-editorial-gold:hover {
+  background: linear-gradient(135deg, #D4B683 0%, #C5A46D 100%);
+  box-shadow: 0 6px 20px rgba(197, 164, 109, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ── WhatsApp Concierge Button ── */
+.btn-editorial-whatsapp {
+  background-color: #244438;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(36, 68, 56, 0.22);
+  transition: all 240ms ease;
+}
+
+.btn-editorial-whatsapp:hover {
+  background-color: #1A332A;
+  box-shadow: 0 6px 20px rgba(36, 68, 56, 0.32);
+  transform: translateY(-1px);
+}
+
+/* ── Eyebrow Tag / Label ── */
+.eyebrow-tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #81776C;
+}
+
+/* ── Gentle Shimmer / Polish ── */
+.editorial-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.editorial-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 65%
+  );
+  transform: rotate(25deg) translateY(-100%);
+  transition: transform 800ms ease;
+  pointer-events: none;
+}
+
+.editorial-shimmer:hover::after {
+  transform: rotate(25deg) translateY(100%);
+}
+
+/* ── Scrollbars & iOS safe areas ── */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -103,11 +216,16 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* iOS Safe Area padding helpers */
 .pb-safe {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
-.bottom-safe {
-  bottom: max(0px, env(safe-area-inset-bottom));
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

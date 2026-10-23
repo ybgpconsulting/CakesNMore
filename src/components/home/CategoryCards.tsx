@@ -6,58 +6,111 @@ import { useStore } from '../../context/StoreContext';
 export const CategoryCards: React.FC = () => {
   const { categories } = useStore();
 
+  const primaryEditorialPanels = [
+    {
+      id: 'panel-cakes',
+      title: 'Artisanal Cakes',
+      eyebrow: 'Bakery Atelier',
+      subtitle: '100% pure vegetarian cakes, cheesecakes & custom photo designs.',
+      image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=900&auto=format&fit=crop',
+      link: '/category/cakes',
+      ratio: 'aspect-[4/5] lg:aspect-[3/4]',
+    },
+    {
+      id: 'panel-flowers',
+      title: 'Fresh Blooms',
+      eyebrow: 'Botanical Floristry',
+      subtitle: 'Morning-cut Dutch roses, Asiatic lilies & hand-tied floral bouquets.',
+      image: 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=900&auto=format&fit=crop',
+      link: '/category/flowers',
+      ratio: 'aspect-[4/5] lg:aspect-[3/4]',
+    },
+    {
+      id: 'panel-gifts',
+      title: 'Gifts & Hampers',
+      eyebrow: 'Thoughtful Gifting',
+      subtitle: 'Curated celebration hampers, premium chocolates & indoor plants.',
+      image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=900&auto=format&fit=crop',
+      link: '/category/gifts',
+      ratio: 'aspect-[4/5] lg:aspect-[3/4]',
+    },
+  ];
+
   const activeCategories = categories.filter((c) => c.active);
 
   return (
-    <section className="py-14 sm:py-20 bg-[#FAF8F5]">
+    <section className="py-16 sm:py-24 bg-[#FAF7F0] border-b border-[#E8E2D5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <span className="text-xs font-bold text-[#831843] uppercase tracking-widest">
-            Handcrafted With Love
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B] mt-2">
-            Explore Our Specialties
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
-            From oven-fresh designer cakes to morning-cut floral arrangements and curated luxury hampers.
+        
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 gap-4">
+          <div>
+            <span className="eyebrow-tag text-[#C5A46D] block mb-2">Curated Collections</span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#30251F] tracking-tight">
+              Shop by Category
+            </h2>
+          </div>
+          <p className="text-sm sm:text-base text-[#81776C] max-w-md font-normal">
+            Three dedicated ateliers under one roof in Sector 76 Noida. Handcrafted on order for memorable moments.
           </p>
         </div>
 
-        {/* 6 Category Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-          {activeCategories.map((category) => (
+        {/* 3 Visually Distinct Editorial Panels */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {primaryEditorialPanels.map((panel) => (
             <Link
-              key={category.id}
-              to={`/category/${category.slug}`}
-              className="group relative flex flex-col items-center bg-white rounded-2xl p-3 sm:p-4 border border-[#ECE2DC] hover:border-[#D1B8B3] hover:shadow-[0_8px_25px_rgba(131,24,67,0.08)] active:scale-95 transition-all duration-300"
+              key={panel.id}
+              to={panel.link}
+              className="group relative rounded-3xl overflow-hidden bg-white border border-[#E8E2D5] shadow-xs hover:shadow-xl transition-all duration-500 flex flex-col"
             >
-              {/* Image Circle with zoom */}
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#F7F2EE] mb-3">
+              <div className={`relative ${panel.ratio} w-full overflow-hidden bg-[#FAF7F0]`}>
                 <img
-                  src={category.image}
-                  alt={category.name}
+                  src={panel.image}
+                  alt={`${panel.title} at Cakes N More Sector 76 Noida`}
                   loading="lazy"
                   decoding="async"
-                  width={240}
-                  height={240}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                  width={600}
+                  height={800}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 text-[#831843] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#30251F]/70 via-[#30251F]/15 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                
+                {/* Floating Top Arrow */}
+                <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-[#30251F] flex items-center justify-center shadow-md group-hover:bg-[#30251F] group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+
+                {/* Bottom Overlay Content */}
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <p className="eyebrow-tag text-[10px] text-[#E8CECB] mb-1">{panel.eyebrow}</p>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold leading-tight mb-1 text-white">
+                    {panel.title}
+                  </h3>
+                  <p className="text-xs text-[#FAF7F0]/85 line-clamp-2 font-normal leading-relaxed">
+                    {panel.subtitle}
+                  </p>
                 </div>
               </div>
-
-              {/* Category Name */}
-              <h3 className="font-serif text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#831843] transition-colors text-center">
-                {category.name}
-              </h3>
-              <p className="text-[11px] text-gray-500 text-center line-clamp-1 mt-0.5">
-                {category.description}
-              </p>
             </Link>
           ))}
         </div>
+
+        {/* Secondary Category Chips for Full Catalogue Coverage */}
+        {activeCategories.length > 3 && (
+          <div className="mt-10 sm:mt-12 pt-8 border-t border-[#E8E2D5] flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <span className="eyebrow-tag text-[#81776C] mr-2">Also Explore:</span>
+            {activeCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/category/${cat.slug}`}
+                className="px-4 py-2 rounded-full bg-white border border-[#E8E2D5] hover:border-[#30251F] text-[#30251F] text-xs font-medium transition-all shadow-2xs hover:shadow-xs active:scale-95"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        )}
+
       </div>
     </section>
   );

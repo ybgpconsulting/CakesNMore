@@ -86,21 +86,21 @@ export const CategoryPage: React.FC = () => {
 
   if (!currentCategory) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="font-serif text-3xl font-bold text-gray-900 mb-2">Category Not Found</h2>
-        <p className="text-gray-500 mb-6">The category you are looking for does not exist.</p>
+      <div className="min-h-[60vh] bg-[#FAF7F0] flex flex-col items-center justify-center p-6 text-center text-[#30251F]">
+        <h2 className="font-serif text-3xl font-bold text-[#30251F] mb-2">Collection Not Found</h2>
+        <p className="text-[#81776C] mb-6">The category you are looking for does not exist or has been archived.</p>
         <Link
           to="/shop"
-          className="px-6 py-3 rounded-xl bg-[#831843] text-white font-bold text-sm"
+          className="px-6 py-3 rounded-full bg-[#30251F] hover:bg-[#201814] text-[#FAF7F0] font-serif text-xs font-semibold cursor-pointer"
         >
-          View All Products
+          View All Creations
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] py-8 sm:py-12">
+    <div className="min-h-screen bg-[#FAF7F0] text-[#30251F] py-8 sm:py-16">
       <SEO
         title={`${currentCategory.name} Delivery in Sector 76 Noida | Cakes N More`}
         description={`Order ${isCakeCategory ? 'fresh 100% eggless cakes' : `fresh ${currentCategory.name.toLowerCase()}`} in Sector 76, Noida. ${currentCategory.description} Check delivery availability and order via WhatsApp.`}
@@ -111,40 +111,42 @@ export const CategoryPage: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-gray-800 flex items-center gap-1">
+        <nav className="flex items-center gap-2 text-xs text-[#81776C] mb-6" aria-label="Breadcrumb">
+          <Link to="/" className="hover:text-[#30251F] flex items-center gap-1 transition-colors">
             <Home className="w-3.5 h-3.5" />
             <span>Home</span>
           </Link>
-          <ChevronRight className="w-3 h-3 text-gray-400" />
-          <Link to="/shop" className="hover:text-gray-800">
-            Shop
+          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
+          <Link to="/shop" className="hover:text-[#30251F] transition-colors">
+            Catalogue
           </Link>
-          <ChevronRight className="w-3 h-3 text-gray-400" />
-          <span className="text-gray-900 font-semibold">{currentCategory.name}</span>
+          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
+          <span className="text-[#30251F] font-semibold">{currentCategory.name}</span>
         </nav>
 
-        {/* Category Banner */}
-        <div className="relative rounded-3xl overflow-hidden mb-10 shadow-md border border-[#EADBDA] bg-white">
+        {/* Category Editorial Hero Banner */}
+        <div className="relative rounded-3xl overflow-hidden mb-10 shadow-xs border border-[#E8E2D5] bg-[#FFFFFF]">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             <div className="md:col-span-8 p-6 sm:p-10 space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FAF7F0] text-[#C5A46D] border border-[#E8E2D5] text-[11px] font-bold uppercase tracking-[0.2em]">
+                <Sparkles className="w-3.5 h-3.5 text-[#C5A46D]" />
                 <span>Sector 76 Specialty Collection</span>
               </div>
-              <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#29141B] tracking-tight">
+              <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#30251F] tracking-tight">
                 {currentCategory.name}
               </h1>
-              <p className="text-sm sm:text-base text-gray-600 max-w-xl leading-relaxed">
+              <p className="text-sm sm:text-base text-[#81776C] max-w-xl leading-relaxed font-normal">
                 {currentCategory.description}
               </p>
-              <div className="pt-2 text-xs text-gray-500">
-                Same-day delivery availability depends on your address and order timing.
+              <div className="pt-2 text-xs text-[#244438] font-medium flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#244438]" />
+                <span>Handcrafted fresh on order at our Sector 76 boutique.</span>
               </div>
             </div>
 
-            <div className="md:col-span-4 h-48 md:h-full min-h-[180px] bg-gray-100 overflow-hidden">
+            <div className="md:col-span-4 h-48 md:h-full min-h-[220px] bg-[#FAF7F0] overflow-hidden">
               <img
                 src={currentCategory.image}
                 alt={`${currentCategory.name} in Sector 76 Noida - Cakes N More`}
@@ -152,7 +154,7 @@ export const CategoryPage: React.FC = () => {
                 decoding="async"
                 width={400}
                 height={300}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </div>
           </div>
@@ -166,10 +168,10 @@ export const CategoryPage: React.FC = () => {
               <Link
                 key={cat.id}
                 to={`/category/${cat.slug}`}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 active:scale-95 ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 duration-200 cursor-pointer ${
                   cat.id === currentCategory.id
-                    ? 'bg-[#831843] text-white shadow-sm'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-[#831843] hover:text-[#831843]'
+                    ? 'bg-[#30251F] text-[#FAF7F0] shadow-sm'
+                    : 'bg-[#FFFFFF] text-[#81776C] border border-[#E8E2D5] hover:border-[#30251F] hover:text-[#30251F]'
                 }`}
               >
                 {cat.name}
@@ -178,40 +180,40 @@ export const CategoryPage: React.FC = () => {
         </div>
 
         {/* Toolbar: Count & Sort */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl border border-[#EADBDA] shadow-sm">
-          <p className="text-xs sm:text-sm text-gray-600 font-medium">
-            Showing <strong className="text-gray-900">{categoryProducts.length}</strong> {currentCategory.name.toLowerCase()} items
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8E2D5] shadow-xs">
+          <p className="text-xs sm:text-sm text-[#81776C] font-medium">
+            Presenting <strong className="text-[#30251F] font-semibold">{categoryProducts.length}</strong> {currentCategory.name.toLowerCase()} creations
           </p>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 font-medium">Sort by:</span>
+            <span className="text-xs text-[#81776C] font-medium">Sort by:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               aria-label="Sort category products"
-              className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#831843]"
+              className="bg-[#FAF7F0] border border-[#E8E2D5] rounded-full px-3.5 py-1.5 text-xs font-medium text-[#30251F] focus:outline-none focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] cursor-pointer"
             >
-              <option value="recommended">Recommended</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name-asc">Name (A-Z)</option>
+              <option value="recommended" className="bg-white">Curated Recommendation</option>
+              <option value="price-low" className="bg-white">Price: Low to High</option>
+              <option value="price-high" className="bg-white">Price: High to Low</option>
+              <option value="name-asc" className="bg-white">Alphabetical (A-Z)</option>
             </select>
           </div>
         </div>
 
         {/* Product Grid */}
         {categoryProducts.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-[#EADBDA]">
-            <p className="text-gray-600 font-serif text-xl mb-4">No items currently listed under this category.</p>
+          <div className="bg-[#FFFFFF] rounded-3xl p-12 text-center border border-[#E8E2D5] shadow-xs space-y-4">
+            <p className="text-[#81776C] font-serif text-xl">No items currently listed under this category.</p>
             <Link
               to="/shop"
-              className="inline-flex items-center px-6 py-2.5 bg-[#831843] text-white rounded-xl text-xs font-bold hover:bg-[#6b1336]"
+              className="inline-flex items-center px-6 py-2.5 rounded-full bg-[#30251F] text-[#FAF7F0] font-serif text-xs font-semibold cursor-pointer"
             >
-              Browse other categories
+              Browse other collections
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {categoryProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -219,21 +221,21 @@ export const CategoryPage: React.FC = () => {
         )}
 
         {/* Local Category SEO Reassurance Block */}
-        <section className="mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-[#EADBDA] shadow-xs">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#29141B] mb-3">
+        <section className="mt-16 bg-[#FFFFFF] rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] shadow-xs">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#30251F] mb-3">
             Why Order {currentCategory.name} from Cakes N More Sector 76 Noida?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700 leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-[#81776C] leading-relaxed">
             <p>
-              At <strong>Cakes N More</strong>, our {currentCategory.name.toLowerCase()} are curated with pure artisanal dedication.
-              Conveniently located at <em>Shop 29, Ground Floor, Amrapali Crystal Home Shopping Arcade</em> (Sector 76 Noida),
+              At <strong className="text-[#30251F]">Cakes N More</strong>, our {currentCategory.name.toLowerCase()} are curated with pure artisanal dedication.
+              Conveniently located at <em className="text-[#30251F] not-italic font-medium">Shop 29, Ground Floor, Amrapali Crystal Home Shopping Arcade</em> (Sector 76 Noida),
               we serve families and celebration hosts across Amrapali Silicon City, Amrapali Crystal Homes, Aditya Urban Casa,
               JM Orchid, and surrounding Noida sectors (74, 75, 77, 78, 79, 50).
             </p>
             <p>
-              Need delivery or a custom order? Check out through the cart, or ask our team on WhatsApp
-              (<a href="tel:+919999517599" className="text-[#831843] font-bold hover:underline">+91 9999517599</a>)
-              about delivery availability for your address, order timing, and product customizations.
+              Need express delivery or a bespoke creation? Add items to your bag or connect directly on WhatsApp
+              (<a href="tel:+919999517599" className="text-[#30251F] font-semibold hover:underline">+91 9999517599</a>)
+              for immediate concierge assistance with custom messages, floral designs, or delivery scheduling.
             </p>
           </div>
         </section>

@@ -117,21 +117,22 @@ export const AdminCategoriesPage: React.FC = () => {
       <SEO title="Category Management | Cakes N More Admin" />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#E8E2D5] shadow-sm">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Catalogue Taxonomies</span>
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#30251F] mt-1">
             Store Categories
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[#81776C] mt-1">
             Manage your store sections: Cakes, Flowers, Bouquets, Gifts, Plants, Hampers.
           </p>
         </div>
 
         <button
           onClick={() => openForm()}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md transition-all"
+          className="btn-editorial-primary inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold tracking-wider shadow-sm transition-all"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 text-[#C5A46D]" />
           <span>Add New Category</span>
         </button>
       </div>
@@ -146,9 +147,9 @@ export const AdminCategoriesPage: React.FC = () => {
           }`}
         >
           {actionNotice.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           ) : (
-            <AlertCircle className="w-4 h-4 text-rose-600" />
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
           )}
           <span>{actionNotice.text}</span>
         </div>
@@ -159,30 +160,34 @@ export const AdminCategoriesPage: React.FC = () => {
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="bg-white rounded-3xl p-5 border border-[#EADBDA] shadow-sm flex flex-col justify-between"
+            className="bg-white rounded-3xl p-5 border border-[#E8E2D5] shadow-sm flex flex-col justify-between"
           >
             <div>
-              <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-100 mb-4">
+              <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#FAF7F0] mb-4 border border-[#E8E2D5]">
                 <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
                 <span
-                  className={`absolute top-3 right-3 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shadow ${
-                    cat.active ? 'bg-emerald-500 text-white' : 'bg-gray-500 text-white'
+                  className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shadow-xs ${
+                    cat.active
+                      ? 'bg-[#244438] text-white'
+                      : 'bg-[#81776C] text-white'
                   }`}
                 >
                   {cat.active ? 'Active' : 'Hidden'}
                 </span>
               </div>
 
-              <h3 className="font-serif text-xl font-bold text-gray-900">{cat.name}</h3>
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{cat.description}</p>
-              <p className="text-[11px] text-[#831843] font-mono mt-2">slug: /{cat.slug}</p>
+              <h3 className="font-serif text-xl font-normal text-[#30251F]">{cat.name}</h3>
+              <p className="text-xs text-[#81776C] mt-1 line-clamp-2">{cat.description}</p>
+              <p className="text-[11px] text-[#30251F] font-mono mt-2 bg-[#FAF7F0] px-2.5 py-1 rounded-lg border border-[#E8E2D5] inline-block font-semibold">
+                /{cat.slug}
+              </p>
             </div>
 
-            <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-end gap-2">
+            <div className="pt-4 mt-4 border-t border-[#E8E2D5] flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => openForm(cat)}
-                className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-[#831843] text-gray-700 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-1.5 rounded-xl bg-[#FAF7F0] hover:bg-[#30251F] text-[#30251F] hover:text-white border border-[#E8E2D5] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>Edit</span>
@@ -190,7 +195,7 @@ export const AdminCategoriesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleDelete(cat)}
-                className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-rose-600 text-gray-700 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete</span>
@@ -203,19 +208,22 @@ export const AdminCategoriesPage: React.FC = () => {
       {/* Category Edit/Create Modal */}
       {isModalOpen && (
         <div role="dialog" aria-modal="true" aria-labelledby="category-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 id="category-modal-title" className="font-serif text-xl font-bold text-gray-900">
-                {editingCategory ? 'Edit Category' : 'Create Category'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8E2D5] space-y-5 text-[#30251F]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8E2D5]">
+              <div>
+                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Category Editor</span>
+                <h3 id="category-modal-title" className="font-serif text-xl font-normal text-[#30251F] mt-0.5">
+                  {editingCategory ? 'Edit Category' : 'Create Category'}
+                </h3>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="text-[#81776C] hover:text-[#30251F]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                   Category Name *
                 </label>
                 <input
@@ -224,12 +232,12 @@ export const AdminCategoriesPage: React.FC = () => {
                   placeholder="E.g., Cakes"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                   Slug (URL path)
                 </label>
                 <input
@@ -237,30 +245,30 @@ export const AdminCategoriesPage: React.FC = () => {
                   placeholder="cakes"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                   Description
                 </label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
 
               {/* Category Image */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider">
                     Banner Image URL
                   </label>
-                  <label className="cursor-pointer text-xs font-bold text-[#831843] hover:underline flex items-center gap-1">
-                    {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                  <label className="cursor-pointer text-xs font-bold text-[#30251F] hover:text-[#C5A46D] flex items-center gap-1 transition-colors">
+                    {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A46D]" /> : <Upload className="w-3.5 h-3.5 text-[#C5A46D]" />}
                     <span>Upload Image</span>
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                   </label>
@@ -270,36 +278,36 @@ export const AdminCategoriesPage: React.FC = () => {
                   required
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
                 {image && (
-                  <div className="mt-2 aspect-video rounded-xl overflow-hidden bg-gray-100 max-h-32 border">
+                  <div className="mt-2 aspect-video rounded-xl overflow-hidden bg-[#FAF7F0] max-h-32 border border-[#E8E2D5]">
                     <img src={image} alt="Preview" className="w-full h-full object-cover" />
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
-                <span className="text-xs font-bold text-gray-800">Category Active in Navigation</span>
+              <div className="flex items-center justify-between p-3.5 bg-[#FAF7F0] rounded-xl border border-[#E8E2D5]">
+                <span className="text-xs font-bold text-[#30251F]">Category Active in Navigation</span>
                 <input
                   type="checkbox"
                   checked={active}
                   onChange={(e) => setActive(e.target.checked)}
-                  className="w-4 h-4 text-[#831843] rounded"
+                  className="w-4 h-4 text-[#30251F] rounded accent-[#30251F]"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-[#E8E2D5]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100"
+                  className="px-5 py-2 rounded-full text-xs font-bold text-[#81776C] border border-[#E8E2D5] hover:bg-[#FAF7F0]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-xl bg-[#831843] hover:bg-[#6b1336] text-white text-xs font-bold shadow"
+                  className="btn-editorial-primary px-6 py-2 rounded-full text-xs font-bold tracking-wider shadow-sm"
                 >
                   Save Category
                 </button>

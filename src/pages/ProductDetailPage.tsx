@@ -60,12 +60,12 @@ export const ProductDetailPage: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="font-serif text-3xl font-bold text-gray-900 mb-2">Product Not Found</h2>
-        <p className="text-gray-500 mb-6">The item you are searching for is no longer available.</p>
+      <div className="min-h-[60vh] bg-[#0F1117] flex flex-col items-center justify-center p-6 text-center">
+        <h2 className="font-serif text-3xl font-bold text-[#F1F3F8] mb-2">Creation Not Found</h2>
+        <p className="text-[#9CA3B4] mb-6">The item you are searching for is no longer available in our atelier.</p>
         <Link
           to="/shop"
-          className="px-6 py-3 rounded-xl bg-[#831843] text-white font-bold text-sm shadow hover:bg-[#6b1336]"
+          className="btn-primary-luxury px-6 py-3 rounded-full text-xs font-semibold"
         >
           Explore All Products
         </Link>
@@ -153,7 +153,7 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-36 sm:py-12">
+    <div className="min-h-screen bg-[#FAF7F0] text-[#30251F] pt-4 pb-36 sm:py-16">
       <SEO
         title={`${product.name} | Cakes N More, Sector 76 Noida`}
         description={
@@ -168,35 +168,37 @@ export const ProductDetailPage: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500 mb-6 flex-wrap" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-gray-800 flex items-center gap-1">
+        <nav className="flex items-center gap-2 text-xs text-[#81776C] mb-6 flex-wrap" aria-label="Breadcrumb">
+          <Link to="/" className="hover:text-[#30251F] flex items-center gap-1 transition-colors">
             <Home className="w-3.5 h-3.5" />
             <span>Home</span>
           </Link>
-          <ChevronRight className="w-3 h-3 text-gray-400" />
-          <Link to="/shop" className="hover:text-gray-800">
-            Shop
+          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
+          <Link to="/shop" className="hover:text-[#30251F] transition-colors">
+            Catalogue
           </Link>
           {product.categorySlug && (
             <>
-              <ChevronRight className="w-3 h-3 text-gray-400" />
-              <Link to={`/category/${product.categorySlug}`} className="hover:text-gray-800">
+              <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
+              <Link to={`/category/${product.categorySlug}`} className="hover:text-[#30251F] transition-colors">
                 {product.categoryName}
               </Link>
             </>
           )}
-          <ChevronRight className="w-3 h-3 text-gray-400" />
-          <span className="text-gray-900 font-semibold truncate max-w-xs">{product.name}</span>
+          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
+          <span className="text-[#30251F] font-semibold truncate max-w-xs">{product.name}</span>
         </nav>
 
         {/* Product Showcase Grid */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EADBDA] shadow-sm mb-16">
+        <div className="bg-[#FFFFFF] rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] shadow-xs mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Gallery Column (5 cols) */}
+            
+            {/* Gallery Column (6 cols) */}
             <div className="lg:col-span-6 space-y-4">
-              {/* Primary Image View with zoom feel */}
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF8F5] border border-gray-100 shadow-inner">
+              {/* Primary Image View */}
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF7F0] border border-[#E8E2D5] shadow-inner">
                 <img
                   src={activeImage || product.images?.[0]}
                   alt={`${product.name} - ${isCake ? '100% eggless cake' : product.categoryName || 'product'} from Cakes N More Sector 76 Noida`}
@@ -205,18 +207,18 @@ export const ProductDetailPage: React.FC = () => {
                   decoding="async"
                   width={600}
                   height={600}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-all duration-300"
                 />
 
                 {discountPercent > 0 && (
-                  <span className="absolute top-4 left-4 bg-[#831843] text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-lg shadow">
+                  <span className="absolute top-4 left-4 bg-[#E8CECB] text-[#30251F] text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md shadow-sm">
                     {discountPercent}% OFF
                   </span>
                 )}
 
                 {!product.available && (
-                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                    <span className="bg-white text-gray-900 font-bold text-sm px-4 py-2 rounded-full uppercase tracking-wider shadow">
+                  <div className="absolute inset-0 bg-[#30251F]/60 backdrop-blur-sm flex items-center justify-center">
+                    <span className="bg-[#FAF7F0] text-[#30251F] border border-[#E8E2D5] font-serif font-bold text-sm px-5 py-2.5 rounded-full uppercase tracking-wider shadow-lg">
                       Sold Out
                     </span>
                   </div>
@@ -232,10 +234,10 @@ export const ProductDetailPage: React.FC = () => {
                       type="button"
                       onClick={() => setActiveImage(img)}
                       aria-label={`View ${product.name} photo ${idx + 1}`}
-                      className={`w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                      className={`w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
                         activeImage === img
-                          ? 'border-[#831843] scale-105 shadow-sm'
-                          : 'border-transparent opacity-70 hover:opacity-100'
+                          ? 'border-[#30251F] scale-105 shadow-sm'
+                          : 'border-[#E8E2D5] opacity-60 hover:opacity-100 hover:border-[#C5A46D]'
                       }`}
                     >
                       <img
@@ -258,34 +260,34 @@ export const ProductDetailPage: React.FC = () => {
               <div>
                 {/* Category & Availability Badge */}
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold text-[#831843] uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-[#C5A46D] uppercase tracking-[0.18em]">
                     {product.categoryName || 'Catalogue'}
                   </span>
-                  <span className="text-gray-300">•</span>
+                  <span className="text-[#E8E2D5]">•</span>
                   {product.available ? (
-                    <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
-                      In Stock for Sector 76
+                    <span className="text-xs bg-[#244438]/10 text-[#244438] font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 border border-[#244438]/20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#244438] inline-block" />
+                      In Store • Ready for Sector 76 Delivery
                     </span>
                   ) : (
-                    <span className="text-xs bg-gray-100 text-gray-600 font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="text-xs bg-[#FAF7F0] text-[#81776C] font-semibold px-2.5 py-0.5 rounded-full border border-[#E8E2D5]">
                       Currently Unavailable
                     </span>
                   )}
                 </div>
 
                 {/* Title */}
-                <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B] tracking-tight leading-snug">
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#30251F] tracking-tight leading-snug">
                   {product.name}
                 </h1>
 
                 {/* Price Display */}
                 <div className="flex items-baseline gap-3 mt-3">
-                  <span className="text-3xl font-extrabold text-gray-950">₹{currentPricing.price}</span>
+                  <span className="font-serif text-3xl sm:text-4xl font-bold text-[#30251F]">₹{currentPricing.price}</span>
                   {currentPricing.oldPrice && currentPricing.oldPrice > currentPricing.price && (
                     <>
-                      <span className="text-base text-gray-400 line-through">₹{currentPricing.oldPrice}</span>
-                      <span className="text-xs bg-[#FCE7F3] text-[#831843] font-bold px-2 py-0.5 rounded">
+                      <span className="text-base text-[#81776C] line-through">₹{currentPricing.oldPrice}</span>
+                      <span className="text-xs bg-[#E8CECB] text-[#30251F] font-bold px-2.5 py-0.5 rounded-md">
                         Save ₹{currentPricing.oldPrice - currentPricing.price}
                       </span>
                     </>
@@ -293,16 +295,18 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
 
                 {/* 100% Eggless Vegetarian Guarantee */}
-                {isCake && <div className="mt-3.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-xs">
-                    <span className="w-3.5 h-3.5 border-2 border-emerald-700 p-0.5 flex items-center justify-center rounded-xs bg-white shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-700"></span>
+                {isCake && (
+                  <div className="mt-3.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#244438]/10 border border-[#244438]/20 text-[#244438] text-xs font-semibold">
+                    <span className="w-3.5 h-3.5 border border-[#244438] p-0.5 flex items-center justify-center rounded-[2px] bg-transparent shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#244438]"></span>
                     </span>
-                    <span>100% Eggless • Pure Vegetarian Bakery</span>
-                </div>}
+                    <span>100% Eggless • Pure Vegetarian Patisserie</span>
+                  </div>
+                )}
 
                 {/* Description */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                <div className="mt-4 pt-4 border-t border-[#E8E2D5]">
+                  <p className="text-sm text-[#81776C] leading-relaxed">
                     {product.description}
                   </p>
                 </div>
@@ -310,7 +314,7 @@ export const ProductDetailPage: React.FC = () => {
                 {/* Weight Options */}
                 {product.weightOptions && product.weightOptions.length > 0 && (
                   <div className="mt-5">
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    <label className="block text-[11px] font-bold text-[#81776C] uppercase tracking-[0.14em] mb-2">
                       Select Size / Weight
                     </label>
                     <div className="flex flex-wrap gap-2.5">
@@ -322,15 +326,15 @@ export const ProductDetailPage: React.FC = () => {
                             key={weight}
                             type="button"
                             onClick={() => setSelectedWeight(weight)}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                            className={`px-4 py-2 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 cursor-pointer ${
                               selectedWeight === weight
-                                ? 'bg-[#831843] text-white border-[#831843] shadow-sm'
-                                : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
+                                ? 'bg-[#30251F] text-[#FAF7F0] border-[#30251F] shadow-sm'
+                                : 'bg-[#FAF7F0] text-[#81776C] border border-[#E8E2D5] hover:border-[#30251F] hover:text-[#30251F]'
                             }`}
                           >
                             <span>{weight}</span>
                             {hasCustomRate && (
-                              <span className={`text-[11px] font-semibold ${selectedWeight === weight ? 'text-pink-100' : 'text-gray-500'}`}>
+                              <span className={`text-[11px] font-semibold ${selectedWeight === weight ? 'text-[#FAF7F0]/80' : 'text-[#81776C]'}`}>
                                 (₹{wp.price})
                               </span>
                             )}
@@ -343,7 +347,7 @@ export const ProductDetailPage: React.FC = () => {
 
                 {product.allowFlavourSelection && (
                   <div className="mt-5">
-                    <label htmlFor="cake-flavour" className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                    <label htmlFor="cake-flavour" className="block text-[11px] font-bold text-[#81776C] uppercase tracking-[0.14em] mb-2">
                       Select Cake Flavour *
                     </label>
                     <select
@@ -351,11 +355,11 @@ export const ProductDetailPage: React.FC = () => {
                       required
                       value={selectedFlavour || ''}
                       onChange={(event) => setSelectedFlavour(event.target.value || undefined)}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] text-[#30251F] rounded-xl text-sm focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] focus:outline-none cursor-pointer"
                     >
-                      <option value="" disabled>Choose a flavour</option>
+                      <option value="" disabled className="bg-white">Choose an artisanal flavour</option>
                       {CAKE_FLAVOURS.map((flavour) => (
-                        <option key={flavour} value={flavour}>{flavour}</option>
+                        <option key={flavour} value={flavour} className="bg-white">{flavour}</option>
                       ))}
                     </select>
                   </div>
@@ -364,8 +368,8 @@ export const ProductDetailPage: React.FC = () => {
                 {/* Custom Message on Cake / Card */}
                 {product.allowCustomMessage && (
                   <div className="mt-5">
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                      Message on Cake or Greeting Card (Free)
+                    <label className="block text-[11px] font-bold text-[#81776C] uppercase tracking-[0.14em] mb-1.5">
+                      Custom Inscription or Card Note (Complimentary)
                     </label>
                     <input
                       type="text"
@@ -373,51 +377,51 @@ export const ProductDetailPage: React.FC = () => {
                       placeholder={product.customMessagePlaceholder || 'E.g., Happy 25th Anniversary Mom & Dad!'}
                       value={customMessage}
                       onChange={(e) => setCustomMessage(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] text-[#30251F] placeholder-[#81776C]/60 rounded-xl text-sm focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] focus:outline-none"
                     />
-                    <p className="text-[11px] text-gray-400 mt-1">
-                      Our pastry artists will hand-pipe this onto the chocolate tag or calligraph on the complimentary gift card.
+                    <p className="text-[11px] text-[#81776C] mt-1">
+                      Our pastry artists will hand-pipe this onto a fine chocolate plaque or write it on our complimentary gift card.
                     </p>
                   </div>
                 )}
 
                 {/* Quantity Selector */}
                 <div className="mt-6 flex items-center gap-4">
-                  <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Quantity</span>
-                  <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50">
+                  <span className="text-[11px] font-bold text-[#81776C] uppercase tracking-[0.14em]">Quantity</span>
+                  <div className="flex items-center border border-[#E8E2D5] rounded-full bg-[#FAF7F0] px-1">
                     <button
                       type="button"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="p-2 text-gray-600 hover:text-gray-900"
+                      className="p-2 text-[#81776C] hover:text-[#30251F] transition-colors cursor-pointer"
                       aria-label="Decrease quantity"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-4 text-sm font-bold text-gray-900">{quantity}</span>
+                    <span className="px-4 text-sm font-semibold text-[#30251F]">{quantity}</span>
                     <button
                       type="button"
                       onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                      className="p-2 text-gray-600 hover:text-gray-900"
+                      className="p-2 text-[#81776C] hover:text-[#30251F] transition-colors cursor-pointer"
                       aria-label="Increase quantity"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-6 border-t border-gray-100 space-y-3">
+              <div className="pt-6 border-t border-[#E8E2D5] space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Add to Cart */}
                   <button
                     type="button"
                     onClick={handleAddToCart}
                     disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
-                    className="w-full py-4 px-6 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                    className="w-full py-4 px-6 rounded-full bg-[#30251F] hover:bg-[#201814] text-[#FAF7F0] font-serif text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-md"
                   >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span>Add to Cart (₹{currentPricing.price * quantity})</span>
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>Add to Bag (₹{currentPricing.price * quantity})</span>
                   </button>
 
                   {/* Order on WhatsApp Prominent Button */}
@@ -429,28 +433,32 @@ export const ProductDetailPage: React.FC = () => {
                     onClick={(event) => {
                       if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
                     }}
-                    className={`w-full py-4 px-6 rounded-2xl text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 ${
-                      product.available && (!product.allowFlavourSelection || selectedFlavour) ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
+                    className={`w-full py-4 px-6 rounded-full font-semibold text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 ${
+                      product.available && (!product.allowFlavourSelection || selectedFlavour)
+                        ? 'bg-[#244438] hover:bg-[#1a3229] text-white cursor-pointer'
+                        : 'bg-[#E8E2D5] text-[#81776C] cursor-not-allowed'
                     }`}
                   >
-                    <WhatsAppIcon className="w-5 h-5" />
-                    <span>{!product.available ? 'Currently Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Select a Flavour to Order' : 'Order on WhatsApp'}</span>
+                    <WhatsAppIcon className="w-4 h-4 text-white" />
+                    <span>{!product.available ? 'Currently Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Select a Flavour to Order' : 'WhatsApp Concierge'}</span>
                   </a>
                 </div>
 
                 {/* Delivery Notes & Trust info */}
-                <div className="bg-[#FAF8F5] rounded-2xl p-4 border border-[#EADBDA] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-600 mt-4">
-                  {isCake && <div className="flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-[#831843] shrink-0" />
-                    <span>Same-Day Sector 76 Delivery</span>
-                  </div>}
+                <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#E8E2D5] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-[#81776C] mt-4">
+                  {isCake && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-[#30251F] shrink-0" />
+                      <span>Same-Day Sector 76 Delivery</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#831843] shrink-0" />
-                    <span>100% Eggless Fresh Bake</span>
+                    <Sparkles className="w-4 h-4 text-[#C5A46D] shrink-0" />
+                    <span>100% Eggless Pure Veg</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#831843] shrink-0" />
-                    <span>Store Pickup: Shop 29</span>
+                    <MapPin className="w-4 h-4 text-[#244438] shrink-0" />
+                    <span>Boutique Pickup: Shop 29</span>
                   </div>
                 </div>
               </div>
@@ -461,13 +469,13 @@ export const ProductDetailPage: React.FC = () => {
         {/* Related Products from same category */}
         {relatedProducts.length > 0 && (
           <section className="pt-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#29141B]">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-[#E8E2D5]">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#30251F]">
                 More from {product.categoryName || 'This Collection'}
               </h2>
               <Link
                 to={`/category/${product.categorySlug || 'cakes'}`}
-                className="text-xs sm:text-sm font-bold text-[#831843] hover:underline"
+                className="text-xs sm:text-sm font-semibold text-[#30251F] hover:text-[#C5A46D] hover:underline"
               >
                 View Collection →
               </Link>
@@ -483,12 +491,12 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Sticky Mobile Purchase Action Bar */}
-      <div className="lg:hidden fixed bottom-[calc(56px+max(0.4rem,env(safe-area-inset-bottom,0px)))] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
+      <div className="lg:hidden fixed bottom-[calc(56px+max(0.6rem,env(safe-area-inset-bottom,0px)))] inset-x-0 bg-[#FFFFFF]/95 backdrop-blur-xl border-t border-[#E8E2D5] p-3 shadow-lg z-30 text-[#30251F]">
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div className="flex flex-col shrink-0">
-            <span className="text-[10px] uppercase font-bold text-gray-400">Total Price</span>
-            <span className="text-lg font-extrabold text-[#831843] leading-none">
-              ₹{product.price * quantity}
+            <span className="text-[10px] uppercase font-bold text-[#81776C]">Total Price</span>
+            <span className="font-serif text-lg font-bold text-[#30251F] leading-none">
+              ₹{currentPricing.price * quantity}
             </span>
           </div>
 
@@ -497,10 +505,10 @@ export const ProductDetailPage: React.FC = () => {
               type="button"
               onClick={handleAddToCart}
               disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
-              className="flex-1 py-2.5 px-3 rounded-xl bg-[#831843] hover:bg-[#6b1336] active:scale-95 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+              className="flex-1 py-2.5 px-3 rounded-full active:scale-95 bg-[#30251F] text-[#FAF7F0] font-serif font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
             >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Add to Cart</span>
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Add to Bag</span>
             </button>
 
             <a
@@ -511,11 +519,13 @@ export const ProductDetailPage: React.FC = () => {
               onClick={(event) => {
                 if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
               }}
-              className={`py-2.5 px-3.5 rounded-xl text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all ${
-                product.available && (!product.allowFlavourSelection || selectedFlavour) ? 'bg-[#25D366] hover:bg-[#20bd5a] active:scale-95' : 'bg-gray-300 cursor-not-allowed'
+              className={`py-2.5 px-3.5 rounded-full text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-all ${
+                product.available && (!product.allowFlavourSelection || selectedFlavour)
+                  ? 'bg-[#244438] active:scale-95 cursor-pointer'
+                  : 'bg-[#E8E2D5] text-[#81776C] cursor-not-allowed'
               }`}
             >
-              <WhatsAppIcon className="w-4 h-4" />
+              <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
               <span>{!product.available ? 'Unavailable' : product.allowFlavourSelection && !selectedFlavour ? 'Choose Flavour' : 'WhatsApp'}</span>
             </a>
           </div>

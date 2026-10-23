@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, ShieldCheck, FileText, Truck, RotateCcw } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { getProductionUrl } from '../utils/seo';
 
@@ -15,41 +16,43 @@ const policyContent: Record<
     title: string;
     description: string;
     intro: string;
+    icon: typeof ShieldCheck;
     sections: Array<{ heading: string; body: string[] }>;
   }
 > = {
   privacy: {
     title: 'Privacy Policy',
     description: 'How Cakes N More collects, uses, and protects customer information on this store.',
+    icon: ShieldCheck,
     intro:
-      'We value your trust and are committed to protecting the personal information you share with us while placing orders or contacting our store.',
+      'We value your trust and are committed to protecting the personal information you share with us while placing orders or contacting our boutique atelier.',
     sections: [
       {
         heading: 'Information We Collect',
         body: [
           'We may collect your name, mobile number, delivery address, order details, and any notes included in WhatsApp or web checkout requests.',
-          'We may also collect delivery radius and location information only to determine if your address is within our local service area.',
+          'We may also collect delivery radius and location coordinates solely to determine if your address falls within our local service area.',
         ],
       },
       {
         heading: 'How We Use Your Information',
         body: [
-          'We use your information to process and confirm product orders, coordinate delivery, and respond to customer requests.',
+          'We use your information strictly to process and confirm product orders, coordinate delivery logistics, and respond to bespoke customer requests.',
           'We may use your details for customer support, service improvement, order documentation, and direct WhatsApp communication when needed.',
         ],
       },
       {
-        heading: 'Data Protection',
+        heading: 'Data Protection & Integrity',
         body: [
           'We do not sell, rent, or trade customer data with third parties for marketing purposes.',
-          'We take reasonable steps to keep your personal data secure and limit access to authorized personnel only.',
+          'We take reasonable physical and digital measures to keep your personal data secure and limit access to authorized personnel only.',
         ],
       },
       {
-        heading: 'Cookies and Local Storage',
+        heading: 'Cookies & Browser Storage',
         body: [
-          'The website may store preference and cart data in the browser to provide a smoother shopping experience.',
-          'Delivery verification data is used only to check service eligibility and is not shared permanently with third parties without a confirmed order.',
+          'The website stores cart items and verified delivery preferences in your browser’s local storage to ensure a smooth shopping experience.',
+          'Delivery verification coordinates are used only to compute distance against our Sector 76 hub and are never stored permanently without a confirmed order.',
         ],
       },
     ],
@@ -57,35 +60,36 @@ const policyContent: Record<
   terms: {
     title: 'Terms & Conditions',
     description: 'Store terms for ordering, payment, fulfillment, and customer expectations.',
+    icon: FileText,
     intro:
-      'These terms govern the use of our website and the ordering process for Cakes N More. By placing an order, you agree to the conditions below.',
+      'These terms govern the use of our website and the ordering process for Cakes N More. By browsing our catalogue or placing an order, you agree to the conditions below.',
     sections: [
       {
         heading: 'Ordering and Availability',
         body: [
-          'All product availability is subject to stock, freshness, and order confirmation by our team.',
-          'We reserve the right to reject or revise an order if the requested product is unavailable, out of stock, or outside our delivery capability.',
+          'All product availability is subject to stock, daily freshness standards, and order confirmation by our boutique team.',
+          'We reserve the right to revise or decline an order if the requested product is out of stock or outside our safe delivery radius.',
         ],
       },
       {
         heading: 'Pricing and Custom Orders',
         body: [
-          'Prices may change depending on product selection, customizations, or seasonal variation.',
-          'Custom cake requests, floral arrangements, and gift combinations are prepared based on the details provided in the order.'
+          'Prices may vary based on selected weight, size variants, custom inscriptions, or seasonal floral availability.',
+          'Custom cake requests, specific floral color palettes, and curated gift hampers are prepared based on the exact instructions provided in your order.',
         ],
       },
       {
         heading: 'Customer Responsibility',
         body: [
-          'Customers are responsible for providing correct delivery information, reachable contact numbers, and clear order instructions.',
-          'We are not liable for delays or failed delivery caused by incorrect addresses, missed contacts, or unforeseen third-party issues after dispatch.',
+          'Customers are responsible for providing correct delivery addresses, gate access details, reachable phone numbers, and clear delivery instructions.',
+          'We are not liable for delivery delays or failed drop-offs resulting from incorrect recipient numbers or unreachable recipients at the premises.',
         ],
       },
       {
-        heading: 'Website Use',
+        heading: 'Website Content & Imagery',
         body: [
-          'The site is intended for browsing and ordering in good faith. We do not guarantee uninterrupted access or error-free operation at all times.',
-          'Product images, text, and descriptions are for illustrative and informational purposes and may vary slightly from the actual item delivered.',
+          'The site is intended for browsing and ordering in good faith. We strive for 100% accuracy in stock and pricing at all times.',
+          'Handcrafted cakes and fresh flowers may have minor artistic variations in decoration or bloom tone from representative catalogue photography.',
         ],
       },
     ],
@@ -93,28 +97,29 @@ const policyContent: Record<
   shipping: {
     title: 'Shipping & Delivery',
     description: 'Local delivery rules, service radius, and order fulfillment details for Cakes N More.',
+    icon: Truck,
     intro:
-      'We proudly serve the Sector 76, Noida area and nearby localities. Delivery availability depends on your exact location and current order timing.',
+      'We take pride in swift, temperature-conscious local delivery originating from Shop 29, Sector 76, Noida. Delivery availability depends on your verified distance and store timing.',
     sections: [
       {
-        heading: 'Service Area',
+        heading: 'Service Area & Radius',
         body: [
-          'Our standard local delivery radius is within 10 km of our Sector 76, Noida store, subject to operational conditions and time windows.',
-          'Delivery may be restricted in certain zones due to traffic, route conditions, weather, or temporary store limitations.',
+          'Our standard local delivery radius covers up to 10 km from our Sector 76, Noida store, encompassing societies across Central Noida and Greater Noida West (Gaur City).',
+          'Delivery may be temporarily restricted during severe weather conditions, intense road blockages, or outside operating hours.',
         ],
       },
       {
-        heading: 'Timelines',
+        heading: 'Dispatch Timelines & Same-Day Service',
         body: [
-          'Most standard orders are prepared and dispatched the same day when confirmed in time.',
-          'Same-day delivery is subject to order timing, product readiness, and last-mile logistics feasibility.',
+          'Standard fresh cakes and blooms are baked and hand-arranged same-day for orders confirmed during store hours.',
+          'Most orders reach customers within 60 to 120 minutes of preparation confirmation, depending on delivery distance and traffic.',
         ],
       },
       {
-        heading: 'Delivery Notes',
+        heading: 'Delivery Instructions & Security Checkpoints',
         body: [
-          'Customers must provide a correct address, landmark or building details, and a reachable phone number for delivery coordination.',
-          'We recommend confirming your delivery pin or postal code before finalizing the order to avoid service issues.',
+          'Please specify tower numbers, society gates, and flat details clearly on checkout.',
+          'We recommend verifying your delivery eligibility with our pin check before proceeding to order.',
         ],
       },
     ],
@@ -122,28 +127,29 @@ const policyContent: Record<
   returns: {
     title: 'Returns & Refunds',
     description: 'Return and refund guidance for custom orders, damaged items, and order cancellations.',
+    icon: RotateCcw,
     intro:
-      'Because our products are handmade, personalized, and freshness-sensitive, each order is handled with care. This policy explains our return and refund approach.',
+      'Because our cakes are baked fresh on order and our flowers are hand-cut, each creation is treated with delicate care. This policy outlines our return and replacement approach.',
     sections: [
       {
-        heading: 'Freshness and Quality',
+        heading: 'Perishable Freshness & Quality Guarantee',
         body: [
-          'Fresh cakes, flowers, and arrangements are highly time-sensitive products. Any concerns should be reported as soon as possible after delivery.',
-          'If a product is clearly damaged, incorrect, or substantially different from what was ordered, please contact us immediately.',
+          'Fresh cakes and floral bouquets are perishable. Please inspect your delivery upon arrival.',
+          'If an item arrives damaged in transit, incorrect, or spoiled, notify us within 2 hours of delivery with photographic evidence on WhatsApp.',
         ],
       },
       {
-        heading: 'Custom Orders',
+        heading: 'Custom & Personalized Creations',
         body: [
-          'Custom cake designs, personalized messages, and bespoke arrangements are typically non-returnable unless they are delivered in a damaged or incorrect condition.',
-          'If an issue is reported promptly, we will review the item and work toward a fair resolution.',
+          'Custom cake designs, photo prints, personalized inscriptions, and bespoke floral hampers cannot be canceled once preparation has commenced.',
+          'In genuine cases of error on our part, we will offer a replacement or store credit promptly.',
         ],
       },
       {
-        heading: 'Cancellation',
+        heading: 'Order Cancellation',
         body: [
-          'Orders may be canceled before preparation begins, subject to our current production stage and timing.',
-          'Once the product has been baked, packed, or dispatched, cancellation may not be possible.',
+          'Orders may be canceled without charge prior to baking or floral stem preparation.',
+          'Once our chef has begun sponge preparation or our florist has trimmed custom stems, cancellations cannot be accepted.',
         ],
       },
     ],
@@ -159,6 +165,7 @@ const canonicalMap: Record<PolicyKey, string> = {
 
 export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
   const content = policyContent[page];
+  const Icon = content.icon;
 
   const legalSchema = {
     '@context': 'https://schema.org',
@@ -181,7 +188,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
+    <div className="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 sm:py-20">
       <SEO
         title={`${content.title} | Cakes N More Sector 76 Noida`}
         description={content.description}
@@ -191,31 +198,36 @@ export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#831843] hover:underline">
-            ← Back to Home
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#30251F] hover:text-[#C5A46D] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Return to Store</span>
           </Link>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#EADBDA] shadow-sm p-6 sm:p-10">
-          <div className="mb-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider px-3 py-1.5">
-              Cakes N More Policies
-            </span>
-            <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#29141B] tracking-tight mt-4">
+        <div className="bg-white rounded-3xl border border-[#E8E2D5] shadow-sm p-6 sm:p-12">
+          <div className="mb-10 pb-8 border-b border-[#E8E2D5]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF7F0] text-[#30251F] border border-[#E8E2D5] text-[11px] font-bold uppercase tracking-[0.2em] mb-4">
+              <Icon className="w-3.5 h-3.5 text-[#C5A46D]" />
+              <span>Cakes N More Policy</span>
+            </div>
+            <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#30251F] tracking-tight">
               {content.title}
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-3 max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#81776C] mt-3 max-w-2xl leading-relaxed">
               {content.intro}
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-10">
             {content.sections.map((section) => (
-              <section key={section.heading} className="border-t border-[#F0E6E1] pt-6 first:border-t-0 first:pt-0">
-                <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+              <section key={section.heading} className="space-y-3">
+                <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#30251F]">
                   {section.heading}
                 </h2>
-                <div className="space-y-3 text-sm sm:text-base text-gray-700 leading-relaxed">
+                <div className="space-y-3 text-sm sm:text-base text-[#81776C] leading-relaxed">
                   {section.body.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
@@ -224,10 +236,10 @@ export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
             ))}
           </div>
 
-          <div className="mt-10 pt-6 border-t border-[#F0E6E1] text-sm text-gray-600">
+          <div className="mt-12 pt-8 border-t border-[#E8E2D5] text-xs sm:text-sm text-[#81776C]">
             <p>
-              For urgent order issues or questions, please contact us on WhatsApp or at{' '}
-              <a href="tel:+919999517599" className="text-[#831843] font-semibold hover:underline">
+              For urgent order inquiries, custom delivery questions, or assistance, please message our concierge on WhatsApp or call{' '}
+              <a href="tel:+919999517599" className="text-[#30251F] font-bold hover:underline">
                 +91 9999517599
               </a>
               .

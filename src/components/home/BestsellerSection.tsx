@@ -1,44 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Flame } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { ProductCard } from '../products/ProductCard';
 
 export const BestsellerSection: React.FC = () => {
   const { getBestsellerProducts } = useStore();
-  const bestsellerProducts = getBestsellerProducts();
+  const [activeTab, setActiveTab] = useState<'all' | 'cakes' | 'flowers' | 'combos'>('all');
+  const allBestsellers = getBestsellerProducts();
 
-  if (bestsellerProducts.length === 0) return null;
+  if (allBestsellers.length === 0) return null;
+
+  const filteredBestsellers = allBestsellers.filter((p) => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'cakes') return p.categoryId === 'cat-cakes' || p.categorySlug === 'cakes';
+    if (activeTab === 'flowers') return p.categoryId === 'cat-flowers' || p.categorySlug === 'flowers';
+    if (activeTab === 'combos') return p.categoryId === 'cat-combos' || p.categorySlug === 'combos' || p.categorySlug === 'gifts';
+    return true;
+  });
+
+  const displayedProducts = filteredBestsellers.length > 0 ? filteredBestsellers : allBestsellers;
 
   return (
-    <section className="py-14 sm:py-20 bg-[#FAF8F5]">
+    <section className="py-16 sm:py-24 bg-[#FAF7F0] border-b border-[#E8E2D5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
+        
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B45309] uppercase tracking-wider mb-2">
-              <Flame className="w-3.5 h-3.5 fill-[#B45309]" />
-              <span>Customer Favorites in Sector 76</span>
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B]">
-              Bestsellers of the Week
+            <span className="eyebrow-tag text-[#C5A46D] block mb-2">Most Requested In Sector 76</span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#30251F] tracking-tight">
+              Popular Favourites
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Most loved cakes, red roses, and celebration hampers ordered this week.
+            <p className="text-sm sm:text-base text-[#81776C] mt-2 max-w-xl font-normal">
+              Our neighborhood’s most celebrated eggless celebration cakes, velvety Dutch roses, and curated gifting treats.
             </p>
           </div>
 
           <Link
             to="/shop?filter=bestseller"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#831843] hover:text-[#6b1336] transition-colors group self-start sm:self-auto"
+            className="btn-editorial-secondary inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold self-start md:self-auto"
           >
-            <span>Explore All Bestsellers</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span>View All Bestsellers</span>
+            <ArrowRight className="w-3.5 h-3.5 text-[#C5A46D]" />
           </Link>
         </div>
 
-        {/* Responsive Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {bestsellerProducts.slice(0, 8).map((product) => (
+        {/* Clean Editorial Category Filter Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-8 sm:mb-10 pb-1">
+          {[
+            { id: 'all', label: 'All Favourites' },
+            { id: 'cakes', label: 'Artisanal Cakes' },
+            { id: 'flowers', label: 'Fresh Blooms' },
+            { id: 'combos', label: 'Celebration Combos' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`px-4 py-2 rounded-full text-xs font-medium tracking-wide transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
+                activeTab === tab.id
+                  ? 'btn-editorial-primary'
+                  : 'bg-white border border-[#E8E2D5] text-[#81776C] hover:text-[#30251F] hover:border-[#DFC79E]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 2-Col Mobile Grid / 4-Col Desktop Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          {displayedProducts.slice(0, 8).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

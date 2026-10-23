@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Cake, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Clock, Heart, MapPin } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { useDeliveryAvailability } from '../../context/DeliveryContext';
 import { safeCtaUrl } from '../../utils/urls';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 
 export const Hero: React.FC = () => {
   const { homepageConfig, settings } = useStore();
+  const { openDeliveryGate, verifiedLocation } = useDeliveryAvailability();
 
   const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
@@ -14,118 +16,92 @@ export const Hero: React.FC = () => {
   )}`;
 
   return (
-    <section className="premium-hero relative overflow-hidden py-6 sm:py-14 lg:py-20 border-b border-[#F0E6E1]">
-      {/* Subtle organic background aura */}
-      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FCE7F3]/40 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FEF3C7]/30 blur-3xl pointer-events-none" />
+    <section className="editorial-hero relative overflow-hidden border-b border-[#E8CECB] px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center text-center">
+        <div className="mb-7 flex flex-wrap items-center justify-center gap-2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E8CECB] bg-white/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#81776C] shadow-sm sm:text-[11px]">
+            <MapPin className="h-3.5 w-3.5 text-[#C5A46D]" />
+            Sector 76, Noida Atelier
+          </span>
+          <button
+            type="button"
+            onClick={openDeliveryGate}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#C5A46D]/60 bg-white/70 px-3 py-1.5 text-[10px] font-medium tracking-wide text-[#30251F] shadow-sm transition-colors hover:bg-white sm:text-[11px]"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-[#244438]" />
+            {verifiedLocation?.verified ? 'Delivering to Sec 76 ✓' : 'Check Delivery Radius'}
+          </button>
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          {/* Left Text Column */}
-          <div className="premium-reveal lg:col-span-7 space-y-3 sm:space-y-6 text-center lg:text-left">
-            {/* Sector 76 Local Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FCE7F3] text-[#831843] text-[11px] sm:text-xs font-bold tracking-wide uppercase shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 fill-[#831843]" />
-              <span>Florist &amp; Bakery • Sector 76, Noida • 100% Pure Veg</span>
-            </div>
+        <h1 className="max-w-4xl font-serif text-5xl font-semibold leading-[1.03] tracking-tight text-[#593A32] sm:text-6xl lg:text-7xl">
+          {homepageConfig.heroTitle || (
+            <>
+              Sweet moments,
+              <br />
+              <span className="font-normal italic text-[#F0447E]">made special</span>
+            </>
+          )}
+        </h1>
 
-            {/* Headline */}
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#29141B] tracking-tight leading-[1.15]">
-              {homepageConfig.heroTitle || 'Cakes, Flowers & Gifts for Every Celebration'}
-            </h1>
+        <div className="my-6 flex w-full max-w-md items-center gap-3 text-[#C5A46D] sm:my-7">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#C5A46D]/70 to-[#C5A46D]/70" />
+          <Heart className="h-5 w-5 fill-white stroke-[1.5]" />
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#C5A46D]/70 to-[#C5A46D]/70" />
+        </div>
 
-            {/* Supporting Text */}
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              {homepageConfig.heroSubtitle ||
-                'Make every occasion special with freshly prepared cakes, beautiful flowers and thoughtful gifts.'}
-            </p>
+        <p className="max-w-2xl text-base leading-relaxed text-[#8C6B5D] sm:text-lg">
+          {homepageConfig.heroSubtitle ||
+            "Freshly baked cakes, beautiful flowers and thoughtful gifts made to make your day extra special. Handcrafted with 100% pure vegetarian recipes in Sector 76, Noida."}
+        </p>
 
-            {/* Action Buttons: Primary CTA & Secondary WhatsApp CTA */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
-              <Link
-                to={safeCtaUrl(homepageConfig.heroCtaLink)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm sm:text-base shadow-lg shadow-[#831843]/20 active:scale-95 transition-all"
-              >
-                <span>{homepageConfig.heroCtaText || 'Shop Now'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+        <div className="mt-8 flex w-full max-w-xl flex-col gap-3 sm:mt-10 sm:flex-row sm:justify-center sm:gap-4">
+          <Link
+            to={safeCtaUrl(homepageConfig.heroCtaLink) || '/shop'}
+            className="btn-editorial-secondary editorial-shimmer inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold tracking-wide text-[#F0447E] sm:w-auto sm:min-w-64 sm:text-base"
+          >
+            <span>{homepageConfig.heroCtaText || 'Explore treats'}</span>
+            <ArrowRight className="h-4 w-4 text-[#C5A46D]" />
+          </Link>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-editorial-primary inline-flex min-h-14 w-full items-center justify-center gap-2.5 rounded-full px-7 py-4 text-sm font-semibold tracking-wide sm:w-auto sm:min-w-64 sm:text-base"
+          >
+            <WhatsAppIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span>Plan a party</span>
+          </a>
+        </div>
 
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base shadow-md active:scale-95 transition-all"
-              >
-                <WhatsAppIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Order on WhatsApp</span>
-              </a>
-            </div>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-[#C5A46D]/30 pt-5 text-xs font-medium text-[#755D52] sm:mt-10 sm:gap-x-8">
+          <span className="inline-flex items-center gap-2">
+            <Check className="h-4 w-4 text-[#C5A46D]" />
+            100% Pure Veg
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <Check className="h-4 w-4 text-[#C5A46D]" />
+            Baked to Order
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <Clock className="h-4 w-4 text-[#C5A46D]" />
+            Same-Day Noida
+          </span>
+        </div>
 
-            {/* Highlights Bar */}
-            <div className="pt-4 sm:pt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-lg mx-auto lg:mx-0 text-left border-t border-[#EADBDA]/80">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#831843] shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-800">Fresh Daily</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#831843] shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-800">Fast Delivery</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#831843] shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-800">Local Pickup</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-800">100% Pure Veg</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Visual Column (Hero Image with Organic Badge & Customer Rating) */}
-          <div className="premium-reveal lg:col-span-5 relative mt-3 lg:mt-0">
-            <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
-              {/* Decorative Frame with Optimized Aspect Ratio */}
-              <div className="premium-image-frame relative rounded-3xl overflow-hidden border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100 shadow-xl">
-                <img
-                  src={
-                    homepageConfig.heroImage ||
-                    'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=900&auto=format&fit=crop'
-                  }
-                  alt="Fresh Cakes and Flower Bouquets in Sector 76 Noida"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  width={800}
-                  height={600}
-                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <p className="text-xs uppercase tracking-wider text-[#FCE7F3] font-bold">Amrapali Crystal Home</p>
-                  <p className="font-serif text-lg font-bold">Sector 76, Noida Central</p>
-                </div>
-              </div>
-
-              {/* Freshness Card */}
-              <div className="absolute -bottom-5 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2.5 sm:gap-3 z-10">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#FCE7F3] text-[#831843] flex items-center justify-center">
-                  <Cake className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-gray-900">Made for Your Moment</p>
-                  <p className="text-[10px] text-gray-500">Fresh cakes &amp; blooms, made with care</p>
-                </div>
-              </div>
-
-              {/* Floating Delivery Pill */}
-              <div className="absolute -top-3 -right-2 sm:-right-3 bg-[#831843] text-white px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-lg text-[11px] sm:text-xs font-bold flex items-center gap-1.5 z-10">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <Clock className="w-3.5 h-3.5" />
-                <span>Same-Day Delivery Available</span>
-              </div>
-            </div>
-          </div>
+        <div className="mt-12 w-full max-w-4xl overflow-hidden rounded-[2rem] border border-[#C5A46D]/60 bg-white p-2 shadow-[0_18px_50px_rgba(130,79,65,0.12)] sm:mt-16 sm:rounded-[2.5rem]">
+          <img
+            src={
+              homepageConfig.heroImage ||
+              'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop'
+            }
+            alt="Handcrafted celebration cakes and fresh flowers from Cakes N More"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            width={1200}
+            height={560}
+            className="h-56 w-full rounded-[1.5rem] object-cover sm:h-80 sm:rounded-[2rem] lg:h-[26rem]"
+          />
         </div>
       </div>
     </section>

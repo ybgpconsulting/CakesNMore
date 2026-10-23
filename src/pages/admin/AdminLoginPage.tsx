@@ -50,40 +50,40 @@ export const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF7F0] flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-[#30251F]">
       <SEO title="Admin Login | Cakes N More Sector 76 Noida" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-14 h-14 rounded-2xl bg-[#831843] text-white flex items-center justify-center mx-auto shadow-md mb-4">
+        <div className="w-14 h-14 rounded-2xl bg-[#30251F] text-[#C5A46D] border border-[#C5A46D]/30 flex items-center justify-center mx-auto shadow-sm mb-4">
           <Store className="w-7 h-7" />
         </div>
-        <h1 className="font-serif text-3xl font-bold text-gray-900">
+        <h1 className="font-serif text-3xl font-normal text-[#30251F] tracking-tight">
           Store Management Portal
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-xs text-[#81776C] tracking-wide uppercase">
           Cakes N More • Sector 76, Noida
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 shadow-xl sm:rounded-3xl border border-[#EADBDA] sm:px-10">
+        <div className="bg-white py-8 px-6 shadow-sm sm:rounded-3xl border border-[#E8E2D5] sm:px-10">
           {error && (
-            <div className="mb-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
               <span>{error}</span>
             </div>
           )}
 
           {resetSuccess && (
-            <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
               <span>{resetSuccess}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Admin Email Address
               </label>
               <div className="relative">
@@ -93,21 +93,21 @@ export const AdminLoginPage: React.FC = () => {
                   placeholder="admin@cakesnmore.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-[#FAF7F0] border border-[#E8E2D5] text-[#30251F] rounded-xl text-xs sm:text-sm focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
-                <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#81776C] absolute left-3.5 top-3.5" />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider">
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}
-                  className="text-xs text-[#831843] hover:underline"
+                  className="text-xs text-[#81776C] hover:text-[#30251F] underline transition-colors cursor-pointer"
                 >
                   Forgot password?
                 </button>
@@ -119,16 +119,16 @@ export const AdminLoginPage: React.FC = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-[#FAF7F0] border border-[#E8E2D5] text-[#30251F] rounded-xl text-xs sm:text-sm focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
                 />
-                <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#81776C] absolute left-3.5 top-3.5" />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              className="btn-editorial-primary w-full py-3.5 px-4 rounded-full text-xs font-bold tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
             >
               {loading ? (
                 <span>Verifying credentials...</span>
@@ -141,8 +141,8 @@ export const AdminLoginPage: React.FC = () => {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
-            <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0" />
+          <div className="mt-6 pt-5 border-t border-[#E8E2D5] flex items-center gap-2 text-xs text-[#81776C]">
+            <ShieldAlert className="w-4 h-4 text-[#C5A46D] shrink-0" />
             <span>Authorized access only. All authentication attempts are verified by the secure store administrator service.</span>
           </div>
         </div>
@@ -150,32 +150,32 @@ export const AdminLoginPage: React.FC = () => {
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
-            <h3 className="font-serif text-lg font-bold text-gray-900">Reset Admin Password</h3>
-            <p className="text-xs text-gray-600">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-4 shadow-xl border border-[#E8E2D5]">
+            <h3 className="font-serif text-xl font-normal text-[#30251F]">Reset Admin Password</h3>
+            <p className="text-xs text-[#81776C]">
               Enter your registered administrator email to receive password reset instructions.
             </p>
-            <form onSubmit={handleResetPassword} className="space-y-3">
+            <form onSubmit={handleResetPassword} className="space-y-4">
               <input
                 type="email"
                 required
                 placeholder="admin@cakesnmore.in"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm"
+                className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs focus:border-[#30251F] focus:outline-none"
               />
-              <div className="flex gap-2 justify-end">
+              <div className="flex gap-2 justify-end pt-2">
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(false)}
-                  className="px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100"
+                  className="px-4 py-2 rounded-full border border-[#E8E2D5] text-xs font-bold text-[#81776C] hover:bg-[#FAF7F0]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#831843] text-white text-xs font-bold hover:bg-[#6b1336]"
+                  className="px-4 py-2 rounded-full bg-[#30251F] hover:bg-[#1E1714] text-white text-xs font-bold shadow-sm"
                 >
                   Send Reset Link
                 </button>

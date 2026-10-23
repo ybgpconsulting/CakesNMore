@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Award, Cake, Clock, Heart, MapPin, Phone, ShieldCheck, Sparkles, Store } from 'lucide-react';
+import { Award, Cake, Clock, Heart, MapPin, Phone, ShieldCheck, Sparkles, Store, ArrowRight } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
 import { getProductionUrl } from '../utils/seo';
@@ -41,35 +41,37 @@ export const AboutPage: React.FC = () => {
   ].join(', ');
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
+    <div className="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 sm:py-20">
       <SEO
-        title="About Us | Cakes N More Noida Sector 76"
+        title="Our Story & Atelier | Cakes N More Noida Sector 76"
         description="Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home."
         keywords={aboutKeywords}
         imageAlt="About Cakes N More Bakery & Florist Sector 76 Noida"
         schema={aboutSchema}
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         {/* Header Block */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider">
-            <Store className="w-3.5 h-3.5" />
-            <span>Serving Sector 76 Noida</span>
+        <div className="text-center space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF7F0] text-[#30251F] border border-[#E8E2D5] text-[11px] font-bold uppercase tracking-[0.2em] shadow-sm">
+            <Store className="w-3.5 h-3.5 text-[#C5A46D]" />
+            <span>Serving Sector 76 &amp; Central Noida</span>
           </div>
-          <h1 className="font-serif text-4xl sm:text-5xl font-extrabold text-[#29141B] tracking-tight">
-            Crafting Sweet Moments &amp; Fresh Blooms
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#30251F] tracking-tight leading-tight">
+            Crafting Sweet Moments <br className="hidden sm:block" />
+            <span className="italic font-normal text-[#81776C]">&amp; Fresh Blooms</span>
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Welcome to Cakes N More, located at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
+          <p className="text-sm sm:text-base text-[#81776C] max-w-2xl mx-auto leading-relaxed">
+            Welcome to Cakes N More — your artisanal neighborhood destination at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
           </p>
         </div>
 
         {/* Story Section */}
-        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#EADBDA] shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          <div className="md:col-span-7 space-y-4 text-gray-700 text-sm sm:text-base leading-relaxed">
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">
-              Our Passion for Celebrations
+        <div className="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#E8E2D5] shadow-[0_4px_25px_rgba(48,37,31,0.05)] grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div className="md:col-span-7 space-y-5 text-[#81776C] text-sm sm:text-base leading-relaxed">
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Our Heritage &amp; Philosophy</span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#30251F]">
+              Dedicated to the Art of Celebration
             </h2>
             <p>
               Located conveniently in the heart of Sector 76 near Mithaas at Amrapali Silicon City,
@@ -83,11 +85,11 @@ export const AboutPage: React.FC = () => {
             </p>
             <p>
               By combining bakery, flowers, plants, and gifting under one roof, we make gifting effortless,
-              delivering prompt doorstep smiles across Noida.
+              delivering prompt doorstep smiles across Sector 76 and neighboring communities in Central Noida.
             </p>
           </div>
 
-          <div className="md:col-span-5 aspect-[4/5] rounded-2xl overflow-hidden shadow-md">
+          <div className="md:col-span-5 aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-[#E8E2D5]">
             <img
               src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
               alt="Artisan 100% eggless cake preparation at Cakes N More Sector 76 Noida"
@@ -100,62 +102,61 @@ export const AboutPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Pillars of Quality */}
+        {/* 3 Pillars */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-[#EADBDA] shadow-sm text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] text-[#831843] flex items-center justify-center mx-auto mb-3">
-              <Cake className="w-6 h-6" />
-            </div>
-            <h3 className="font-serif text-lg font-bold text-gray-900">Oven-Fresh Guarantee</h3>
-            <p className="text-xs text-gray-600">
-              We never freeze or serve stale cakes. Every order is prepared specifically for your date and time slot.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-[#EADBDA] shadow-sm text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] text-[#831843] flex items-center justify-center mx-auto mb-3">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h3 className="font-serif text-lg font-bold text-gray-900">Hand-Selected Florals</h3>
-            <p className="text-xs text-gray-600">
-              Exotic Dutch roses, Asiatic lilies, orchids and carnations arranged by skilled florists.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-[#EADBDA] shadow-sm text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#FAF5F2] text-[#831843] flex items-center justify-center mx-auto mb-3">
+          <div className="bg-white rounded-2xl p-7 border border-[#E8E2D5] text-center space-y-3.5 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#244438] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-bold text-gray-900">Personalized Service</h3>
-            <p className="text-xs text-gray-600">
-              Custom weight, 100% pure eggless baking, hand-piped celebratory messages and personalized cards.
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">100% Eggless Purity</h3>
+            <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
+              Every recipe is prepared in a dedicated vegetarian atelier with zero eggs, using only top-tier cream and real cocoa.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-7 border border-[#E8E2D5] text-center space-y-3.5 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#30251F] flex items-center justify-center mx-auto border border-[#E8E2D5]">
+              <Clock className="w-6 h-6" />
+            </div>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Oven-Fresh on Order</h3>
+            <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
+              We never freeze cakes. Each sponge is baked from scratch upon order confirmation to ensure unmatched moistness.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-7 border border-[#E8E2D5] text-center space-y-3.5 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#C5A46D] flex items-center justify-center mx-auto border border-[#E8E2D5]">
+              <Heart className="w-6 h-6" />
+            </div>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Neighborhood Care</h3>
+            <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
+              Dedicated staff in Sector 76 ensuring reliable hand-deliveries, personalized cake notes, and celebratory greetings.
             </p>
           </div>
         </div>
 
-        {/* Store Location Card */}
-        <div className="bg-[#1C1618] text-white rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center sm:text-left">
-            <h3 className="font-serif text-2xl font-bold">Visit Our Sector 76 Store</h3>
-            <p className="text-sm text-[#D8C7C5] max-w-md">
-              {settings.address}
-            </p>
-            <p className="text-xs text-[#E8A598]">Opening Hours: {settings.openingHours}</p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <a
-              href={`tel:${settings.phone}`}
-              className="px-6 py-3 rounded-full bg-white text-gray-900 text-xs font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
-            >
-              <Phone className="w-4 h-4" />
-              <span>{settings.phone}</span>
-            </a>
+        {/* Action Banner */}
+        <div className="bg-[#30251F] text-[#FAF7F0] rounded-3xl p-8 sm:p-12 text-center space-y-5 shadow-xl">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Visit or Order</span>
+          <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight">
+            Visit Our Store or Order Online
+          </h2>
+          <p className="text-xs sm:text-sm text-[#FAF7F0]/80 max-w-xl mx-auto leading-relaxed">
+            Whether you want to pick up directly from Shop 29 at Amrapali Crystal Home or need immediate doorstep delivery, we are ready to serve you.
+          </p>
+          <div className="pt-3 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/shop"
-              className="px-6 py-3 rounded-full bg-[#831843] text-white text-xs font-bold hover:bg-[#9D174D] transition-colors"
+              className="btn-editorial-primary px-8 py-3.5 rounded-full text-xs font-bold font-sans tracking-wide inline-flex items-center gap-2"
             >
-              Order Online
+              <span>Explore Catalogue</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/contact"
+              className="px-8 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF7F0] border border-white/20 text-xs font-bold font-sans tracking-wide transition-all"
+            >
+              Store Location &amp; Contact
             </Link>
           </div>
         </div>
