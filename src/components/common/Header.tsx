@@ -80,13 +80,12 @@ export const Header: React.FC = () => {
           
           {/* Brand Identity */}
           <div className="flex items-center gap-6">
-            <Link to="/" className="flex flex-col group">
-              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#30251F] group-hover:text-[#4A3B32] transition-colors leading-none">
-                Cakes N More
-              </span>
-              <span className="eyebrow-tag text-[9px] sm:text-[10px] text-[#81776C] mt-1">
-                Atelier &amp; Florist • Sector 76 Noida
-              </span>
+            <Link to="/" className="flex items-center group">
+              <img
+                src="/logo-horizontal-640w.png"
+                alt="Cakes N More"
+                className="h-9 w-auto max-w-[150px] object-contain sm:h-12 sm:max-w-[200px]"
+              />
             </Link>
 
             {/* Desktop Location Pill */}

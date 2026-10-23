@@ -19,7 +19,7 @@ export const SEO: React.FC<SEOProps> = ({
   description = 'Bakery and florist in Sector 76 Noida. Shop eggless cakes, fresh flowers, and gift hampers. Check delivery availability and order on WhatsApp.',
   keywords = 'cake delivery sector 76 noida, bakery in sector 76 noida, eggless cakes noida, online cake delivery noida, flower delivery sector 76 noida, florist noida, gift hampers noida',
   canonical,
-  image = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop',
+  image = 'https://cakesnmorenoida.in/social-share-1200x630.jpg',
   imageAlt = 'Artisan 100% Eggless Cake from Cakes N More Sector 76 Noida',
   type = 'website',
   robots,
