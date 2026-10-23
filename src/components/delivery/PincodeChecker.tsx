@@ -54,7 +54,7 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
       setCheckedState({
         checked: true,
         isNoidaArea: true,
-        message: `Pincode ${cleanPin} is located in our general Noida / Gautam Buddha Nagar service zone!`,
+        message: `Pincode ${cleanPin} is located in our primary Noida / Gautam Buddha Nagar service zone!`,
       });
     } else {
       setCheckedState({
@@ -68,9 +68,9 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
   return (
     <div className="space-y-4">
       <div>
-        <h4 className="font-serif text-lg font-bold text-gray-900">Check by Postal Pincode</h4>
-        <p className="text-xs text-gray-500">
-          Enter your 6-digit pincode to check general serviceability in Noida.
+        <h4 className="font-serif text-xl font-bold text-[#30251F]">Verify by Postal Pincode</h4>
+        <p className="text-xs text-[#81776C]">
+          Enter your 6-digit pincode to check serviceability from our Sector 76 boutique.
         </p>
       </div>
 
@@ -87,28 +87,28 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
               setPincode(e.target.value);
               if (checkedState) setCheckedState(null);
             }}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-sm font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#831843] focus:border-[#831843]"
+            className="flex-1 px-4 py-3 bg-[#FFFFFF] border border-[#E8E2D5] rounded-2xl text-sm font-semibold text-[#30251F] placeholder:text-[#81776C]/60 focus:outline-none focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F]"
           />
           <button
             type="submit"
-            className="px-5 py-3 bg-[#831843] hover:bg-[#6b1336] active:scale-95 text-white font-bold text-xs rounded-xl shadow transition-all"
+            className="px-6 py-3 bg-[#30251F] hover:bg-[#201814] text-[#FAF7F0] font-serif font-bold text-xs rounded-2xl shadow-xs transition-all cursor-pointer"
           >
-            Check
+            Verify
           </button>
         </div>
       </form>
 
-      {/* Verification Notice per requirement */}
+      {/* Verification Notice */}
       {checkedState && (
         <div className="animate-in fade-in duration-200 space-y-3">
           {checkedState.isNoidaArea ? (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-3">
-              <div className="flex items-start gap-2.5 text-emerald-900">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+            <div className="bg-[#244438]/10 border border-[#244438]/25 rounded-2xl p-4 space-y-3">
+              <div className="flex items-start gap-2.5 text-[#244438]">
+                <CheckCircle2 className="w-5 h-5 text-[#244438] shrink-0 mt-0.5" />
                 <div className="text-xs space-y-1">
-                  <p className="font-bold text-sm text-emerald-800">{checkedState.message}</p>
-                  <p className="text-gray-600 leading-relaxed">
-                    <strong>Important:</strong> A pincode covers a wide geographical area and does not guarantee an exact 10 km radius. To confirm your exact delivery eligibility, please use your Current Location or choose your address on the map:
+                  <p className="font-serif font-bold text-base text-[#244438]">{checkedState.message}</p>
+                  <p className="text-[#81776C] leading-relaxed">
+                    <strong>Note:</strong> A pincode covers a wide area. To confirm exact delivery radius, please use your Current Location or select your address on the map:
                   </p>
                 </div>
               </div>
@@ -118,28 +118,28 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
                 <button
                   type="button"
                   onClick={onUseGps}
-                  className="w-full py-2.5 px-3 bg-[#831843] hover:bg-[#6b1336] active:scale-95 text-white rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1.5 transition-all"
+                  className="w-full py-2.5 px-3 rounded-full bg-[#30251F] hover:bg-[#201814] text-[#FAF7F0] text-xs font-serif font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
-                  <Navigation className="w-4 h-4" />
+                  <Navigation className="w-3.5 h-3.5 text-[#C5A46D]" />
                   <span>Use Current Location</span>
                 </button>
                 <button
                   type="button"
                   onClick={onOpenMap}
-                  className="w-full py-2.5 px-3 bg-white border border-[#831843] hover:bg-[#FDF2F8] active:scale-95 text-[#831843] rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 transition-all"
+                  className="w-full py-2.5 px-3 bg-[#FFFFFF] border border-[#E8E2D5] hover:border-[#30251F] active:scale-95 text-[#30251F] rounded-full text-xs font-serif font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
-                  <Map className="w-4 h-4" />
+                  <Map className="w-3.5 h-3.5 text-[#C5A46D]" />
                   <span>Choose Pin on Map</span>
                 </button>
               </div>
             </div>
           ) : (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
-              <div className="flex items-start gap-2.5 text-amber-900">
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="bg-[#FFFFFF] border border-[#E8E2D5] rounded-2xl p-4 space-y-3">
+              <div className="flex items-start gap-2.5 text-[#81776C]">
+                <AlertCircle className="w-5 h-5 text-[#C5A46D] shrink-0 mt-0.5" />
                 <div className="text-xs space-y-1">
-                  <p className="font-bold text-sm text-amber-800">{checkedState.message}</p>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="font-serif font-bold text-base text-[#30251F]">{checkedState.message}</p>
+                  <p className="text-[#81776C] leading-relaxed">
                     Our fresh cake and flower delivery operates within a 10 km radius of Sector 76, Noida. If you are near our store border, you can still verify your exact coordinates on the map.
                   </p>
                 </div>
@@ -147,9 +147,9 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
               <button
                 type="button"
                 onClick={onOpenMap}
-                className="w-full py-2.5 px-3 bg-white border border-amber-700 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                className="w-full py-2.5 px-3 bg-[#FAF7F0] border border-[#E8E2D5] hover:border-[#30251F] text-[#30251F] rounded-full text-xs font-serif font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
-                <Map className="w-4 h-4" />
+                <Map className="w-3.5 h-3.5 text-[#C5A46D]" />
                 <span>Verify on Map Anyway</span>
               </button>
             </div>
@@ -158,13 +158,13 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
       )}
 
       {/* Back to main choices */}
-      <div className="pt-2">
+      <div className="pt-2 text-center">
         <button
           type="button"
           onClick={onCancel}
-          className="w-full py-2.5 text-xs font-bold text-gray-500 hover:text-gray-800"
+          className="text-xs text-[#81776C] hover:text-[#30251F] transition-colors cursor-pointer"
         >
-          ← Back to Location Options
+          ← Return to options
         </button>
       </div>
     </div>

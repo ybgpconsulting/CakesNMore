@@ -43,15 +43,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const secondaryImage =
     product.images && product.images.length > 1 ? product.images[1] : primaryImage;
 
+  const isCake = product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes';
+
   return (
     <>
       <div
-        className="premium-card group relative bg-white rounded-2xl overflow-hidden border border-[#EBE3DE] hover:border-[#D1B8B3] flex flex-col h-full transition-all duration-300 shadow-xs hover:shadow-md"
+        className="editorial-card group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E8E2D5] hover:border-[#DFC79E] flex flex-col h-full transition-all duration-300 shadow-2xs hover:shadow-xl"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Image Container with Consistent 1:1 Aspect Ratio */}
-        <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#FAF8F5]">
+        {/* Product Image Frame */}
+        <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#FAF7F0]">
           <img
             src={isHovered && secondaryImage !== primaryImage ? secondaryImage : primaryImage}
             alt={`${product.name} - Cakes N More Sector 76 Noida`}
@@ -59,44 +61,45 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             decoding="async"
             width={400}
             height={400}
-            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-104"
           />
 
-          {/* Badges: Discount, Bestseller, Featured */}
-          <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-col gap-1 z-10">
+          {/* Floating Pill Badges */}
+          <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
             {discountPercent > 0 && (
-              <span className="bg-[#831843] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
+              <span className="bg-[#E8CECB] text-[#30251F] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
                 {discountPercent}% OFF
               </span>
             )}
             {product.bestseller && (
-              <span className="bg-[#B45309] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
-                Bestseller
-              </span>
-            )}
-            {product.featured && !product.bestseller && (
-              <span className="bg-[#047857] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
-                Featured
-              </span>
-            )}
-            {(product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') && (
-              <span className="bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
-                100% Eggless
+              <span className="bg-white/95 text-[#30251F] border border-[#E8E2D5] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
+                Signature
               </span>
             )}
           </div>
 
-          {/* Availability overlay if out of stock */}
-          {!product.available && (
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-20">
-              <span className="bg-white text-gray-900 font-semibold text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                Currently Unavailable
+          {/* Pure Veg / Eggless Green Mark in top-right */}
+          {isCake && (
+            <div
+              className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 bg-white/90 backdrop-blur-sm p-1.5 rounded-md border border-[#E8E2D5] flex items-center gap-1 shadow-2xs"
+              title="100% Pure Vegetarian / Eggless"
+            >
+              <span className="w-3.5 h-3.5 border border-[#244438] rounded-[2px] flex items-center justify-center shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#244438]" />
               </span>
             </div>
           )}
 
-          {/* Quick View Floating Action (desktop hover only to avoid mobile tap conflicts) */}
+          {/* Out of Stock Overlay */}
+          {!product.available && (
+            <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center z-20">
+              <span className="bg-[#30251F] text-white font-serif font-bold text-xs px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+                Sold Out
+              </span>
+            </div>
+          )}
+
+          {/* Quick View Button for Desktop */}
           <button
             type="button"
             onClick={(e) => {
@@ -105,62 +108,76 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               setQuickViewOpen(true);
             }}
             aria-label={`Quick view ${product.name}`}
-            className="hidden sm:flex absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white/95 text-gray-700 hover:text-[#831843] hover:bg-white shadow-md items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+            className="hidden sm:flex absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white/95 text-[#30251F] hover:bg-[#30251F] hover:text-white shadow-md items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 border border-[#E8E2D5]"
           >
             <Eye className="w-4 h-4" />
           </button>
         </Link>
 
         {/* Product Details Content */}
-        <div className="p-3.5 sm:p-4 flex flex-col flex-grow justify-between">
+        <div className="p-4 sm:p-5 flex flex-col flex-grow justify-between bg-white">
           <div>
             {product.categoryName && (
-              <span className="text-[10px] sm:text-[11px] font-semibold text-[#831843] uppercase tracking-wider block mb-1">
+              <span className="eyebrow-tag text-[10px] text-[#81776C] block truncate mb-1">
                 {product.categoryName}
               </span>
             )}
 
             <Link
               to={`/product/${product.slug}`}
-              className="font-serif text-sm sm:text-base lg:text-lg font-bold text-gray-900 hover:text-[#831843] line-clamp-1 transition-colors"
+              className="font-serif text-base sm:text-lg font-bold text-[#30251F] hover:text-[#C5A46D] line-clamp-1 transition-colors leading-snug"
             >
               {product.name}
             </Link>
 
-            <p className="text-xs text-gray-500 line-clamp-2 mt-1 leading-relaxed">
+            <p className="text-xs text-[#81776C] line-clamp-2 mt-1.5 leading-relaxed font-normal">
               {product.description}
             </p>
+
+            {/* Quick Weight preview tags */}
+            {product.weightOptions && product.weightOptions.length > 0 && (
+              <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar">
+                {product.weightOptions.slice(0, 3).map((w) => (
+                  <span
+                    key={w}
+                    className="text-[10px] font-medium text-[#81776C] bg-[#FAF7F0] px-2 py-0.5 rounded-md border border-[#E8E2D5]"
+                  >
+                    {w}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Price & Action Row */}
-          <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+          <div className="mt-4 pt-3 border-t border-[#F0EBE1] flex items-center justify-between gap-2">
             <div className="flex items-baseline gap-1.5 flex-wrap">
               {hasVariants && (
-                <span className="text-[11px] sm:text-xs text-gray-500 font-medium">From</span>
+                <span className="text-[11px] text-[#81776C] font-normal">From</span>
               )}
-              <span className="text-sm sm:text-base lg:text-lg font-bold text-gray-900">
+              <span className="font-serif text-base sm:text-xl font-bold text-[#30251F]">
                 ₹{lowest.price}
               </span>
               {lowest.oldPrice && lowest.oldPrice > lowest.price && (
-                <span className="text-[11px] sm:text-xs text-gray-400 line-through">
+                <span className="text-xs text-[#B4ACA2] line-through font-normal">
                   ₹{lowest.oldPrice}
                 </span>
               )}
             </div>
 
-            {/* Ergonomic Touch-friendly Add/Select Button */}
+            {/* Action Button */}
             <button
               onClick={handleAddToCart}
               disabled={!product.available}
               aria-label={hasVariants ? `Select options for ${product.name}` : `Add ${product.name} to cart`}
-              className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 min-h-[38px] sm:min-h-0 sm:py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 ${
+              className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold tracking-wide transition-all active:scale-95 cursor-pointer ${
                 product.available
-                  ? 'bg-[#FDF2F8] hover:bg-[#831843] text-[#831843] hover:text-white'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'btn-editorial-primary'
+                  : 'bg-[#F0EBE1] text-[#9E958A] cursor-not-allowed border border-transparent'
               }`}
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>{hasVariants ? 'Select' : 'Add'}</span>
+              <span>{hasVariants ? 'Options' : 'Add'}</span>
             </button>
           </div>
         </div>

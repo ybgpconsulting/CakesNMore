@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, MapPin, Sparkles, Truck, Utensils } from 'lucide-react';
+import { ChevronDown, MapPin, Sparkles } from 'lucide-react';
 
 interface FaqItem {
   question: string;
@@ -8,34 +8,34 @@ interface FaqItem {
 
 export const LOCAL_FAQS: FaqItem[] = [
   {
-    question: 'Are all cakes at Cakes N More 100% eggless and pure vegetarian?',
+    question: 'Are all cakes at Cakes N More 100% eggless?',
     answer:
-      'Yes, absolutely! Every single cake, pastry, bento cake, and dessert baked at Cakes N More Sector 76 Noida is 100% eggless and prepared in a strictly vegetarian bakery environment using premium dairy creams, rich chocolates, and fresh fruits.',
+      'Yes, absolutely! Every single cake, pastry, brownie, and confection at Cakes N More is 100% eggless and pure vegetarian. We craft our recipes using premium dairy cream, fine Belgian chocolates, and fresh fruits, guaranteeing rich flavour and light crumb texture without egg products.',
   },
   {
-    question: 'How fast is your cake and flower delivery in Sector 76 Noida?',
+    question: 'Do you offer same-day delivery in Sector 76, Noida?',
     answer:
-      'Same-day delivery is available in our configured delivery areas, subject to product availability and order timing. Contact us to confirm delivery availability and the expected time for your address.',
+      'Yes! We provide same-day doorstep delivery within a 10 km radius of our Sector 76 store, covering Sector 76, 75, 74, 77, 78, 79, 50, and surrounding Noida neighborhoods. To ensure absolute oven-freshness, please confirm delivery radius on our website before ordering via WhatsApp.',
   },
   {
-    question: 'Do you offer midnight cake and flower delivery in Noida?',
+    question: 'Can I pick up my cake directly from your store?',
     answer:
-      'Contact us on WhatsApp to ask about midnight delivery for your address and preferred date. Availability and order cut-off times may vary.',
+      'Certainly! Our boutique is located at Shop 29, Ground Floor, Amrapali Crystal Home Shopping Arcade, Sector 76, Noida (near Mithaas, Amrapali Silicon City). You are warmly invited to visit, sample flavours, consult with our master bakers, or pick up your order directly.',
   },
   {
-    question: 'Which societies in Sector 76 Noida do you deliver to?',
+    question: 'How do I place an order for customized or photo cakes?',
     answer:
-      'We provide direct doorstep delivery to all societies in Sector 76 including Amrapali Silicon City, Amrapali Crystal Homes, Aditya Urban Casa, JM Orchid, Sethi Max Royal, Skytech Matrott, as well as adjacent societies like Mahagun Moderne, Supertech Capetown, and Prateek Wisteria.',
+      'You can select any cake design on our website, specify custom weight and complimentary cake messages, and tap "WhatsApp Concierge". Our team will immediately verify your customization, share live pictures if needed, and confirm payment via UPI or direct transfer.',
   },
   {
-    question: 'Can I customize my cake with photos, custom names, or special messages?',
+    question: 'How fresh are the flowers used in your bouquets and combos?',
     answer:
-      'Yes! You can add personalized greeting messages or names directly on the cake for free. For edible photo cakes, tier cakes, pinata cakes, or customized fondant designs, simply connect with our bakers on WhatsApp (+91 9999517599) with your design reference.',
+      'We receive fresh-cut Dutch roses, Asiatic lilies, orchids, carnations, and seasonal blooms every morning from vetted growers. Each floral bouquet is arranged by skilled florists only after your order is confirmed, ensuring prolonged vase life and radiant petals.',
   },
   {
-    question: 'Where is the physical Cakes N More store located in Sector 76?',
+    question: 'What delivery radius does Cakes N More cover in Noida?',
     answer:
-      'Our physical boutique is located at Shop No. 29, Ground Floor, Amrapali Crystal Home Shopping Arcade, near Mithaas and Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301. You can visit us for cake tastings, flower selections, or order pickup.',
+      'Our primary delivery service radius is up to 10 km from Shop 29, Amrapali Crystal Home, Sector 76, Noida. This covers prominent residential societies like Amrapali Silicon City, Amrapali Crystal Homes, Aditya Urban Casa, JM Orchid, Mahagun Moderne, Supertech Capetown, and nearby Noida sectors.',
   },
 ];
 
@@ -51,109 +51,103 @@ export const LocalSeoFaqSection: React.FC = () => {
     'Amrapali Crystal Homes',
     'Aditya Urban Casa',
     'JM Orchid',
-    'Sethi Max Royal',
-    'Skytech Matrott',
-    'Mahagun Moderne (Sec 78)',
-    'Supertech Capetown (Sec 74)',
-    'Prateek Wisteria (Sec 77)',
-    'Antriksh Golf View',
-    'Express Zenith (Sec 77)',
-    'Civitech Sampriti (Sec 77)',
+    'Mahagun Moderne (Sector 78)',
+    'Supertech Capetown (Sector 74)',
+    'Antriksh Golf View (Sector 78)',
+    'Civitech Sampriti (Sector 77)',
+    'Prateek Wisteria (Sector 77)',
+    'Sector 50 Noida',
   ];
 
   return (
-    <section className="py-14 sm:py-20 bg-[#FAF8F5] border-t border-[#F0EAE5]">
+    <section className="py-16 sm:py-24 bg-white border-t border-[#E8E2D5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Local SEO Informational Content Block */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#EADBDA] shadow-sm mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Noida Sector 76 Premier Patisserie &amp; Florist</span>
-          </div>
+        {/* Editorial Local SEO Content Block */}
+        <div className="editorial-card bg-[#FAF7F0] rounded-3xl p-6 sm:p-10 lg:p-14 border border-[#E8E2D5] shadow-xs mb-14 sm:mb-20">
+          <span className="eyebrow-tag text-[#C5A46D] block mb-2">
+            Sector 76 Noida Pâtisserie &amp; Florist
+          </span>
 
-          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#29141B] tracking-tight mb-4">
-            Best Bakery in Sector 76 Noida – 100% Eggless Cakes &amp; Fresh Blooms
+          <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#30251F] tracking-tight mb-4">
+            Artisanal 100% Eggless Bakery &amp; Fresh Floral Studio in Sector 76
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700 leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-sm text-[#81776C] leading-relaxed font-normal">
             <p>
-              Looking for freshly baked cakes and exquisite floral arrangements in Sector 76 Noida? 
-              <strong> Cakes N More</strong> brings premium artisanal baking right to your doorstep. 
-              Conveniently located at <em>Shop 29, Amrapali Crystal Home Shopping Arcade</em> (near Mithaas, Amrapali Silicon City), 
-              we pride ourselves on offering <strong>100% eggless, pure vegetarian celebration cakes</strong> crafted with the finest ingredients.
+              Looking for freshly baked celebration cakes and exquisite floral arrangements in Sector 76 Noida? 
+              <strong className="text-[#30251F]"> Cakes N More</strong> brings European patisserie standards and fresh botanicals right to your doorstep. 
+              Our kitchen operates under stringent 100% vegetarian culinary protocols, ensuring every chocolate truffle, 
+              red velvet, and seasonal fruit cake is entirely egg-free and delightfully fluffy.
             </p>
             <p>
-              From chocolate truffle, red velvet, and seasonal fresh fruit cakes to bento cakes, pull-me-up cakes, 
-              and photo cakes, each confection is made on order to guarantee optimal freshness. Pair your cake with 
-              fragrant Dutch roses, exotic lilies, or mixed floral bouquets, perfect for birthdays, anniversaries, and milestones.
+              Located conveniently at <em className="text-[#30251F] not-italic font-semibold">Shop No. 29, Ground Floor, Amrapali Crystal Home Shopping Arcade</em>, 
+              we are right next to Mithaas and seconds away from Amrapali Silicon City. We proudly cater to celebrations, birthdays, 
+              weddings, and milestones with doorstep delivery in 60-90 minutes across central Noida.
             </p>
           </div>
 
-          {/* Delivery Coverage Badge Cloud */}
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-600 mb-3">
-              <MapPin className="w-4 h-4 text-[#831843]" />
-              <span>Prompt Doorstep Delivery Across Sector 76 &amp; Neighborhood Societies:</span>
-            </div>
+          {/* Societies Served Pills */}
+          <div className="mt-8 pt-6 border-t border-[#E8E2D5]">
+            <p className="eyebrow-tag text-[10px] text-[#81776C] mb-3 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#C5A46D]" />
+              <span>Prompt Doorstep Delivery Across Prominent Societies:</span>
+            </p>
             <div className="flex flex-wrap gap-2">
               {deliverySocieties.map((society) => (
                 <span
                   key={society}
-                  className="px-3 py-1 rounded-lg bg-[#FAF5F2] border border-[#EADBDA] text-xs text-gray-800 font-medium hover:border-[#831843] transition-colors"
+                  className="px-3 py-1.5 rounded-full bg-white border border-[#E8E2D5] text-xs text-[#30251F] font-medium shadow-2xs"
                 >
-                  📍 {society}
+                  {society}
                 </span>
               ))}
             </div>
           </div>
         </div>
 
-        {/* FAQs Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF5F2] text-[#831843] text-xs font-bold uppercase tracking-wider mb-2">
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Got Questions?</span>
+        {/* FAQ Accordion Section */}
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10 sm:mb-14">
+            <span className="eyebrow-tag text-[#C5A46D] block mb-2">Common Questions</span>
+            <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#30251F] tracking-tight">
+              Frequently Asked Questions
+            </h3>
+            <p className="text-sm text-[#81776C] mt-2 font-normal">
+              Clear answers regarding eggless certification, same-day delivery radius, and customized orders.
+            </p>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B] tracking-tight">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-sm text-gray-600 mt-2">
-            Everything you need to know about our cakes, flower bouquets, delivery timings, and order process.
-          </p>
-        </div>
 
-        {/* FAQ Accordion */}
-        <div className="max-w-3xl mx-auto space-y-3">
-          {LOCAL_FAQS.map((faq, index) => {
-            const isOpen = openIndex === index;
-            return (
-              <div
-                key={index}
-                className="bg-white rounded-2xl border border-[#EADBDA] overflow-hidden shadow-xs transition-all"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleFaq(index)}
-                  aria-expanded={isOpen}
-                  className="w-full text-left px-5 sm:px-6 py-4 flex items-center justify-between gap-4 font-serif text-base sm:text-lg font-bold text-gray-900 hover:text-[#831843] transition-colors"
+          <div className="space-y-3">
+            {LOCAL_FAQS.map((faq, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <div
+                  key={index}
+                  className="bg-[#FAF7F0] rounded-2xl border border-[#E8E2D5] overflow-hidden transition-all duration-200"
                 >
-                  <span>{faq.question}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-[#831843]' : ''
-                    }`}
-                  />
-                </button>
-
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-5 pt-1 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 bg-[#FAF8F5]/40 animate-in fade-in duration-150">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(index)}
+                    className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left font-serif text-base sm:text-lg font-bold text-[#30251F] hover:text-[#C5A46D] transition-colors cursor-pointer"
+                    aria-expanded={isOpen}
+                  >
+                    <span>{faq.question}</span>
+                    <ChevronDown
+                      className={`w-5 h-5 text-[#81776C] shrink-0 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180 text-[#30251F]' : ''
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-6 pb-6 pt-1 text-sm text-[#81776C] leading-relaxed border-t border-[#E8E2D5] font-normal">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       </div>

@@ -59,31 +59,32 @@ export const AdminHomepagePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#30251F]">
       <SEO title="Homepage Content Management | Cakes N More Admin" />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#E8E2D5] shadow-sm">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Storefront Showcase</span>
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#30251F] mt-1">
             Homepage Content Editor
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
-            Control the hero banner, promo announcements, and store value highlights.
+          <p className="text-xs text-[#81776C] mt-1">
+            Control the editorial hero banner, announcement strip, and authentic value highlights.
           </p>
         </div>
 
         <button
           onClick={handleSubmit}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md transition-all active:scale-95"
+          className="btn-editorial-primary inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold tracking-wider shadow-sm transition-all active:scale-95 cursor-pointer"
         >
-          <Save className="w-5 h-5" />
+          <Save className="w-4 h-4 text-[#C5A46D]" />
           <span>Save All Homepage Changes</span>
         </button>
       </div>
 
       {saveSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 shadow-sm">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>Homepage updates published live successfully!</span>
         </div>
       )}
@@ -91,16 +92,18 @@ export const AdminHomepagePage: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Top Promo Banner Section */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm space-y-4">
-          <h2 className="font-serif text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#831843]" />
-            <span>Top Announcement Banner</span>
-          </h2>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8E2D5] shadow-sm space-y-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#C5A46D]" />
+            <h2 className="font-serif text-lg font-normal text-[#30251F]">
+              Top Announcement Banner
+            </h2>
+          </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-200">
+          <div className="flex items-center justify-between p-4 bg-[#FAF7F0] rounded-2xl border border-[#E8E2D5]">
             <div>
-              <p className="text-xs font-bold text-gray-900">Enable Announcement Banner</p>
-              <p className="text-[11px] text-gray-500">Shows a top header banner across all pages</p>
+              <p className="text-xs font-bold text-[#30251F]">Enable Announcement Banner</p>
+              <p className="text-[11px] text-[#81776C]">Shows a subtle top header notification across all pages</p>
             </div>
             <input
               type="checkbox"
@@ -108,12 +111,12 @@ export const AdminHomepagePage: React.FC = () => {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, promoBannerActive: e.target.checked }))
               }
-              className="w-5 h-5 text-[#831843] rounded"
+              className="w-5 h-5 text-[#30251F] rounded accent-[#30251F]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
               Banner Text Content
             </label>
             <input
@@ -122,17 +125,17 @@ export const AdminHomepagePage: React.FC = () => {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, promoBannerText: e.target.value }))
               }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+              className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Hero Section */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm space-y-4">
-          <h2 className="font-serif text-lg font-bold text-gray-900">Hero Section</h2>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8E2D5] shadow-sm space-y-4">
+          <h2 className="font-serif text-lg font-normal text-[#30251F]">Hero Section</h2>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
               Main Headline *
             </label>
             <input
@@ -140,25 +143,25 @@ export const AdminHomepagePage: React.FC = () => {
               required
               value={formData.heroTitle}
               onChange={(e) => setFormData((prev) => ({ ...prev, heroTitle: e.target.value }))}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none font-bold"
+              className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] font-bold focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
               Subtitle / Supporting Text
             </label>
             <textarea
               rows={2}
               value={formData.heroSubtitle}
               onChange={(e) => setFormData((prev) => ({ ...prev, heroSubtitle: e.target.value }))}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+              className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 CTA Button Text
               </label>
               <input
@@ -167,12 +170,12 @@ export const AdminHomepagePage: React.FC = () => {
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, heroCtaText: e.target.value }))
                 }
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 CTA Button Link
               </label>
               <input
@@ -181,21 +184,21 @@ export const AdminHomepagePage: React.FC = () => {
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, heroCtaLink: e.target.value }))
                 }
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider">
                 Hero Image
               </label>
-              <label className="cursor-pointer text-xs font-bold text-[#831843] hover:underline flex items-center gap-1">
+              <label className="cursor-pointer text-xs font-bold text-[#30251F] hover:text-[#C5A46D] flex items-center gap-1 transition-colors">
                 {isUploading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A46D]" />
                 ) : (
-                  <Upload className="w-3.5 h-3.5" />
+                  <Upload className="w-3.5 h-3.5 text-[#C5A46D]" />
                 )}
                 <span>Upload New Hero Photo</span>
                 <input
@@ -210,10 +213,10 @@ export const AdminHomepagePage: React.FC = () => {
               type="url"
               value={formData.heroImage}
               onChange={(e) => setFormData((prev) => ({ ...prev, heroImage: e.target.value }))}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+              className="w-full px-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
             />
             {formData.heroImage && (
-              <div className="mt-3 aspect-[16/6] rounded-2xl overflow-hidden bg-gray-100 border">
+              <div className="mt-3 aspect-[16/6] rounded-2xl overflow-hidden bg-[#FAF7F0] border border-[#E8E2D5]">
                 <img
                   src={formData.heroImage}
                   alt="Hero Preview"
@@ -225,24 +228,24 @@ export const AdminHomepagePage: React.FC = () => {
         </div>
 
         {/* Why Choose Us Points */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm space-y-4">
-          <h2 className="font-serif text-lg font-bold text-gray-900">Why Choose Us Points (5 Highlights)</h2>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8E2D5] shadow-sm space-y-4">
+          <h2 className="font-serif text-lg font-normal text-[#30251F]">Why Choose Us Points (5 Highlights)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {formData.whyUsPoints.map((pt, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">
-                <p className="text-xs font-bold text-[#831843] uppercase">Highlight #{idx + 1}</p>
+              <div key={idx} className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#E8E2D5] space-y-2">
+                <p className="text-[11px] font-bold text-[#C5A46D] uppercase tracking-wider">Highlight #{idx + 1}</p>
                 <input
                   type="text"
                   value={pt.title}
                   onChange={(e) => handlePointChange(idx, 'title', e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold"
+                  className="w-full px-3 py-1.5 bg-white border border-[#E8E2D5] rounded-xl text-xs font-bold text-[#30251F] focus:border-[#30251F] focus:outline-none"
                   placeholder="Title"
                 />
                 <textarea
                   rows={2}
                   value={pt.description}
                   onChange={(e) => handlePointChange(idx, 'description', e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs"
+                  className="w-full px-3 py-1.5 bg-white border border-[#E8E2D5] rounded-xl text-xs text-[#30251F] focus:border-[#30251F] focus:outline-none"
                   placeholder="Description"
                 />
               </div>
@@ -253,7 +256,7 @@ export const AdminHomepagePage: React.FC = () => {
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            className="px-8 py-3.5 rounded-2xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md"
+            className="btn-editorial-primary px-8 py-3.5 rounded-full text-xs font-bold tracking-wider shadow-sm cursor-pointer"
           >
             Save All Homepage Changes
           </button>

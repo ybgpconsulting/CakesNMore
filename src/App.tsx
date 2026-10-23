@@ -31,7 +31,7 @@ const AdminMenuImportPage = lazy(() => import('./pages/admin/AdminMenuImportPage
 
 const PageSuspenseFallback = () => (
   <div className="min-h-[50vh] flex items-center justify-center" aria-label="Loading page">
-    <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
+    <div className="w-8 h-8 border-2 border-[#FF6B4A] border-t-transparent rounded-full animate-spin" />
   </div>
 );
 

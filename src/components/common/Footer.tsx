@@ -4,12 +4,9 @@ import {
   Clock,
   ExternalLink,
   Facebook,
-  Heart,
   Instagram,
-  Mail,
   MapPin,
   Phone,
-  Store,
   Twitter,
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
@@ -26,29 +23,26 @@ export const Footer: React.FC = () => {
   )}`;
 
   return (
-    <footer className="premium-footer bg-[#1C1618] text-[#D8C7C5] pt-10 pb-24 sm:pb-10 border-t border-[#312527]">
+    <footer className="bg-[#30251F] text-[#FAF7F0] pt-14 pb-28 md:pb-12 border-t border-[#4A3B32]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 mb-8">
-          {/* Brand & Overview (Col 1 & 2) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+          
+          {/* Brand Col 1 & 2 */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#9D174D] text-white flex items-center justify-center">
-                <Store className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-white tracking-tight leading-none">
-                  Cakes N More
-                </h3>
-                <p className="text-xs text-[#E8A598] tracking-wider uppercase font-medium mt-1">
-                  Sector 76, Noida • Uttar Pradesh
-                </p>
-              </div>
+            <div className="space-y-1">
+              <h3 className="font-serif text-3xl font-bold text-white tracking-tight leading-tight">
+                Cakes N More
+              </h3>
+              <p className="eyebrow-tag text-[10px] text-[#C5A46D]">
+                Artisanal Atelier &amp; Botanical Florist • Sector 76 Noida
+              </p>
             </div>
 
-            <p className="text-sm text-[#A89897] leading-relaxed max-w-sm pt-1">
-              Fresh 100% eggless celebration cakes, flower bouquets, indoor plants, and gift hampers from our neighborhood bakery and florist in Sector 76, Noida.
+            <p className="text-sm text-[#B4ACA2] leading-relaxed max-w-sm pt-1">
+              100% pure vegetarian handcrafted celebration cakes, fresh morning flowers, indoor plants, and luxury gift hampers prepared at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
             </p>
 
+            {/* Social & WhatsApp */}
             <div className="pt-2 flex items-center gap-3">
               {settings.instagramUrl && (
                 <a
@@ -56,7 +50,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Instagram"
-                  className="w-9 h-9 rounded-full bg-[#2A1E22] hover:bg-[#9D174D] text-white flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
@@ -67,7 +61,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Facebook"
-                  className="w-9 h-9 rounded-full bg-[#2A1E22] hover:bg-[#9D174D] text-white flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
                 >
                   <Facebook className="w-4 h-4" />
                 </a>
@@ -78,7 +72,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Twitter/X"
-                  className="w-9 h-9 rounded-full bg-[#2A1E22] hover:bg-[#9D174D] text-white flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
                 >
                   <Twitter className="w-4 h-4" />
                 </a>
@@ -88,104 +82,104 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat on WhatsApp"
-                className="w-9 h-9 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                className="w-9 h-9 rounded-full bg-[#244438] text-white flex items-center justify-center hover:bg-[#1A332A] transition-colors"
               >
                 <WhatsAppIcon className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links (Col 3) */}
+          {/* Navigate Col 3 */}
           <div className="space-y-3">
-            <h4 className="text-xs uppercase tracking-widest text-[#E8A598] font-bold">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Explore</h4>
+            <ul className="space-y-2.5 text-sm">
               <li>
-                <Link to="/" className="hover:text-white transition-colors">
+                <Link to="/" className="text-[#B4ACA2] hover:text-white transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/shop" className="hover:text-white transition-colors">
-                  All Products
+                <Link to="/shop" className="text-[#B4ACA2] hover:text-white transition-colors">
+                  Complete Catalogue
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  About Our Store
+                <Link to="/about" className="text-[#B4ACA2] hover:text-white transition-colors">
+                  Our Story &amp; Craft
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-white transition-colors">
-                  Contact & Map
+                <Link to="/contact" className="text-[#B4ACA2] hover:text-white transition-colors">
+                  Visit Sector 76 Store
                 </Link>
               </li>
               <li>
-                <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">
-                  Shipping & Delivery
+                <Link to="/shipping-and-delivery" className="text-[#B4ACA2] hover:text-white transition-colors">
+                  Delivery Guidelines
                 </Link>
               </li>
               <li>
-                <Link to="/returns-policy" className="hover:text-white transition-colors">
-                  Returns & Refunds
+                <Link to="/returns-policy" className="text-[#B4ACA2] hover:text-white transition-colors">
+                  Returns &amp; Cancellations
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Categories (Col 4) */}
+          {/* Collections Col 4 */}
           <div className="space-y-3">
-            <h4 className="text-xs uppercase tracking-widest text-[#E8A598] font-bold">Catalogue</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Collections</h4>
+            <ul className="space-y-2.5 text-sm">
               {categories.slice(0, 6).map((cat) => (
                 <li key={cat.id}>
-                  <Link to={`/category/${cat.slug}`} className="hover:text-white transition-colors">
+                  <Link to={`/category/${cat.slug}`} className="text-[#B4ACA2] hover:text-white transition-colors">
                     {cat.name}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/terms-and-conditions" className="text-xs text-[#A89897] hover:text-white transition-colors pt-1 block">
+                <Link to="/terms-and-conditions" className="text-xs text-[#81776C] hover:text-white transition-colors pt-1 block">
                   Terms &amp; Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" className="text-xs text-[#A89897] hover:text-white transition-colors block">
+                <Link to="/privacy-policy" className="text-xs text-[#81776C] hover:text-white transition-colors block">
                   Privacy Policy
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Details (Col 5) */}
+          {/* Boutique Visit Col 5 */}
           <div className="space-y-3">
-            <h4 className="text-xs uppercase tracking-widest text-[#E8A598] font-bold">Store Visit</h4>
-            <div className="space-y-2.5 text-xs text-[#B5A5A4]">
-              <div className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-[#E8A598] shrink-0 mt-0.5" />
-                <p className="leading-snug">{settings.address}</p>
+            <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Visit Atelier</h4>
+            <div className="space-y-3 text-xs text-[#B4ACA2]">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#C5A46D] shrink-0 mt-0.5" />
+                <p className="leading-relaxed">{settings.address}</p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#E8A598] shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#C5A46D] shrink-0" />
                 <a href={`tel:${settings.phone}`} className="hover:text-white font-medium">
                   {settings.phone}
                 </a>
               </div>
 
-              <div className="flex items-center gap-2">
-                <WhatsAppIcon className="w-4 h-4 shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <WhatsAppIcon className="w-4 h-4 shrink-0 text-[#E8CECB]" />
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white text-[#25D366] font-medium"
+                  className="hover:text-white text-[#E8CECB] font-medium"
                 >
                   WhatsApp: {settings.whatsappNumber}
                 </a>
               </div>
 
-              <div className="flex items-start gap-2">
-                <Clock className="w-4 h-4 text-[#E8A598] shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5">
+                <Clock className="w-4 h-4 text-[#C5A46D] shrink-0 mt-0.5" />
                 <span>{settings.openingHours}</span>
               </div>
 
@@ -194,20 +188,20 @@ export const Footer: React.FC = () => {
                   href={safeExternalUrl(settings.mapsUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-[#FBCFE8] hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs text-[#C5A46D] hover:underline font-medium"
                 >
-                  <span>Get Google Maps Directions</span>
+                  <span>Google Maps Directions</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
 
               {(settings.zomatoUrl || settings.swiggyUrl || settings.magicpinUrl) && (
-                <div className="pt-3 border-t border-[#312527] space-y-2">
-                  <p className="text-[10px] uppercase tracking-widest text-[#E8A598] font-bold">Order on delivery apps</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
-                    {settings.zomatoUrl && <a href={safeExternalUrl(settings.zomatoUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Zomato</a>}
-                    {settings.swiggyUrl && <a href={safeExternalUrl(settings.swiggyUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Swiggy</a>}
-                    {settings.magicpinUrl && <a href={safeExternalUrl(settings.magicpinUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Magicpin</a>}
+                <div className="pt-3 border-t border-[#4A3B32] space-y-1.5">
+                  <p className="eyebrow-tag text-[10px] text-[#C5A46D]">Delivery Partners</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
+                    {settings.zomatoUrl && <a href={safeExternalUrl(settings.zomatoUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Zomato</a>}
+                    {settings.swiggyUrl && <a href={safeExternalUrl(settings.swiggyUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Swiggy</a>}
+                    {settings.magicpinUrl && <a href={safeExternalUrl(settings.magicpinUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Magicpin</a>}
                   </div>
                 </div>
               )}
@@ -215,18 +209,18 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Local Keywords & Delivery Reach Ribbon */}
-        <div className="pt-6 border-t border-[#312527] mb-4">
-          <p className="text-[11px] text-[#A89897] leading-relaxed">
-            <strong className="text-[#E8A598]">Local Doorstep Delivery Across Noida:</strong> Sector 76, Sector 75, Sector 74, Sector 77, Sector 78, Sector 79, Sector 50, Sector 51, Amrapali Silicon City, Amrapali Crystal Homes, Mahagun Moderne, Supertech Capetown, Aditya Urban Casa, and Central Noida. 100% Eggless Cakes • Midnight Delivery • Fresh Flowers.
+        {/* Local Service Areas */}
+        <div className="pt-6 border-t border-[#4A3B32] mb-6">
+          <p className="text-[11px] text-[#81776C] leading-relaxed">
+            <strong className="text-[#C5A46D]">Fresh Doorstep Delivery Across Noida:</strong> Sector 76, Sector 75, Sector 74, Sector 77, Sector 78, Sector 79, Sector 50, Sector 51, Amrapali Silicon City, Amrapali Crystal Homes, Mahagun Moderne, Supertech Capetown, Aditya Urban Casa, and Central Noida. 100% Pure Vegetarian Eggless Cakes • Midnight Delivery • Hand-Tied Morning Blooms.
           </p>
         </div>
 
-        {/* Bottom Sub-bar */}
-        <div className="pt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
+        {/* Bottom Credits & Developer */}
+        <div className="pt-6 border-t border-[#4A3B32] flex flex-col sm:flex-row items-center justify-between text-xs text-[#81776C] gap-4">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
             <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
-            <div className="flex items-center gap-3 text-[11px] text-[#A89897]">
+            <div className="flex items-center gap-3 text-[11px]">
               <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
               <span>•</span>
               <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
@@ -241,13 +235,13 @@ export const Footer: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Looking to grow your business? Your business growth partner. Designed and developed by YBGP. Visit ybgp.in"
-            className="flex items-center gap-3 rounded-md text-right text-[#D8C7C5] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8A598] focus-visible:ring-offset-4 focus-visible:ring-offset-[#1C1618]"
+            className="flex items-center gap-3 rounded-md text-right text-[#B4ACA2] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D] focus-visible:ring-offset-4 focus-visible:ring-offset-[#30251F]"
           >
-            <span className="flex flex-col items-end gap-1">
-              <span className="font-semibold text-white">Looking to grow your business?</span>
-              <span className="text-[#A89897]">Designed and developed by YBGP</span>
+            <span className="flex flex-col items-end gap-0.5">
+              <span className="font-semibold text-white text-[11px]">Looking to grow your business?</span>
+              <span className="text-[#81776C] text-[10px]">Designed and developed by YBGP</span>
             </span>
-            <img src="/ybgp-logo.png" alt="YBGP - Your Business Growth Partner logo" width={72} height={36} className="h-9 w-auto rounded-sm bg-white px-1" />
+            <img src="/ybgp-logo.png" alt="YBGP - Your Business Growth Partner logo" width={72} height={36} className="h-8 w-auto rounded-xs bg-white px-1" />
           </a>
         </div>
       </div>

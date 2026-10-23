@@ -244,26 +244,27 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   return (
     <div role="dialog" aria-modal="true" aria-labelledby="product-form-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:p-8 shadow-2xl border border-gray-100 my-2 sm:my-8 animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+      <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:p-8 shadow-2xl border border-[#E8E2D5] my-2 sm:my-8 animate-in fade-in zoom-in-95 duration-200 text-[#30251F]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E8E2D5]">
           <div>
-            <h2 id="product-form-modal-title" className="font-serif text-2xl font-bold text-gray-900">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Product Atelier</span>
+            <h2 id="product-form-modal-title" className="font-serif text-2xl font-normal text-[#30251F] mt-0.5">
               {isEdit ? 'Edit Product' : 'Add New Product'}
             </h2>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[#81776C]">
               Update catalogue information, stock availability, and image gallery.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-full"
+            className="p-2 text-[#81776C] hover:text-[#30251F] rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {formError && (
-          <div className="mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl font-medium">
+          <div className="mt-4 p-3.5 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl font-medium">
             {formError}
           </div>
         )}
@@ -272,7 +273,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           {/* Row 1: Title & Category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Product Title *
               </label>
               <input
@@ -281,18 +282,18 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 placeholder="E.g., Belgian Chocolate Truffle Cake"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Category *
               </label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] font-bold focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -306,7 +307,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           {/* Row 2: Price & Old Price */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Selling Price (₹) *
               </label>
               <input
@@ -315,12 +316,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 min={1}
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none font-bold"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm font-bold text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Original / Old Price (₹) (Optional)
               </label>
               <input
@@ -328,26 +329,26 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 placeholder="E.g., 799"
                 value={oldPrice || ''}
                 onChange={(e) => setOldPrice(e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
                 Display Order
               </label>
               <input
                 type="number"
                 value={displayOrder}
                 onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </div>
 
           {/* Row 3: Description */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1.5">
               Description *
             </label>
             <textarea
@@ -356,32 +357,32 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               placeholder="Describe freshness, ingredients, packaging, and presentation..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
+              className="w-full px-3.5 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-xl text-xs sm:text-sm text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
           {/* Row 4: Image Management (Upload, Preview, Primary selection, Delete, Reorder) */}
-          <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-gray-200 space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="bg-[#FAF7F0] p-5 rounded-2xl border border-[#E8E2D5] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-[#30251F] uppercase tracking-wider">
                   Product Images ({images.length})
                 </h4>
-                <p className="text-[11px] text-gray-500">
+                <p className="text-[11px] text-[#81776C]">
                   The first image is the Primary photo shown in product cards.
                 </p>
               </div>
 
               {/* Upload Input Button */}
-              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 bg-[#831843] text-white text-xs font-bold rounded-xl hover:bg-[#6b1336] shadow transition-colors">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#30251F] text-white text-xs font-bold rounded-full hover:bg-[#1E1714] shadow-sm transition-colors">
                 {isUploading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[#C5A46D]" />
                     <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-4 h-4 text-[#C5A46D]" />
                     <span>Upload Image Files</span>
                   </>
                 )}
@@ -403,12 +404,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 placeholder="Or paste image web link URL (https://...)"
                 value={imageUrlInput}
                 onChange={(e) => setImageUrlInput(e.target.value)}
-                className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs"
+                className="flex-1 px-3.5 py-2 bg-white border border-[#E8E2D5] rounded-xl text-xs text-[#30251F] focus:outline-none focus:border-[#30251F]"
               />
               <button
                 type="button"
                 onClick={handleAddUrl}
-                className="px-4 py-2 bg-gray-800 text-white rounded-xl text-xs font-bold hover:bg-gray-700"
+                className="px-4 py-2 bg-[#30251F] text-white rounded-xl text-xs font-bold hover:bg-[#1E1714] transition-colors"
               >
                 Add Link
               </button>
@@ -420,26 +421,26 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div
                   key={idx}
                   className={`relative rounded-xl overflow-hidden border-2 bg-white aspect-square shadow-sm ${
-                    idx === 0 ? 'border-[#831843] ring-2 ring-[#FCE7F3]' : 'border-gray-200'
+                    idx === 0 ? 'border-[#30251F] ring-2 ring-[#C5A46D]/30' : 'border-[#E8E2D5]'
                   }`}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" />
 
                   {/* Primary Badge */}
                   {idx === 0 && (
-                    <span className="absolute top-1 left-1 bg-[#831843] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow">
+                    <span className="absolute top-1 left-1 bg-[#30251F] text-white text-[9px] font-bold px-2 py-0.5 rounded shadow">
                       PRIMARY
                     </span>
                   )}
 
                   {/* Image Controls Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 bg-black/70 backdrop-blur-xs p-1 flex items-center justify-around text-white">
+                  <div className="absolute inset-x-0 bottom-0 bg-black/75 backdrop-blur-xs p-1 flex items-center justify-around text-white">
                     {idx > 0 && (
                       <button
                         type="button"
                         onClick={() => handleSetPrimary(idx)}
                         title="Set as Primary"
-                        className="p-1 hover:text-amber-400 text-gray-300"
+                        className="p-1 hover:text-[#C5A46D] text-gray-300"
                       >
                         <Star className="w-3.5 h-3.5" />
                       </button>
@@ -479,13 +480,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </div>
 
           {/* Row 5: Weight-Wise Pricing / Size Options */}
-          <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-gray-200 space-y-4">
+          <div className="bg-[#FAF7F0] p-5 rounded-2xl border border-[#E8E2D5] space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-[#30251F] uppercase tracking-wider">
                   Weight-Wise Pricing Options
                 </h4>
-                <p className="text-[11px] text-gray-500">
+                <p className="text-[11px] text-[#81776C]">
                   Set separate rates for weights (e.g. 500gm, 1kg, 2kg). The lowest rate will automatically show in the menu as &ldquo;From ₹...&rdquo;.
                 </p>
               </div>
@@ -496,8 +497,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   onChange={(e) => setHasWeightPricing(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#831843]"></div>
-                <span className="ml-2 text-xs font-semibold text-gray-700">Separate Rates</span>
+                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#30251F]"></div>
+                <span className="ml-2 text-xs font-bold text-[#30251F]">Separate Rates</span>
               </label>
             </div>
 
@@ -505,9 +506,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="space-y-3">
                 <div className="space-y-2">
                   {weightPrices.map((wp, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-gray-200">
+                    <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-[#E8E2D5]">
                       <div className="flex-1">
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                        <label className="block text-[10px] font-bold text-[#81776C] uppercase tracking-wider mb-0.5">
                           Size / Weight
                         </label>
                         <input
@@ -519,12 +520,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             copy[idx].weight = e.target.value;
                             setWeightPrices(copy);
                           }}
-                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold focus:ring-1 focus:ring-[#831843] focus:outline-none"
+                          className="w-full px-2.5 py-1.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-lg text-xs font-semibold text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none"
                         />
                       </div>
 
                       <div className="w-28 sm:w-32">
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                        <label className="block text-[10px] font-bold text-[#81776C] uppercase tracking-wider mb-0.5">
                           Rate (₹) *
                         </label>
                         <input
@@ -537,12 +538,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             copy[idx].price = Number(e.target.value);
                             setWeightPrices(copy);
                           }}
-                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-900 focus:ring-1 focus:ring-[#831843] focus:outline-none"
+                          className="w-full px-2.5 py-1.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-lg text-xs font-bold text-[#30251F] focus:border-[#30251F] focus:bg-white focus:outline-none"
                         />
                       </div>
 
                       <div className="w-28 sm:w-32">
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
+                        <label className="block text-[10px] font-bold text-[#81776C] uppercase tracking-wider mb-0.5">
                           Old Rate (₹)
                         </label>
                         <input
@@ -555,7 +556,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             copy[idx].oldPrice = e.target.value ? Number(e.target.value) : undefined;
                             setWeightPrices(copy);
                           }}
-                          className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#831843] focus:outline-none text-gray-500"
+                          className="w-full px-2.5 py-1.5 bg-[#FAF7F0] border border-[#E8E2D5] rounded-lg text-xs text-[#81776C] focus:border-[#30251F] focus:bg-white focus:outline-none"
                         />
                       </div>
 
@@ -581,15 +582,15 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   onClick={() => {
                     setWeightPrices([...weightPrices, { weight: '', price: price || 599 }]);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#831843] bg-pink-50 hover:bg-pink-100 rounded-xl transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-[#30251F] bg-white hover:bg-[#FAF7F0] border border-[#E8E2D5] rounded-full transition-colors cursor-pointer"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 text-[#C5A46D]" />
                   <span>Add Another Weight Option</span>
                 </button>
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-[#30251F] uppercase tracking-wider mb-1">
                   Weight / Size Options (Comma-separated)
                 </label>
                 <input
@@ -597,9 +598,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   placeholder="500g, 1kg, 2kg"
                   value={weightOptionsStr}
                   onChange={(e) => setWeightOptionsStr(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#E8E2D5] rounded-xl text-xs text-[#30251F] focus:border-[#30251F] focus:outline-none"
                 />
-                <p className="text-[11px] text-gray-500 mt-1">
+                <p className="text-[11px] text-[#81776C] mt-1">
                   Customers can select among these weights at the base price of ₹{price}.
                 </p>
               </div>
@@ -607,10 +608,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </div>
 
           {isCakeCategory && (
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="bg-[#FAF7F0] p-4 rounded-2xl border border-[#E8E2D5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <span className="text-xs font-bold text-gray-900 block">Offer Cake Flavour Selection</span>
-                <span className="text-[11px] text-gray-500">Customers must choose from the predefined cake flavours when ordering this product.</span>
+                <span className="text-xs font-bold text-[#30251F] block">Offer Cake Flavour Selection</span>
+                <span className="text-[11px] text-[#81776C]">Customers must choose from the predefined cake flavours when ordering this product.</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -619,16 +620,16 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   onChange={(e) => setAllowFlavourSelection(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#831843]"></div>
+                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#30251F]"></div>
               </label>
             </div>
           )}
 
           {/* Row 6: Custom Message Toggle */}
-          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="bg-[#FAF7F0] p-4 rounded-2xl border border-[#E8E2D5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <span className="text-xs font-bold text-gray-900 block">Allow Custom Message on Cake or Card</span>
-              <span className="text-[11px] text-gray-500">Provides text field for customer to add piping message</span>
+              <span className="text-xs font-bold text-[#30251F] block">Allow Custom Message on Cake or Card</span>
+              <span className="text-[11px] text-[#81776C]">Provides text field for customer to add piping message</span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -637,49 +638,49 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 onChange={(e) => setAllowCustomMessage(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#831843]"></div>
+              <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#30251F]"></div>
             </label>
           </div>
 
           {/* Row 7: Flags (In Stock, Featured, Bestseller) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <label className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer">
+            <label className="flex items-center gap-2.5 p-3.5 bg-[#FAF7F0] rounded-xl border border-[#E8E2D5] cursor-pointer">
               <input
                 type="checkbox"
                 checked={available}
                 onChange={(e) => setAvailable(e.target.checked)}
-                className="w-4 h-4 text-[#831843] rounded"
+                className="w-4 h-4 text-[#30251F] rounded accent-[#30251F]"
               />
-              <span className="text-xs font-bold text-gray-800">In Stock for Order</span>
+              <span className="text-xs font-bold text-[#30251F]">In Stock for Order</span>
             </label>
 
-            <label className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer">
+            <label className="flex items-center gap-2.5 p-3.5 bg-[#FAF7F0] rounded-xl border border-[#E8E2D5] cursor-pointer">
               <input
                 type="checkbox"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="w-4 h-4 text-[#831843] rounded"
+                className="w-4 h-4 text-[#30251F] rounded accent-[#30251F]"
               />
-              <span className="text-xs font-bold text-gray-800">Show on Featured</span>
+              <span className="text-xs font-bold text-[#30251F]">Show on Featured</span>
             </label>
 
-            <label className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer">
+            <label className="flex items-center gap-2.5 p-3.5 bg-[#FAF7F0] rounded-xl border border-[#E8E2D5] cursor-pointer">
               <input
                 type="checkbox"
                 checked={bestseller}
                 onChange={(e) => setBestseller(e.target.checked)}
-                className="w-4 h-4 text-[#831843] rounded"
+                className="w-4 h-4 text-[#30251F] rounded accent-[#30251F]"
               />
-              <span className="text-xs font-bold text-gray-800">Show on Bestsellers</span>
+              <span className="text-xs font-bold text-[#30251F]">Show on Bestsellers</span>
             </label>
           </div>
 
           {/* Form Actions */}
-          <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
+          <div className="pt-5 border-t border-[#E8E2D5] flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-50"
+              className="px-6 py-2.5 rounded-full border border-[#E8E2D5] text-xs font-bold text-[#81776C] hover:bg-[#FAF7F0] transition-colors"
             >
               Cancel
             </button>
@@ -687,11 +688,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-[#831843] hover:bg-[#6b1336] text-white text-xs font-bold shadow-md transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="btn-editorial-primary px-7 py-2.5 rounded-full text-xs font-bold tracking-wider shadow-sm transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#C5A46D]" />
                   <span>Saving Product...</span>
                 </>
               ) : (
