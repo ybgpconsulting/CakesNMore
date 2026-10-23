@@ -328,7 +328,7 @@ export const AdminMenuImportPage: React.FC = () => {
           id: `cat-${catSlug}`,
           name: catName,
           slug: catSlug,
-          description: `Handcrafted ${catName} freshly prepared in Sector 76 Noida.`,
+          description: `${catName} listed in the current catalogue.`,
           image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop',
           active: true,
           displayOrder: categories.length + idx + 1,

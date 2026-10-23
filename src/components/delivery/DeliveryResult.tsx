@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle2, XCircle, MapPin, ArrowRight, RotateCcw } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { formatDistanceKm } from '../../utils/distance';
-import { generateWhatsAppUrl } from '../../utils/urls';
+import { generateWhatsAppUrl, WHATSAPP_ORDER_MESSAGE } from '../../utils/urls';
 import { useStore } from '../../context/StoreContext';
 import { DeliverySettings, VerifiedLocation } from '../../types';
 
@@ -25,7 +25,7 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
 
   const whatsappInquiryUrl = generateWhatsAppUrl(
     storeSettings.whatsappNumber,
-    `Hi Cakes N More Sector 76 Noida, I am checking delivery for my location (approx ${formattedDist} away). Can you deliver cakes/flowers to my area?`
+    WHATSAPP_ORDER_MESSAGE
   );
 
   if (isAvailable) {
@@ -92,15 +92,16 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
           Outside Standard Delivery Radius
         </span>
         <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#30251F]">
-          Beyond Our Freshness Guarantee Radius
+          Outside the Configured Delivery Area
         </h3>
         <p className="text-sm sm:text-base text-[#81776C] max-w-md mx-auto">
           Your location is approximately{' '}
           <strong className="text-[#30251F] font-bold">{formattedDist}</strong> from our boutique.
         </p>
         <p className="text-xs text-[#81776C] max-w-sm mx-auto leading-relaxed">
-          Our standard fresh cake and flower delivery radius is{' '}
-          <strong className="text-[#30251F] font-semibold">within {settings.radiusKm} km of Sector 76, Noida</strong> to preserve peak oven freshness and flower vitality.
+          Your location is outside the current configured delivery radius of{' '}
+          <strong className="font-semibold text-[#30251F]">{settings.radiusKm} km</strong>.
+          Contact the store to ask about available alternatives.
         </p>
       </div>
 

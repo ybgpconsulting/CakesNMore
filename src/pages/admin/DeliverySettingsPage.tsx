@@ -95,7 +95,7 @@ export const DeliverySettingsPage: React.FC = () => {
             Delivery Radius &amp; Store Location
           </h1>
           <p className="text-xs text-[#81776C] mt-1">
-            Configure the delivery availability gate, store GPS coordinates, and delivery radius (default 10 km).
+            Configure the delivery availability gate, store GPS coordinates, and service radius.
           </p>
         </div>
 
@@ -199,7 +199,7 @@ export const DeliverySettingsPage: React.FC = () => {
             <div>
               <h2 className="font-serif text-lg font-normal text-[#30251F]">Cakes N More Store GPS Coordinates</h2>
               <p className="text-xs text-[#81776C]">
-                The 10 km radius is calculated strictly from these exact store coordinates.
+                The configured radius is calculated from these store coordinates.
               </p>
             </div>
 

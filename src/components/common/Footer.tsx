@@ -10,164 +10,164 @@ import {
   Twitter,
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { safeExternalUrl } from '../../utils/urls';
+import { generateWhatsAppUrl, safeExternalUrl, WHATSAPP_ORDER_MESSAGE } from '../../utils/urls';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const Footer: React.FC = () => {
   const { settings, categories } = useStore();
   const currentYear = new Date().getFullYear();
 
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi, I would like to inquire about products at Cakes N More, Sector 76 Noida.'
-  )}`;
+  const instagramUrl = safeExternalUrl(settings.instagramUrl);
+  const facebookUrl = safeExternalUrl(settings.facebookUrl);
+  const twitterUrl = safeExternalUrl(settings.twitterUrl);
+  const zomatoUrl = safeExternalUrl(settings.zomatoUrl);
+  const swiggyUrl = safeExternalUrl(settings.swiggyUrl);
+  const whatsappUrl = generateWhatsAppUrl(settings.whatsappNumber, WHATSAPP_ORDER_MESSAGE);
 
   return (
-    <footer className="bg-[#30251F] text-[#FAF7F0] pt-14 pb-28 md:pb-12 border-t border-[#4A3B32]">
+    <footer className="border-t border-[#4A3B32] bg-[#30251F] pb-28 pt-14 text-[#FAF7F0] md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        <div className="mb-10 grid grid-cols-1 items-start gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_0.9fr_1fr] lg:gap-12">
           
-          {/* Brand Col 1 & 2 */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-serif text-3xl font-bold text-white tracking-tight leading-tight">
+              <h3 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-white">
                 Cakes N More
               </h3>
-              <p className="eyebrow-tag text-[10px] text-[#C5A46D]">
-                Artisanal Atelier &amp; Botanical Florist • Sector 76 Noida
+              <p className="eyebrow-tag text-[10px] leading-relaxed text-[#C5A46D]">
+                Cakes, flowers &amp; thoughtful gifts · Sector 76, Noida
               </p>
             </div>
 
-            <p className="text-sm text-[#B4ACA2] leading-relaxed max-w-sm pt-1">
-              100% pure vegetarian handcrafted celebration cakes, fresh morning flowers, indoor plants, and luxury gift hampers prepared at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
+            <p className="max-w-sm pt-1 text-sm leading-relaxed text-[#B4ACA2]">
+              Thoughtful cakes, fresh flowers, plants and gifts for the moments worth celebrating.
             </p>
 
-            {/* Social & WhatsApp */}
-            <div className="pt-2 flex items-center gap-3">
-              {settings.instagramUrl && (
+            <div className="flex items-center gap-2.5 pt-2">
+              {instagramUrl && (
                 <a
-                  href={safeExternalUrl(settings.instagramUrl)}
+                  href={instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Instagram"
-                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5A473C] text-white transition-colors hover:border-[#C5A46D] hover:bg-[#C5A46D]"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
-              {settings.facebookUrl && (
+              {facebookUrl && (
                 <a
-                  href={safeExternalUrl(settings.facebookUrl)}
+                  href={facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Facebook"
-                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5A473C] text-white transition-colors hover:border-[#C5A46D] hover:bg-[#C5A46D]"
                 >
                   <Facebook className="w-4 h-4" />
                 </a>
               )}
-              {settings.twitterUrl && (
+              {twitterUrl && (
                 <a
-                  href={safeExternalUrl(settings.twitterUrl)}
+                  href={twitterUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Twitter/X"
-                  className="w-9 h-9 rounded-full bg-[#4A3B32] hover:bg-[#C5A46D] text-white flex items-center justify-center transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5A473C] text-white transition-colors hover:border-[#C5A46D] hover:bg-[#C5A46D]"
                 >
                   <Twitter className="w-4 h-4" />
                 </a>
               )}
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Chat on WhatsApp"
-                className="w-9 h-9 rounded-full bg-[#244438] text-white flex items-center justify-center hover:bg-[#1A332A] transition-colors"
-              >
-                <WhatsAppIcon className="w-4 h-4" />
-              </a>
             </div>
+
+            {(zomatoUrl || swiggyUrl) && (
+              <div className="grid max-w-sm grid-cols-2 gap-3 pt-1">
+                {zomatoUrl && (
+                  <a
+                    href={zomatoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Order from Cakes N More on Zomato"
+                    className="group flex min-h-16 items-center gap-3 rounded-xl border border-[#5A473C] bg-[#3A2E27] px-3 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[#E23744]/70 hover:bg-[#43332D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E23744] focus-visible:ring-offset-2 focus-visible:ring-offset-[#30251F]"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white">
+                      <img
+                        src="https://cdn.simpleicons.org/zomato/E23744"
+                        alt=""
+                        width={24}
+                        height={24}
+                        loading="lazy"
+                        className="h-6 w-6"
+                      />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] text-[#B4ACA2]">Order on</span>
+                      <span className="block text-sm font-semibold text-white">Zomato</span>
+                    </span>
+                    <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-[#E23744] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                )}
+                {swiggyUrl && (
+                  <a
+                    href={swiggyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Order from Cakes N More on Swiggy"
+                    className="group flex min-h-16 items-center gap-3 rounded-xl border border-[#5A473C] bg-[#3A2E27] px-3 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[#FC8019]/70 hover:bg-[#43332D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FC8019] focus-visible:ring-offset-2 focus-visible:ring-offset-[#30251F]"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white">
+                      <img
+                        src="https://cdn.simpleicons.org/swiggy/FC8019"
+                        alt=""
+                        width={24}
+                        height={24}
+                        loading="lazy"
+                        className="h-6 w-6"
+                      />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] text-[#B4ACA2]">Order on</span>
+                      <span className="block text-sm font-semibold text-white">Swiggy</span>
+                    </span>
+                    <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-[#FC8019] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Navigate Col 3 */}
-          <div className="space-y-3">
-            <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Explore</h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link to="/" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Complete Catalogue
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Our Story &amp; Craft
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Visit Sector 76 Store
-                </Link>
-              </li>
-              <li>
-                <Link to="/shipping-and-delivery" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Delivery Guidelines
-                </Link>
-              </li>
-              <li>
-                <Link to="/returns-policy" className="text-[#B4ACA2] hover:text-white transition-colors">
-                  Returns &amp; Cancellations
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Collections Col 4 */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Collections</h4>
-            <ul className="space-y-2.5 text-sm">
-              {categories.slice(0, 6).map((cat) => (
+            <ul className="space-y-3 text-sm">
+              {categories
+                .filter((category) => category.active)
+                .sort((a, b) => a.displayOrder - b.displayOrder)
+                .map((cat) => (
                 <li key={cat.id}>
-                  <Link to={`/category/${cat.slug}`} className="text-[#B4ACA2] hover:text-white transition-colors">
+                  <Link to={`/category/${cat.slug}`} className="text-[#B4ACA2] transition-colors hover:text-white">
                     {cat.name}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link to="/terms-and-conditions" className="text-xs text-[#81776C] hover:text-white transition-colors pt-1 block">
-                  Terms &amp; Conditions
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy-policy" className="text-xs text-[#81776C] hover:text-white transition-colors block">
-                  Privacy Policy
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Boutique Visit Col 5 */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <h4 className="eyebrow-tag text-[11px] text-[#C5A46D]">Visit Atelier</h4>
-            <div className="space-y-3 text-xs text-[#B4ACA2]">
+            <div className="space-y-4 text-xs text-[#B4ACA2]">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#C5A46D] shrink-0 mt-0.5" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#C5A46D]" />
                 <p className="leading-relaxed">{settings.address}</p>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-[#C5A46D] shrink-0" />
+                <Phone className="h-4 w-4 shrink-0 text-[#C5A46D]" />
                 <a href={`tel:${settings.phone}`} className="hover:text-white font-medium">
                   {settings.phone}
                 </a>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <WhatsAppIcon className="w-4 h-4 shrink-0 text-[#E8CECB]" />
+                <WhatsAppIcon className="h-4 w-4 shrink-0 text-[#E8CECB]" />
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -179,11 +179,11 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-[#C5A46D] shrink-0 mt-0.5" />
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#C5A46D]" />
                 <span>{settings.openingHours}</span>
               </div>
 
-              <div className="pt-1">
+              <div className="border-t border-[#4A3B32] pt-3">
                 <a
                   href={safeExternalUrl(settings.mapsUrl)}
                   target="_blank"
@@ -195,47 +195,27 @@ export const Footer: React.FC = () => {
                 </a>
               </div>
 
-              {(settings.zomatoUrl || settings.swiggyUrl || settings.magicpinUrl) && (
-                <div className="pt-3 border-t border-[#4A3B32] space-y-1.5">
-                  <p className="eyebrow-tag text-[10px] text-[#C5A46D]">Delivery Partners</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
-                    {settings.zomatoUrl && <a href={safeExternalUrl(settings.zomatoUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Zomato</a>}
-                    {settings.swiggyUrl && <a href={safeExternalUrl(settings.swiggyUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Swiggy</a>}
-                    {settings.magicpinUrl && <a href={safeExternalUrl(settings.magicpinUrl)} target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline">Magicpin</a>}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Local Service Areas */}
-        <div className="pt-6 border-t border-[#4A3B32] mb-6">
-          <p className="text-[11px] text-[#81776C] leading-relaxed">
-            <strong className="text-[#C5A46D]">Fresh Doorstep Delivery Across Noida:</strong> Sector 76, Sector 75, Sector 74, Sector 77, Sector 78, Sector 79, Sector 50, Sector 51, Amrapali Silicon City, Amrapali Crystal Homes, Mahagun Moderne, Supertech Capetown, Aditya Urban Casa, and Central Noida. 100% Pure Vegetarian Eggless Cakes • Midnight Delivery • Hand-Tied Morning Blooms.
-          </p>
-        </div>
-
-        {/* Bottom Credits & Developer */}
-        <div className="pt-6 border-t border-[#4A3B32] flex flex-col sm:flex-row items-center justify-between text-xs text-[#81776C] gap-4">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2">
-            <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
-            <div className="flex items-center gap-3 text-[11px]">
-              <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
-              <span>•</span>
-              <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
-              <span>•</span>
-              <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
-              <span>•</span>
-              <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
-            </div>
-          </div>
+        <div className="relative flex flex-col items-center gap-4 border-t border-[#4A3B32] pt-6 text-xs text-[#81776C] sm:flex-row">
+          <p>© {currentYear} Cakes N More. All rights reserved.</p>
+          <nav aria-label="Legal information" className="flex w-full items-center justify-center gap-3 text-[11px] sm:absolute sm:left-1/2 sm:w-auto sm:-translate-x-1/2">
+            <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
+            <span aria-hidden="true">•</span>
+            <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
+            <span aria-hidden="true">•</span>
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
+            <span aria-hidden="true">•</span>
+            <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
+          </nav>
           <a
             href="https://ybgp.in"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Looking to grow your business? Your business growth partner. Designed and developed by YBGP. Visit ybgp.in"
-            className="flex items-center gap-3 rounded-md text-right text-[#B4ACA2] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D] focus-visible:ring-offset-4 focus-visible:ring-offset-[#30251F]"
+            className="flex items-center gap-3 rounded-md text-right text-[#B4ACA2] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D] focus-visible:ring-offset-4 focus-visible:ring-offset-[#30251F] sm:ml-auto"
           >
             <span className="flex flex-col items-end gap-0.5">
               <span className="font-semibold text-white text-[11px]">Looking to grow your business?</span>

@@ -4,6 +4,7 @@ import { Home, MapPin, ShoppingBag, Store } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useDeliveryAvailability } from '../../context/DeliveryContext';
 import { useStore } from '../../context/StoreContext';
+import { generateWhatsAppUrl, WHATSAPP_ORDER_MESSAGE } from '../../utils/urls';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const MobileBottomNav: React.FC = () => {
@@ -16,10 +17,7 @@ export const MobileBottomNav: React.FC = () => {
     return null;
   }
 
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi Cakes N More, I would like to inquire about same-day delivery in Sector 76 Noida.'
-  )}`;
+  const whatsappUrl = generateWhatsAppUrl(settings.whatsappNumber, WHATSAPP_ORDER_MESSAGE);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;

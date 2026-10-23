@@ -96,23 +96,23 @@ const policyContent: Record<
   },
   shipping: {
     title: 'Shipping & Delivery',
-    description: 'Local delivery rules, service radius, and order fulfillment details for Cakes N More.',
+    description: 'Delivery eligibility and order fulfillment details for Cakes N More.',
     icon: Truck,
     intro:
-      'We take pride in swift, temperature-conscious local delivery originating from Shop 29, Sector 76, Noida. Delivery availability depends on your verified distance and store timing.',
+      'Delivery availability is determined by your verified address and current store settings. Check whether your location is eligible before placing a delivery order.',
     sections: [
       {
-        heading: 'Service Area & Radius',
+        heading: 'Service Area & Eligibility',
         body: [
-          'Our standard local delivery radius covers up to 10 km from our Sector 76, Noida store, encompassing societies across Central Noida and Greater Noida West (Gaur City).',
-          'Delivery may be temporarily restricted during severe weather conditions, intense road blockages, or outside operating hours.',
+          'Use the delivery checker to verify your address against the current store radius and service conditions. A postal code is only a preliminary check; exact location verification determines eligibility.',
+          'Availability may change. The store will confirm whether an order can be delivered to the requested address.',
         ],
       },
       {
-        heading: 'Dispatch Timelines & Same-Day Service',
+        heading: 'Preparation & Delivery Timing',
         body: [
-          'Standard fresh cakes and blooms are baked and hand-arranged same-day for orders confirmed during store hours.',
-          'Most orders reach customers within 60 to 120 minutes of preparation confirmation, depending on delivery distance and traffic.',
+          'Preparation and arrival times vary by product, order details, store availability, and travel conditions.',
+          'Contact the store to confirm an estimated time before placing a time-sensitive order.',
         ],
       },
       {
@@ -129,10 +129,10 @@ const policyContent: Record<
     description: 'Return and refund guidance for custom orders, damaged items, and order cancellations.',
     icon: RotateCcw,
     intro:
-      'Because our cakes are baked fresh on order and our flowers are hand-cut, each creation is treated with delicate care. This policy outlines our return and replacement approach.',
+      'This page outlines the store’s process for order cancellations and requests about perishable items. Contact the store promptly if there is an issue with an order.',
     sections: [
       {
-        heading: 'Perishable Freshness & Quality Guarantee',
+        heading: 'Damaged or Incorrect Items',
         body: [
           'Fresh cakes and floral bouquets are perishable. Please inspect your delivery upon arrival.',
           'If an item arrives damaged in transit, incorrect, or spoiled, notify us within 2 hours of delivery with photographic evidence on WhatsApp.',

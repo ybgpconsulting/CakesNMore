@@ -198,6 +198,9 @@ export const AdminSettingsPage: React.FC = () => {
               Social Media Channels
             </h2>
           </div>
+          <p className="text-xs text-[#81776C]">
+            Social links appear in the website footer only when a valid URL is added here.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>

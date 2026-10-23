@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Clock, ExternalLink, Mail, MapPin, Navigation, Phone, Send, Sparkles, Store } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
-import { generateWhatsAppUrl, normalizeWhatsAppNumber, safeExternalUrl } from '../utils/urls';
+import {
+  generateWhatsAppUrl,
+  normalizeWhatsAppNumber,
+  safeExternalUrl,
+  WHATSAPP_ORDER_MESSAGE,
+} from '../utils/urls';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getProductionUrl } from '../utils/seo';
 
@@ -16,7 +21,7 @@ export const ContactPage: React.FC = () => {
 
   const cleanPhone = settings.phone.replace(/[^0-9+]/g, '') || '+919999517599';
   const cleanWhatsApp = normalizeWhatsAppNumber(settings.whatsappNumber);
-  const whatsappUrl = generateWhatsAppUrl(cleanWhatsApp);
+  const whatsappUrl = generateWhatsAppUrl(cleanWhatsApp, WHATSAPP_ORDER_MESSAGE);
   const deliveryPartners = [
     { name: 'Zomato', url: settings.zomatoUrl, logo: 'https://cdn.simpleicons.org/zomato/E23744' },
     { name: 'Swiggy', url: settings.swiggyUrl, logo: 'https://cdn.simpleicons.org/swiggy/FC8019' },
@@ -203,7 +208,6 @@ Please let me know availability and pricing.`;
                 <div>
                   <h3 className="font-serif text-base font-normal text-[#30251F]">Operating Hours</h3>
                   <p className="text-xs text-[#81776C]">{settings.openingHours}</p>
-                  <p className="text-[11px] text-[#244438] font-bold mt-0.5">Open 7 Days a Week • Same-Day Dispatch</p>
                 </div>
               </div>
             </div>
@@ -212,7 +216,7 @@ Please let me know availability and pricing.`;
               <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E2D5] space-y-4 shadow-sm">
                 <div>
                   <h3 className="font-serif text-lg font-normal text-[#30251F]">Order on Delivery Apps</h3>
-                  <p className="text-xs text-[#81776C] mt-1">Instant neighborhood dispatch on leading delivery platforms.</p>
+                  <p className="text-xs text-[#81776C] mt-1">Visit Cakes N More on these current delivery platform listings.</p>
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
                   {deliveryPartners.map((partner) => (

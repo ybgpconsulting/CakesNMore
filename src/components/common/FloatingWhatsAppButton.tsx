@@ -1,9 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext';
+import { generateWhatsAppUrl, WHATSAPP_ORDER_MESSAGE } from '../../utils/urls';
 import { WhatsAppIcon } from './WhatsAppIcon';
-
-const PREFILLED_MESSAGE = 'Hi! I visited your website and would like to place an order in Sector 76 Noida.';
 
 export const FloatingWhatsAppButton: React.FC = () => {
   const { settings } = useStore();
@@ -18,8 +17,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
   const isProductPage = location.pathname.startsWith('/product/');
   const isHomePage = location.pathname === '/';
 
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(PREFILLED_MESSAGE)}`;
+  const whatsappUrl = generateWhatsAppUrl(settings.whatsappNumber, WHATSAPP_ORDER_MESSAGE);
 
   return (
     <a

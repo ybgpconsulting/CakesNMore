@@ -38,7 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const primaryImage =
     product.images && product.images.length > 0
       ? product.images[0]
-      : 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop';
+      : '/social-share-1200x630.jpg';
 
   const secondaryImage =
     product.images && product.images.length > 1 ? product.images[1] : primaryImage;
@@ -71,9 +71,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {discountPercent}% OFF
               </span>
             )}
+            {product.featured && (
+              <span className="bg-white/95 text-[#30251F] border border-[#E8E2D5] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
+                Featured
+              </span>
+            )}
             {product.bestseller && (
               <span className="bg-white/95 text-[#30251F] border border-[#E8E2D5] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
-                Signature
+                Bestseller
               </span>
             )}
           </div>

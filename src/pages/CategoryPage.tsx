@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronRight, Home, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
 import { useStore } from '../context/StoreContext';
@@ -112,41 +112,27 @@ export const CategoryPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-[#81776C] mb-6" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-[#30251F] flex items-center gap-1 transition-colors">
-            <Home className="w-3.5 h-3.5" />
-            <span>Home</span>
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <Link to="/shop" className="hover:text-[#30251F] transition-colors">
-            Catalogue
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <span className="text-[#30251F] font-semibold">{currentCategory.name}</span>
-        </nav>
-
         {/* Category Editorial Hero Banner */}
-        <div className="relative rounded-3xl overflow-hidden mb-10 shadow-xs border border-[#E8E2D5] bg-[#FFFFFF]">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 p-6 sm:p-10 space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FAF7F0] text-[#C5A46D] border border-[#E8E2D5] text-[11px] font-bold uppercase tracking-[0.2em]">
+        <div className="relative mb-8 h-auto overflow-hidden rounded-3xl border border-[#E8E2D5] bg-white shadow-[0_12px_36px_rgba(89,58,50,0.08)] md:mb-10 md:h-[320px] lg:h-[360px]">
+          <div className="grid h-full grid-cols-1 md:grid-cols-12">
+            <div className="flex min-h-[260px] flex-col justify-center p-6 sm:min-h-[280px] sm:p-10 md:col-span-8 md:min-h-0 md:p-10 lg:p-14">
+              <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#E8E2D5] bg-[#FAF7F0] px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#A47D40] sm:text-[11px]">
                 <Sparkles className="w-3.5 h-3.5 text-[#C5A46D]" />
                 <span>Sector 76 Specialty Collection</span>
               </div>
-              <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#30251F] tracking-tight">
+              <h1 className="line-clamp-2 font-serif text-4xl font-medium leading-[1.05] tracking-tight text-[#30251F] sm:text-5xl lg:text-6xl">
                 {currentCategory.name}
               </h1>
-              <p className="text-sm sm:text-base text-[#81776C] max-w-xl leading-relaxed font-normal">
+              <p className="mt-4 line-clamp-2 max-w-2xl text-sm font-normal leading-relaxed text-[#81776C] sm:text-base">
                 {currentCategory.description}
               </p>
-              <div className="pt-2 text-xs text-[#244438] font-medium flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#244438]" />
-                <span>Handcrafted fresh on order at our Sector 76 boutique.</span>
+              <div className="mt-5 flex items-center gap-2 text-xs font-medium text-[#244438] sm:text-sm">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-[#244438]" />
+                <span>Prepared with care at our Sector 76 boutique.</span>
               </div>
             </div>
 
-            <div className="md:col-span-4 h-48 md:h-full min-h-[220px] bg-[#FAF7F0] overflow-hidden">
+            <div className="group relative h-[220px] overflow-hidden bg-[#FAF7F0] sm:h-[280px] md:col-span-4 md:h-full">
               <img
                 src={currentCategory.image}
                 alt={`${currentCategory.name} in Sector 76 Noida - Cakes N More`}
@@ -154,29 +140,11 @@ export const CategoryPage: React.FC = () => {
                 decoding="async"
                 width={400}
                 height={300}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#30251F]/10 via-transparent to-transparent md:bg-gradient-to-l md:from-transparent md:to-white/10" />
             </div>
           </div>
-        </div>
-
-        {/* Quick Category Switcher Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
-          {categories
-            .filter((c) => c.active)
-            .map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/category/${cat.slug}`}
-                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 duration-200 cursor-pointer ${
-                  cat.id === currentCategory.id
-                    ? 'bg-[#30251F] text-[#FAF7F0] shadow-sm'
-                    : 'bg-[#FFFFFF] text-[#81776C] border border-[#E8E2D5] hover:border-[#30251F] hover:text-[#30251F]'
-                }`}
-              >
-                {cat.name}
-              </Link>
-            ))}
         </div>
 
         {/* Toolbar: Count & Sort */}
@@ -193,7 +161,7 @@ export const CategoryPage: React.FC = () => {
               aria-label="Sort category products"
               className="bg-[#FAF7F0] border border-[#E8E2D5] rounded-full px-3.5 py-1.5 text-xs font-medium text-[#30251F] focus:outline-none focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] cursor-pointer"
             >
-              <option value="recommended" className="bg-white">Curated Recommendation</option>
+              <option value="recommended" className="bg-white">Recommended</option>
               <option value="price-low" className="bg-white">Price: Low to High</option>
               <option value="price-high" className="bg-white">Price: High to Low</option>
               <option value="name-asc" className="bg-white">Alphabetical (A-Z)</option>
@@ -220,25 +188,6 @@ export const CategoryPage: React.FC = () => {
           </div>
         )}
 
-        {/* Local Category SEO Reassurance Block */}
-        <section className="mt-16 bg-[#FFFFFF] rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] shadow-xs">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#30251F] mb-3">
-            Why Order {currentCategory.name} from Cakes N More Sector 76 Noida?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-[#81776C] leading-relaxed">
-            <p>
-              At <strong className="text-[#30251F]">Cakes N More</strong>, our {currentCategory.name.toLowerCase()} are curated with pure artisanal dedication.
-              Conveniently located at <em className="text-[#30251F] not-italic font-medium">Shop 29, Ground Floor, Amrapali Crystal Home Shopping Arcade</em> (Sector 76 Noida),
-              we serve families and celebration hosts across Amrapali Silicon City, Amrapali Crystal Homes, Aditya Urban Casa,
-              JM Orchid, and surrounding Noida sectors (74, 75, 77, 78, 79, 50).
-            </p>
-            <p>
-              Need express delivery or a bespoke creation? Add items to your bag or connect directly on WhatsApp
-              (<a href="tel:+919999517599" className="text-[#30251F] font-semibold hover:underline">+91 9999517599</a>)
-              for immediate concierge assistance with custom messages, floral designs, or delivery scheduling.
-            </p>
-          </div>
-        </section>
       </div>
     </div>
   );

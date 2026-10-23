@@ -1,3 +1,6 @@
+export const WHATSAPP_ORDER_MESSAGE =
+  'Hi Cakes N More! I visited your website and would like to place an order.';
+
 export function safeExternalUrl(value: string | undefined): string {
   if (!value) return '';
   try {

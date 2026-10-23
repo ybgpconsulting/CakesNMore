@@ -14,7 +14,56 @@ import { useCart } from '../../context/CartContext';
 import { useDeliveryAvailability } from '../../context/DeliveryContext';
 import { useStore } from '../../context/StoreContext';
 import { WhatsAppIcon } from './WhatsAppIcon';
-import { safeExternalUrl } from '../../utils/urls';
+import { generateWhatsAppUrl, safeExternalUrl, WHATSAPP_ORDER_MESSAGE } from '../../utils/urls';
+
+interface OrderOption {
+  name: string;
+  href: string;
+  logo: string;
+  color: string;
+}
+
+const OrderDropdown: React.FC<{ options: OrderOption[]; mobile?: boolean }> = ({
+  options,
+  mobile = false,
+}) => (
+  <details className={`group relative ${mobile ? 'w-full' : 'hidden sm:block'}`}>
+    <summary
+      className={`flex cursor-pointer list-none items-center justify-center gap-2 rounded-full text-xs font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D] focus-visible:ring-offset-2 ${
+        mobile
+          ? 'w-full rounded-xl border border-[#E8E2D5] bg-white px-4 py-3.5 text-[#30251F]'
+          : 'btn-editorial-primary editorial-shimmer px-4.5 py-2.5 text-white'
+      }`}
+    >
+      Order online
+      <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+    </summary>
+    <div
+      className={`absolute z-50 mt-2 overflow-hidden rounded-2xl border border-[#E8E2D5] bg-white p-2 shadow-[0_16px_40px_rgba(48,37,31,0.18)] ${
+        mobile ? 'inset-x-0 bottom-full mb-2 mt-0' : 'right-0 top-full w-56'
+      }`}
+    >
+      {options.map((option) => (
+        <a
+          key={option.name}
+          href={option.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#30251F] transition-colors hover:bg-[#FAF7F0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C5A46D]"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-[#E8E2D5]">
+            {option.name === 'WhatsApp' ? (
+              <WhatsAppIcon className="h-5 w-5" color="#25D366" />
+            ) : (
+              <img src={option.logo} alt="" className="h-5 w-5" />
+            )}
+          </span>
+          <span className="font-semibold">{option.name}</span>
+        </a>
+      ))}
+    </div>
+  </details>
+);
 
 export const Header: React.FC = () => {
   const { totalQuantity } = useCart();
@@ -35,17 +84,43 @@ export const Header: React.FC = () => {
     }
   };
 
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const directWhatsAppUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi Cakes N More Sector 76! I would like to inquire about fresh celebration cakes and flowers.'
-  )}`;
+  const directWhatsAppUrl = generateWhatsAppUrl(settings.whatsappNumber, WHATSAPP_ORDER_MESSAGE);
+  const orderOptions: OrderOption[] = [
+    {
+      name: 'Swiggy',
+      href: safeExternalUrl(settings.swiggyUrl),
+      logo: 'https://cdn.simpleicons.org/swiggy/FC8019',
+      color: '#FC8019',
+    },
+    {
+      name: 'Zomato',
+      href: safeExternalUrl(settings.zomatoUrl),
+      logo: 'https://cdn.simpleicons.org/zomato/E23744',
+      color: '#E23744',
+    },
+    {
+      name: 'WhatsApp',
+      href: directWhatsAppUrl,
+      logo: '',
+      color: '#25D366',
+    },
+  ].filter((option) => option.name === 'WhatsApp' || option.href);
 
   const navLinks = [
     { name: 'Shop All', path: '/shop' },
-    { name: 'Cakes', path: '/category/cakes' },
-    { name: 'Flowers', path: '/category/flowers' },
-    { name: 'Gifts & Hampers', path: '/category/gifts' },
+    ...categories
+      .filter((category) => category.active)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .map((category) => ({
+        name: category.name,
+        path: `/category/${category.slug}`,
+      })),
     { name: 'About', path: '/about' },
+    ...(!categories.some(
+      (category) => category.active && category.name.trim().toLowerCase() === 'contact'
+    )
+      ? [{ name: 'Contact', path: '/contact' }]
+      : []),
   ];
 
   const isActive = (path: string) => {
@@ -75,34 +150,43 @@ export const Header: React.FC = () => {
       )}
 
       {/* Main Header Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="my-2 sm:my-3 flex h-16 items-center justify-between gap-3 rounded-full border border-[#C5A46D]/80 bg-white/80 px-3 shadow-[0_5px_18px_rgba(130,79,65,0.08)] sm:h-20 sm:gap-4 sm:px-5">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="my-2 sm:my-3 flex h-16 items-center justify-between gap-3 rounded-[1.25rem] border border-[#C5A46D]/70 bg-white/90 px-3 shadow-[0_8px_24px_rgba(89,58,50,0.1)] backdrop-blur-md transition-shadow hover:shadow-[0_10px_28px_rgba(89,58,50,0.13)] sm:h-20 sm:gap-4 sm:rounded-full sm:px-5">
           
           {/* Brand Identity */}
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center group">
+          <div className="flex items-center gap-3 sm:gap-6">
+            <Link to="/" aria-label="Cakes N More home" className="flex shrink-0 items-center group">
               <img
                 src="/logo-horizontal-640w.png"
                 alt="Cakes N More"
-                className="h-9 w-auto max-w-[150px] object-contain sm:h-12 sm:max-w-[200px]"
+                className="h-10 w-auto object-contain sm:h-14"
               />
             </Link>
+
+            <span
+              role="img"
+              aria-label="100% vegetarian"
+              title="100% vegetarian"
+              className="flex h-5 w-5 shrink-0 items-center justify-center border-2 border-[#16813B] bg-white sm:h-6 sm:w-6"
+            >
+              <span className="h-2 w-2 rounded-full bg-[#16813B] sm:h-2.5 sm:w-2.5" />
+            </span>
 
             {/* Desktop Location Pill */}
             <button
               type="button"
               onClick={openDeliveryGate}
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E8E2D5] hover:border-[#C5A46D] text-[#81776C] hover:text-[#30251F] text-xs font-medium transition-all shadow-xs"
+              className="hidden lg:inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#FAF7F0] border border-[#E8E2D5] hover:border-[#C5A46D] text-[#81776C] hover:text-[#30251F] text-[10px] font-medium transition-all"
               title="Verify delivery availability in Noida"
             >
               <MapPin className="w-3.5 h-3.5 text-[#C5A46D]" />
-              <span>{verifiedLocation?.verified ? 'Delivering to Sec 76 ✓' : 'Noida Sector 76'}</span>
+              <span>{verifiedLocation?.verified ? 'Sec 76 ✓' : 'Sector 76'}</span>
               <ChevronDown className="w-3 h-3 text-[#B4ACA2]" />
             </button>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1">
             {navLinks.map((item) => (
               <Link
                 key={item.name}
@@ -154,16 +238,7 @@ export const Header: React.FC = () => {
               )}
             </Link>
 
-            {/* WhatsApp Concierge CTA */}
-            <a
-              href={directWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-editorial-primary editorial-shimmer hidden sm:inline-flex items-center gap-2 px-4.5 py-2.5 rounded-full text-xs font-semibold tracking-wide"
-            >
-              <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
-              <span>WhatsApp Order</span>
-            </a>
+            <OrderDropdown options={orderOptions} />
 
             {/* Mobile Menu Toggle */}
             <button
@@ -171,7 +246,7 @@ export const Header: React.FC = () => {
               onClick={() => setMobileMenuOpen((open) => !open)}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}
-              className="md:hidden p-2 text-[#30251F] hover:bg-white rounded-full border border-[#E8E2D5] transition-colors"
+              className="xl:hidden p-2 text-[#30251F] hover:bg-white rounded-full border border-[#E8E2D5] transition-colors"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -181,7 +256,7 @@ export const Header: React.FC = () => {
 
       {/* Mobile Drawer (Editorial & Clean) */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-[64px] bottom-0 bg-[#FAF7F0] z-50 overflow-y-auto border-t border-[#E8E2D5] p-6 pb-28 flex flex-col justify-between animate-in fade-in duration-200">
+        <div className="xl:hidden fixed inset-x-0 top-[64px] bottom-0 bg-[#FAF7F0] z-50 overflow-y-auto border-t border-[#E8E2D5] p-6 pb-28 flex flex-col justify-between animate-in fade-in duration-200">
           <div className="space-y-6">
             {/* Search Input in Drawer */}
             <form onSubmit={handleSearch} className="relative">
@@ -213,25 +288,6 @@ export const Header: React.FC = () => {
               ))}
             </nav>
 
-            {/* Categories Quick List */}
-            {categories.length > 0 && (
-              <div className="pt-2 border-t border-[#E8E2D5]">
-                <p className="eyebrow-tag mb-3">Browse Categories</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {categories.filter((c) => c.active).map((cat) => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="p-3 bg-white border border-[#E8E2D5] rounded-xl text-xs font-medium text-[#30251F] hover:border-[#C5A46D] transition-colors flex items-center justify-between"
-                    >
-                      <span>{cat.name}</span>
-                      <span className="text-[10px] text-[#B4ACA2]">→</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Drawer Footer & Actions */}
@@ -248,15 +304,7 @@ export const Header: React.FC = () => {
               <span>Verify Delivery to Your Address</span>
             </button>
 
-            <a
-              href={directWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-editorial-whatsapp w-full py-3.5 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-white"
-            >
-              <WhatsAppIcon className="w-4 h-4 text-white" />
-              <span>Order on WhatsApp Concierge</span>
-            </a>
+            <OrderDropdown options={orderOptions} mobile />
           </div>
         </div>
       )}

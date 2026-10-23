@@ -54,13 +54,13 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
       setCheckedState({
         checked: true,
         isNoidaArea: true,
-        message: `Pincode ${cleanPin} is located in our primary Noida / Gautam Buddha Nagar service zone!`,
+        message: `Pincode ${cleanPin} is listed in our current service area.`,
       });
     } else {
       setCheckedState({
         checked: true,
         isNoidaArea: false,
-        message: `Pincode ${cleanPin} is outside our Sector 76 Noida primary delivery territory.`,
+        message: `Pincode ${cleanPin} is not included in our current service-area list.`,
       });
     }
   };
@@ -108,7 +108,7 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
                 <div className="text-xs space-y-1">
                   <p className="font-serif font-bold text-base text-[#244438]">{checkedState.message}</p>
                   <p className="text-[#81776C] leading-relaxed">
-                    <strong>Note:</strong> A pincode covers a wide area. To confirm exact delivery radius, please use your Current Location or select your address on the map:
+                    <strong>Note:</strong> A pincode covers a wide area. Confirm exact eligibility with your current location or a pin on the map:
                   </p>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
                 <div className="text-xs space-y-1">
                   <p className="font-serif font-bold text-base text-[#30251F]">{checkedState.message}</p>
                   <p className="text-[#81776C] leading-relaxed">
-                    Our fresh cake and flower delivery operates within a 10 km radius of Sector 76, Noida. If you are near our store border, you can still verify your exact coordinates on the map.
+                    Delivery availability depends on your exact location and the current store settings. If you may be near the service-area boundary, check your coordinates on the map or contact the store.
                   </p>
                 </div>
               </div>

@@ -4,8 +4,6 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
-  ChevronRight,
-  Home,
   MapPin,
   Minus,
   Plus,
@@ -152,20 +150,6 @@ export const CartPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-[#81776C] mb-6" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-[#30251F] flex items-center gap-1 transition-colors">
-            <Home className="w-3.5 h-3.5" />
-            <span>Home</span>
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <Link to="/shop" className="hover:text-[#30251F] transition-colors">
-            Catalogue
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <span className="text-[#30251F] font-semibold">Shopping Bag &amp; Concierge Checkout</span>
-        </nav>
-
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#30251F] tracking-tight mb-8">
           Review Your Selection
         </h1>
@@ -180,7 +164,7 @@ export const CartPage: React.FC = () => {
                 const itemSubtotal = itemPrice * item.quantity;
                 const imageSrc =
                   item.product.images?.[0] ||
-                  'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=300&auto=format&fit=crop';
+                  '/social-share-1200x630.jpg';
 
                 return (
                   <div key={index} className="py-6 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -282,7 +266,7 @@ export const CartPage: React.FC = () => {
                       Please verify delivery radius before finalizing
                     </h3>
                     <p className="text-xs text-[#81776C] leading-relaxed">
-                      We prepare our celebration cakes and floral bouquets fresh from our Sector 76, Noida boutique. Please verify your address is within our {deliverySettings.radiusKm} km radius before sending your order to WhatsApp.
+                      Verify your address against the current {deliverySettings.radiusKm} km delivery radius before sending your order to WhatsApp.
                     </p>
                   </div>
                 </div>
@@ -334,7 +318,7 @@ export const CartPage: React.FC = () => {
                   Recipient &amp; Delivery Destination
                 </h3>
                 <p className="text-xs text-[#81776C] mt-1">
-                  Enter your doorstep address in Noida. These details will be formatted directly into your WhatsApp concierge dispatch message.
+                  Enter the delivery address. These details will be formatted into your WhatsApp order message.
                 </p>
               </div>
 

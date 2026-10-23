@@ -2,11 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { OCCASIONS } from '../../data/initialData';
+import { useStore } from '../../context/StoreContext';
 
 export const OccasionSection: React.FC = () => {
+  const { categories, products } = useStore();
+
+  const getOccasionImage = (categorySlug: string, fallbackImage: string) => {
+    const category = categories.find((item) => item.slug === categorySlug);
+    const product = products.find(
+      (item) =>
+        item.available &&
+        (item.categorySlug === categorySlug || item.categoryId === category?.id) &&
+        item.images?.[0]
+    );
+    return product?.images[0] || category?.image || fallbackImage;
+  };
+
   return (
     <section className="py-16 sm:py-24 bg-white border-b border-[#E8E2D5]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
@@ -15,34 +29,37 @@ export const OccasionSection: React.FC = () => {
             Shop by Occasion
           </h2>
           <p className="text-sm sm:text-base text-[#81776C] mt-2 font-normal">
-            Bespoke celebration cakes and hand-tied blooms tailored to mark life's memorable moments.
+            Explore the current catalogue for birthdays, anniversaries and other occasions.
           </p>
         </div>
 
-        {/* Occasions Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-          {OCCASIONS.map((occ) => (
+        <div className="grid auto-rows-[12rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] sm:grid-cols-6 sm:gap-4 lg:auto-rows-[15rem] lg:grid-cols-12 lg:gap-5">
+          {OCCASIONS.map((occ, index) => (
             <Link
               key={occ.slug}
               to={`/category/${occ.categorySlug}`}
-              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-end p-4 sm:p-5 transition-all duration-500 hover:-translate-y-1.5 shadow-2xs hover:shadow-xl border border-[#E8E2D5] bg-[#FAF7F0]"
+              aria-label={`${occ.name}: ${occ.description}`}
+              className={`group relative flex min-h-0 flex-col justify-end overflow-hidden rounded-2xl border border-[#E8E2D5] bg-[#FAF7F0] p-4 shadow-2xs transition-all duration-500 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D] focus-visible:ring-offset-2 sm:rounded-3xl sm:p-5 ${
+                index === 0
+                  ? 'col-span-2 row-span-2 sm:col-span-3 lg:col-span-6'
+                  : index === 4
+                    ? 'col-span-2 sm:col-span-3 lg:col-span-6'
+                    : 'col-span-1 sm:col-span-3 lg:col-span-6'
+              }`}
             >
               <img
-                src={occ.image}
-                alt={`${occ.name} at Cakes N More Sector 76 Noida`}
+                src={getOccasionImage(occ.categorySlug, occ.image)}
+                alt=""
                 loading="lazy"
                 decoding="async"
-                width={360}
-                height={480}
+                width={640}
+                height={720}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#30251F]/80 via-[#30251F]/25 to-transparent transition-opacity group-hover:from-[#30251F]/90" />
 
               {/* Text content */}
               <div className="relative z-10 text-white">
-                <span className="eyebrow-tag text-[9px] text-[#E8CECB] block mb-0.5">
-                  Milestone
-                </span>
                 <h3 className="font-serif text-base sm:text-lg font-bold tracking-tight text-white group-hover:text-[#DFC79E] transition-colors leading-tight">
                   {occ.name}
                 </h3>

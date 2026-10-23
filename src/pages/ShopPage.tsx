@@ -7,21 +7,20 @@ import { useStore } from '../context/StoreContext';
 import { getProductionUrl } from '../utils/seo';
 
 export const ShopPage: React.FC = () => {
-  const { products, categories } = useStore();
+  const { products } = useStore();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Filters State
   const initialSearch = searchParams.get('search') || '';
-  const initialCategory = searchParams.get('category') || 'all';
   const initialFilter = searchParams.get('filter') || ''; // 'featured' or 'bestseller'
 
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState<string>('recommended');
   const [maxPrice, setMaxPrice] = useState<number>(3000);
   const [featuredOnly, setFeaturedOnly] = useState<boolean>(initialFilter === 'featured');
   const [bestsellerOnly, setBestsellerOnly] = useState<boolean>(initialFilter === 'bestseller');
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
+  const [showSearchInput, setShowSearchInput] = useState<boolean>(Boolean(initialSearch));
 
   const shopSchema = {
     '@context': 'https://schema.org',
@@ -77,16 +76,6 @@ export const ShopPage: React.FC = () => {
           if (!matchName && !matchDesc && !matchCat) return false;
         }
 
-        // Category filter
-        if (selectedCategory !== 'all') {
-          const matchedCategory = categories.find(
-            (c) => c.slug === selectedCategory || c.id === selectedCategory
-          );
-          if (matchedCategory && p.categoryId !== matchedCategory.id) {
-            return false;
-          }
-        }
-
         // Price filter
         if (p.price > maxPrice) {
           return false;
@@ -106,9 +95,7 @@ export const ShopPage: React.FC = () => {
       });
   }, [
     products,
-    categories,
     searchQuery,
-    selectedCategory,
     maxPrice,
     featuredOnly,
     bestsellerOnly,
@@ -117,7 +104,6 @@ export const ShopPage: React.FC = () => {
 
   const resetFilters = () => {
     setSearchQuery('');
-    setSelectedCategory('all');
     setSortBy('recommended');
     setMaxPrice(3000);
     setFeaturedOnly(false);
@@ -135,10 +121,10 @@ export const ShopPage: React.FC = () => {
         schema={shopSchema}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         
         {/* Editorial Page Title Header */}
-        <div className="mb-10 text-center sm:text-left">
+        <div className="mx-auto mb-10 max-w-5xl text-center">
           <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#C5A46D] uppercase tracking-[0.2em] mb-3 px-3.5 py-1 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#C5A46D]" />
             <span>Complete Delivery Catalogue</span>
@@ -146,75 +132,38 @@ export const ShopPage: React.FC = () => {
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#30251F] tracking-tight">
             Artisanal Bakes &amp; Botanical Floristry
           </h1>
-          <p className="text-sm sm:text-base text-[#81776C] mt-3 max-w-2xl font-normal leading-relaxed">
+          <p className="mx-auto mt-3 max-w-2xl text-sm font-normal leading-relaxed text-[#81776C] sm:text-base">
             100% pure vegetarian handcrafted celebration cakes, hand-tied morning blooms, and luxury gifting confections in Sector 76 Noida.
           </p>
         </div>
 
         {/* Search & Top Action Bar */}
-        <div className="bg-[#FFFFFF] rounded-2xl p-4 sm:p-5 border border-[#E8E2D5] shadow-xs mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Search Box */}
-          <div className="relative w-full md:max-w-md">
-            <input
-              type="text"
-              placeholder="Search artisanal cakes, fresh roses, gifts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F0] border border-[#E8E2D5] text-[#30251F] placeholder-[#81776C]/60 rounded-full text-xs sm:text-sm focus:outline-none focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] transition-all"
-            />
-            <Search className="w-4 h-4 text-[#81776C] absolute left-3.5 top-3" />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-[#81776C] hover:text-[#30251F] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Quick Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+        <div className="mx-auto mb-8 flex w-full max-w-7xl flex-col items-center justify-center gap-4 rounded-2xl border border-[#E8E2D5] bg-[#FFFFFF] p-4 shadow-xs sm:p-5 xl:flex-row xl:flex-wrap">
+          <div className="flex w-full items-center justify-center gap-3 xl:w-auto xl:flex-none">
             <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                selectedCategory === 'all'
-                  ? 'bg-[#30251F] text-[#FAF7F0] shadow-sm'
-                  : 'bg-[#FAF7F0] text-[#81776C] border border-[#E8E2D5] hover:border-[#30251F] hover:text-[#30251F]'
-              }`}
+              type="button"
+              onClick={() => setShowSearchInput((show) => !show)}
+              aria-label={showSearchInput ? 'Close product search' : 'Search products'}
+              aria-expanded={showSearchInput}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E8E2D5] bg-[#FAF7F0] text-[#81776C] transition-colors hover:border-[#C5A46D] hover:text-[#30251F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D]"
             >
-              All Creations
+              {showSearchInput ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             </button>
-            {categories
-              .filter((c) => c.active)
-              .map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.slug)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                    selectedCategory === cat.slug
-                      ? 'bg-[#30251F] text-[#FAF7F0] shadow-sm'
-                      : 'bg-[#FAF7F0] text-[#81776C] border border-[#E8E2D5] hover:border-[#30251F] hover:text-[#30251F]'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-          </div>
 
-          {/* Sort Dropdown & Mobile Filter Toggle */}
-          <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              aria-label="Sort products"
-              className="bg-[#FAF7F0] border border-[#E8E2D5] rounded-full px-3.5 py-2 text-xs font-medium text-[#30251F] focus:outline-none focus:border-[#30251F] focus:ring-1 focus:ring-[#30251F] cursor-pointer"
-            >
-              <option value="recommended" className="bg-white">Curated Recommendation</option>
-              <option value="price-low" className="bg-white">Price: Low to High</option>
-              <option value="price-high" className="bg-white">Price: High to Low</option>
-              <option value="name-asc" className="bg-white">Alphabetical (A - Z)</option>
-            </select>
+            <label className="flex items-center gap-2 text-xs font-medium text-[#81776C]">
+              <span>Sort by</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Sort by"
+                className="max-w-[12rem] cursor-pointer rounded-full border border-[#E8E2D5] bg-[#FAF7F0] px-3.5 py-2 text-xs font-medium text-[#30251F] focus:border-[#30251F] focus:outline-none focus:ring-1 focus:ring-[#30251F]"
+              >
+                <option value="recommended" className="bg-white">Recommended</option>
+                <option value="price-low" className="bg-white">Price: Low to High</option>
+                <option value="price-high" className="bg-white">Price: High to Low</option>
+                <option value="name-asc" className="bg-white">Alphabetical (A - Z)</option>
+              </select>
+            </label>
 
             <button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
@@ -224,8 +173,24 @@ export const ShopPage: React.FC = () => {
               <span>Filters</span>
             </button>
           </div>
+
+          {showSearchInput && (
+            <div className="relative w-full border-t border-[#E8E2D5] pt-4 xl:basis-full xl:flex-none">
+              <input
+                type="search"
+                autoFocus
+                placeholder="Search cakes, flowers and gifts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search products"
+                className="w-full rounded-full border border-[#E8E2D5] bg-[#FAF7F0] py-2.5 pl-10 pr-4 text-sm text-[#30251F] placeholder-[#81776C]/60 transition-all focus:border-[#30251F] focus:outline-none focus:ring-1 focus:ring-[#30251F]"
+              />
+              <Search className="absolute left-3.5 top-[1.9rem] h-4 w-4 text-[#81776C]" />
+            </div>
+          )}
         </div>
 
+        <div className="mx-auto w-full max-w-7xl">
         {/* Main Grid + Sidebar Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Desktop Filter Sidebar */}
@@ -295,9 +260,12 @@ export const ShopPage: React.FC = () => {
             <div className="pt-4 border-t border-[#E8E2D5] text-xs text-[#81776C] space-y-1.5 bg-[#FAF7F0] p-4 rounded-xl border">
               <p className="font-semibold text-[#30251F] flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#244438]" />
-                Sector 76 Instant Fulfillment
+                Sector 76 Store
               </p>
-              <p className="leading-relaxed">Every cake is baked fresh on order. Flowers are arranged by master florists at our Sector 76 boutique.</p>
+              <p className="leading-relaxed">
+                Review each product’s details and availability. Contact the store to confirm delivery
+                or collection arrangements.
+              </p>
             </div>
           </aside>
 
@@ -427,6 +395,7 @@ export const ShopPage: React.FC = () => {
             )}
           </main>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -3,10 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Check,
-  ChevronRight,
   Clock,
   Heart,
-  Home,
   MapPin,
   Minus,
   Plus,
@@ -23,12 +21,14 @@ import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getProductionUrl } from '../utils/seo';
 import { getWeightPrice } from '../utils/productPricing';
 import { CAKE_FLAVOURS } from '../data/cakeFlavours';
+import { useDeliveryAvailability } from '../context/DeliveryContext';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { products, settings } = useStore();
-  const { addToCart, generateSingleProductWhatsAppUrl } = useCart();
+  const { addToCart, generateSingleProductWhatsAppUrl, totalQuantity } = useCart();
+  const { openDeliveryGate, verifiedLocation } = useDeliveryAvailability();
 
   const product = useMemo(() => {
     return products.find((p) => p.slug === slug || p.id === slug);
@@ -100,6 +100,7 @@ export const ProductDetailPage: React.FC = () => {
 
   const productUrl = getProductionUrl(`/product/${product.slug}`);
   const productImages = product.images.map((image) => (image.startsWith('/') ? getProductionUrl(image) : image));
+  const mainImage = activeImage || product.images[0] || '/social-share-1200x630.jpg';
   const productKeywords = [
     `${product.name.toLowerCase()} noida`,
     `order ${product.name.toLowerCase()} sector 76 noida`,
@@ -169,38 +170,16 @@ export const ProductDetailPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-[#81776C] mb-6 flex-wrap" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-[#30251F] flex items-center gap-1 transition-colors">
-            <Home className="w-3.5 h-3.5" />
-            <span>Home</span>
-          </Link>
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <Link to="/shop" className="hover:text-[#30251F] transition-colors">
-            Catalogue
-          </Link>
-          {product.categorySlug && (
-            <>
-              <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-              <Link to={`/category/${product.categorySlug}`} className="hover:text-[#30251F] transition-colors">
-                {product.categoryName}
-              </Link>
-            </>
-          )}
-          <ChevronRight className="w-3 h-3 text-[#C5A46D]" />
-          <span className="text-[#30251F] font-semibold truncate max-w-xs">{product.name}</span>
-        </nav>
-
         {/* Product Showcase Grid */}
-        <div className="bg-[#FFFFFF] rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] shadow-xs mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="mb-16 rounded-3xl border border-[#E8E2D5] bg-white p-3 shadow-xs sm:p-7 lg:p-8">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
             
             {/* Gallery Column (6 cols) */}
-            <div className="lg:col-span-6 space-y-4">
+            <div className="min-w-0 space-y-4 lg:col-span-7">
               {/* Primary Image View */}
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF7F0] border border-[#E8E2D5] shadow-inner">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-[#E8E2D5] bg-[#FAF7F0] shadow-inner sm:aspect-[5/4] lg:aspect-[4/3]">
                 <img
-                  src={activeImage || product.images?.[0]}
+                  src={mainImage}
                   alt={`${product.name} - ${isCake ? '100% eggless cake' : product.categoryName || 'product'} from Cakes N More Sector 76 Noida`}
                   loading="eager"
                   fetchPriority="high"
@@ -256,7 +235,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Product Details & Selection Column (6 cols) */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+            <div className="flex min-w-0 flex-col justify-between space-y-6 rounded-3xl border border-[#E8E2D5] bg-[#FAF7F0] p-5 sm:p-7 lg:sticky lg:top-28 lg:col-span-5 lg:self-start lg:p-8">
               <div>
                 {/* Category & Availability Badge */}
                 <div className="flex items-center gap-2 mb-2">
@@ -267,7 +246,7 @@ export const ProductDetailPage: React.FC = () => {
                   {product.available ? (
                     <span className="text-xs bg-[#244438]/10 text-[#244438] font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 border border-[#244438]/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#244438] inline-block" />
-                      In Store • Ready for Sector 76 Delivery
+                      Available to order
                     </span>
                   ) : (
                     <span className="text-xs bg-[#FAF7F0] text-[#81776C] font-semibold px-2.5 py-0.5 rounded-full border border-[#E8E2D5]">
@@ -445,22 +424,30 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
 
                 {/* Delivery Notes & Trust info */}
-                <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#E8E2D5] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-[#81776C] mt-4">
-                  {isCake && (
+                  <div className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#E8E2D5] bg-white p-4 text-xs text-[#81776C] sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={openDeliveryGate}
+                      className="flex min-h-10 items-center gap-2 text-left transition-colors hover:text-[#30251F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A46D]"
+                    >
+                      <Truck className="h-4 w-4 shrink-0 text-[#30251F]" />
+                      <span>
+                        {verifiedLocation?.verified
+                          ? 'Delivery address verified'
+                          : 'Check delivery eligibility'}
+                      </span>
+                    </button>
+                    {isCake && (
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 shrink-0 text-[#C5A46D]" />
+                        <span>100% Eggless Pure Veg</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-[#30251F] shrink-0" />
-                      <span>Same-Day Sector 76 Delivery</span>
+                      <MapPin className="h-4 w-4 shrink-0 text-[#244438]" />
+                      <span>Boutique Pickup: Shop 29</span>
                     </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#C5A46D] shrink-0" />
-                    <span>100% Eggless Pure Veg</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#244438] shrink-0" />
-                    <span>Boutique Pickup: Shop 29</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -491,7 +478,13 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Sticky Mobile Purchase Action Bar */}
-      <div className="lg:hidden fixed bottom-[calc(56px+max(0.6rem,env(safe-area-inset-bottom,0px)))] inset-x-0 bg-[#FFFFFF]/95 backdrop-blur-xl border-t border-[#E8E2D5] p-3 shadow-lg z-30 text-[#30251F]">
+      <div
+        className={`fixed inset-x-0 z-30 border-t border-[#E8E2D5] bg-white/95 p-2.5 text-[#30251F] shadow-lg backdrop-blur-xl lg:hidden sm:p-3 ${
+          totalQuantity > 0
+            ? 'bottom-[calc(8.25rem+env(safe-area-inset-bottom,0px))]'
+            : 'bottom-[calc(56px+max(0.6rem,env(safe-area-inset-bottom,0px)))]'
+        }`}
+      >
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div className="flex flex-col shrink-0">
             <span className="text-[10px] uppercase font-bold text-[#81776C]">Total Price</span>
@@ -505,7 +498,7 @@ export const ProductDetailPage: React.FC = () => {
               type="button"
               onClick={handleAddToCart}
               disabled={!product.available || (product.allowFlavourSelection && !selectedFlavour)}
-              className="flex-1 py-2.5 px-3 rounded-full active:scale-95 bg-[#30251F] text-[#FAF7F0] font-serif font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+              className="flex min-h-12 flex-1 items-center justify-center gap-1.5 rounded-full bg-[#30251F] px-3 py-2.5 font-serif text-xs font-bold text-[#FAF7F0] transition-all active:scale-95 disabled:opacity-50"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               <span>Add to Bag</span>
@@ -519,7 +512,7 @@ export const ProductDetailPage: React.FC = () => {
               onClick={(event) => {
                 if (!product.available || (product.allowFlavourSelection && !selectedFlavour)) event.preventDefault();
               }}
-              className={`py-2.5 px-3.5 rounded-full text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-all ${
+              className={`flex min-h-12 items-center justify-center gap-1.5 rounded-full px-3.5 py-2.5 text-xs font-semibold text-white transition-all ${
                 product.available && (!product.allowFlavourSelection || selectedFlavour)
                   ? 'bg-[#244438] active:scale-95 cursor-pointer'
                   : 'bg-[#E8E2D5] text-[#81776C] cursor-not-allowed'

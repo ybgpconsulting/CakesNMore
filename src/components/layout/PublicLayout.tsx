@@ -7,9 +7,11 @@ import { Header } from '../common/Header';
 import { MobileBottomNav } from '../common/MobileBottomNav';
 import { Toast } from '../common/Toast';
 import { useCart } from '../../context/CartContext';
+import { useDeliveryAvailability } from '../../context/DeliveryContext';
 
 export const PublicLayout: React.FC = () => {
   const { totalQuantity, subtotal } = useCart();
+  const { deliverySettings } = useDeliveryAvailability();
   const location = useLocation();
 
   const showFloatingCart =
@@ -40,7 +42,7 @@ export const PublicLayout: React.FC = () => {
                   {totalQuantity} {totalQuantity === 1 ? 'Creation' : 'Creations'} in Bag
                 </span>
                 <span className="text-[11px] text-[#E8CECB] font-medium leading-tight mt-0.5">
-                  ₹{subtotal} • Same-Day Noida Delivery
+                  ₹{subtotal} • {deliverySettings.enabled ? 'Check delivery coverage' : 'Contact us for options'}
                 </span>
               </div>
             </div>

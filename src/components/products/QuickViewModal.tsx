@@ -19,7 +19,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   const isCake = product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes';
 
   const [selectedImage, setSelectedImage] = useState<string>(
-    product.images?.[0] || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop'
+    product.images?.[0] || '/social-share-1200x630.jpg'
   );
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedWeight, setSelectedWeight] = useState<string | undefined>(product.weightOptions?.[0]);

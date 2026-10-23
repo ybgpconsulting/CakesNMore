@@ -13,8 +13,14 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 export const WhyChooseUs: React.FC = () => {
-  const { homepageConfig, settings } = useStore();
+  const { homepageConfig, products, settings } = useStore();
   const points = homepageConfig.whyUsPoints || [];
+  const editorialProduct = products.find(
+    (product) => product.available && product.images.some(Boolean)
+  );
+  const editorialImage =
+    editorialProduct?.images.find(Boolean) || '/social-share-1200x630.jpg';
+  const shortAddress = settings.address.split(',').slice(0, 2).join(', ');
 
   return (
     <section className="py-16 sm:py-24 bg-[#FAF7F0] border-b border-[#E8E2D5]">
@@ -27,8 +33,8 @@ export const WhyChooseUs: React.FC = () => {
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden border border-[#E8E2D5] aspect-[4/3] sm:aspect-[16/11] bg-white shadow-md">
               <img
-                src="https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=900&auto=format&fit=crop"
-                alt="Artisan cake decoration and floral craft at Cakes N More Sector 76 Noida"
+                src={editorialImage}
+                alt={editorialProduct?.name || 'A selection from the Cakes N More catalogue'}
                 loading="lazy"
                 decoding="async"
                 width={700}
@@ -43,23 +49,23 @@ export const WhyChooseUs: React.FC = () => {
                 <Heart className="w-5 h-5 text-[#C5A46D] fill-[#C5A46D]/20" />
               </div>
               <div>
-                <p className="font-serif font-bold text-sm text-[#30251F]">Local &amp; Independent</p>
-                <p className="text-xs text-[#81776C]">Shop 29, Amrapali Crystal Home</p>
+                <p className="font-serif font-bold text-sm text-[#30251F]">Cakes N More</p>
+                <p className="line-clamp-2 text-xs text-[#81776C]">{shortAddress}</p>
               </div>
             </div>
           </div>
 
           {/* Narrative Content */}
           <div className="lg:col-span-6 space-y-5 text-left">
-            <span className="eyebrow-tag text-[#C5A46D]">Our Heritage &amp; Promise</span>
+            <span className="eyebrow-tag text-[#C5A46D]">About the Store</span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#30251F] tracking-tight leading-[1.15]">
-              Crafted with Care in the Heart of Sector 76
+              Cakes N More in Sector 76
             </h2>
             <p className="text-sm sm:text-base text-[#81776C] leading-relaxed">
-              At Cakes N More, we believe that life’s most special celebrations deserve more than mass-produced confections. Located conveniently near Mithaas at Amrapali Silicon City, our boutique patisserie and floral atelier handcrafts every order with authentic ingredients and artisanal pride.
+              Cakes N More is a neighborhood bakery and florist in Sector 76, Noida. Browse the current catalogue for cakes, flowers and gifts, with product details and available options listed on each item.
             </p>
             <p className="text-sm sm:text-base text-[#81776C] leading-relaxed">
-              Every single creation is 100% eggless and pure vegetarian. We combine fine Belgian chocolates, fresh dairy cream, and seasonal fruits with fresh-cut morning blooms from trusted growers—bringing delicious desserts and heartwarming flowers together under one neighborhood roof.
+              For ingredient, customization or availability questions, contact the store before ordering. Delivery eligibility can be checked against the current store settings.
             </p>
 
             <div className="pt-2">
@@ -67,7 +73,7 @@ export const WhyChooseUs: React.FC = () => {
                 to="/about"
                 className="btn-editorial-secondary inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-semibold"
               >
-                <span>Read Our Atelier Story</span>
+                <span>About Cakes N More</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#C5A46D]" />
               </Link>
             </div>
@@ -78,12 +84,12 @@ export const WhyChooseUs: React.FC = () => {
         {/* Part 2: Why Cakes N More — Genuine Selling Points */}
         <div className="pt-8 sm:pt-12 border-t border-[#E8E2D5]">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="eyebrow-tag text-[#C5A46D] block mb-2">The Cakes N More Standard</span>
+            <span className="eyebrow-tag text-[#C5A46D] block mb-2">Explore the Catalogue</span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#30251F] tracking-tight">
-              Why Noida Celebrates With Us
+              Browse the Current Selection
             </h2>
             <p className="text-sm sm:text-base text-[#81776C] mt-2 font-normal">
-              Genuine commitments to quality ingredients, punctual doorstep dispatch, and personal care.
+              Explore the current catalogue and contact the store with any questions.
             </p>
           </div>
 

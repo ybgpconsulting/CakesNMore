@@ -189,7 +189,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
           {isAvailable ? (
             <span className="text-[#244438] font-semibold flex items-center gap-1">
               <Check className="w-3.5 h-3.5" />
-              Eligible for same-day delivery
+              Location is within the configured delivery area
             </span>
           ) : (
             <span className="text-[#81776C] font-semibold flex items-center gap-1">

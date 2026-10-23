@@ -6,7 +6,12 @@ import { useStore } from '../context/StoreContext';
 import { getProductionUrl } from '../utils/seo';
 
 export const AboutPage: React.FC = () => {
-  const { settings } = useStore();
+  const { settings, products } = useStore();
+  const catalogueProduct = products.find(
+    (product) => product.available && product.images.some(Boolean)
+  );
+  const catalogueImage =
+    catalogueProduct?.images.find(Boolean) || '/social-share-1200x630.jpg';
 
   const aboutSchema = {
     '@context': 'https://schema.org',
@@ -62,37 +67,36 @@ export const AboutPage: React.FC = () => {
             <span className="italic font-normal text-[#81776C]">&amp; Fresh Blooms</span>
           </h1>
           <p className="text-sm sm:text-base text-[#81776C] max-w-2xl mx-auto leading-relaxed">
-            Welcome to Cakes N More — your artisanal neighborhood destination at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
+            Welcome to Cakes N More at {settings.address}.
           </p>
         </div>
 
         {/* Story Section */}
         <div className="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#E8E2D5] shadow-[0_4px_25px_rgba(48,37,31,0.05)] grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-7 space-y-5 text-[#81776C] text-sm sm:text-base leading-relaxed">
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">Our Heritage &amp; Philosophy</span>
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">About Cakes N More</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#30251F]">
-              Dedicated to the Art of Celebration
+              Cakes, Flowers &amp; Gifts
             </h2>
             <p>
-              Located conveniently in the heart of Sector 76 near Mithaas at Amrapali Silicon City,
-              our boutique brings together the artistry of European patisserie and the timeless charm
-              of fresh floristry.
+              Cakes N More is located in Sector 76, Noida. The current catalogue brings together
+              bakery, flower and gift items in one place.
             </p>
             <p>
-              Whether you are planning a grand midnight birthday surprise, an intimate anniversary dinner,
-              or a congratulatory flower arrangement, our artisans handcraft every cake on order and
-              select fresh-cut morning blooms from the most reputable flower growers.
+              Browse the current catalogue for celebrations, gifts and everyday moments. Product
+              details show available options; contact the store with questions about ingredients,
+              customization or availability.
             </p>
             <p>
-              By combining bakery, flowers, plants, and gifting under one roof, we make gifting effortless,
-              delivering prompt doorstep smiles across Sector 76 and neighboring communities in Central Noida.
+              Delivery eligibility is checked against current store settings. The team can confirm
+              timing and collection details for a specific order.
             </p>
           </div>
 
           <div className="md:col-span-5 aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-[#E8E2D5]">
             <img
-              src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
-              alt="Artisan 100% eggless cake preparation at Cakes N More Sector 76 Noida"
+              src={catalogueImage}
+              alt={catalogueProduct?.name || 'A selection from the Cakes N More catalogue'}
               loading="lazy"
               decoding="async"
               width={600}
@@ -108,9 +112,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#244438] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">100% Eggless Purity</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Eggless Cake Range</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              Every recipe is prepared in a dedicated vegetarian atelier with zero eggs, using only top-tier cream and real cocoa.
+              Cakes are presented as eggless. Check individual product details and contact the store with dietary questions.
             </p>
           </div>
 
@@ -118,9 +122,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#30251F] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <Clock className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">Oven-Fresh on Order</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Product Details</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              We never freeze cakes. Each sponge is baked from scratch upon order confirmation to ensure unmatched moistness.
+              Check each catalogue listing for its description, current availability and selectable options.
             </p>
           </div>
 
@@ -128,9 +132,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#C5A46D] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <Heart className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">Neighborhood Care</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Local Store</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              Dedicated staff in Sector 76 ensuring reliable hand-deliveries, personalized cake notes, and celebratory greetings.
+              Contact the Sector 76 store to ask about a product, a custom request or order arrangements.
             </p>
           </div>
         </div>
@@ -142,7 +146,7 @@ export const AboutPage: React.FC = () => {
             Visit Our Store or Order Online
           </h2>
           <p className="text-xs sm:text-sm text-[#FAF7F0]/80 max-w-xl mx-auto leading-relaxed">
-            Whether you want to pick up directly from Shop 29 at Amrapali Crystal Home or need immediate doorstep delivery, we are ready to serve you.
+            Check delivery eligibility for your address, or contact the store to confirm timing and collection details.
           </p>
           <div className="pt-3 flex flex-wrap items-center justify-center gap-4">
             <Link

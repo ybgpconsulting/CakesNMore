@@ -560,7 +560,7 @@ export function validateAndMatchImportItems(
             id: categoryId,
             name: categoryName,
             slug: categorySlug,
-            description: `Handcrafted ${categoryName} freshly prepared in Sector 76 Noida.`,
+            description: `${categoryName} listed in the current catalogue.`,
             image: CATEGORY_IMAGE_DEFAULTS[categorySlug] || CATEGORY_IMAGE_DEFAULTS.default,
             active: true,
             displayOrder: existingCategories.length + newCategoriesMap.size + 1,
