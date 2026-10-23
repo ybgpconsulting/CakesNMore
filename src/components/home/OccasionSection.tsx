@@ -49,7 +49,7 @@ export const OccasionSection: React.FC = () => {
             >
               <img
                 src={getOccasionImage(occ.categorySlug, occ.image)}
-                alt=""
+                alt={`${occ.name} celebration cakes and gifts - Sector 76 Noida`}
                 loading="lazy"
                 decoding="async"
                 width={640}

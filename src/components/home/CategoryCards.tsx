@@ -47,7 +47,7 @@ export const CategoryCards: React.FC = () => {
                   loading="lazy"
                   decoding="async"
                   width={600}
-                  height={800}
+                  height={520}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#30251F]/75 via-[#30251F]/25 to-transparent transition-opacity group-hover:opacity-90" />

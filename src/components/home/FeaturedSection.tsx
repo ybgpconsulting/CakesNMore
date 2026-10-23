@@ -48,7 +48,7 @@ export const FeaturedSection: React.FC = () => {
             >
               <img
                 src={signatureProduct.images?.[0] || '/social-share-1200x630.jpg'}
-                alt={signatureProduct.name}
+                alt={`${signatureProduct.name} - Cakes N More Sector 76 Noida`}
                 loading="lazy"
                 decoding="async"
                 width={700}

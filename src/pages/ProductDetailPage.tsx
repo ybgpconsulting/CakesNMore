@@ -13,6 +13,7 @@ import {
   Sparkles,
   Truck,
 } from 'lucide-react';
+import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
 import { useCart } from '../context/CartContext';
@@ -60,12 +61,12 @@ export const ProductDetailPage: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="min-h-[60vh] bg-[#0F1117] flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="font-serif text-3xl font-bold text-[#F1F3F8] mb-2">Creation Not Found</h2>
-        <p className="text-[#9CA3B4] mb-6">The item you are searching for is no longer available in our atelier.</p>
+      <div className="min-h-[60vh] bg-[#FAF7F0] flex flex-col items-center justify-center p-6 text-center text-[#30251F]">
+        <h2 className="font-serif text-3xl font-bold text-[#30251F] mb-2">Creation Not Found</h2>
+        <p className="text-[#81776C] mb-6">The item you are searching for is no longer available in our boutique.</p>
         <Link
           to="/shop"
-          className="btn-primary-luxury px-6 py-3 rounded-full text-xs font-semibold"
+          className="btn-editorial-primary px-6 py-3 rounded-full text-xs font-semibold"
         >
           Explore All Products
         </Link>
@@ -169,6 +170,15 @@ export const ProductDetailPage: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs
+          items={[
+            { label: 'Shop', path: '/shop' },
+            ...(product.categorySlug && product.categoryName
+              ? [{ label: product.categoryName, path: `/category/${product.categorySlug}` }]
+              : []),
+            { label: product.name },
+          ]}
+        />
         
         {/* Product Showcase Grid */}
         <div className="mb-16 rounded-3xl border border-[#E8E2D5] bg-white p-3 shadow-xs sm:p-7 lg:p-8">

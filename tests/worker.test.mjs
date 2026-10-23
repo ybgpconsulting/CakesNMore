@@ -87,11 +87,15 @@ test('GET / returns valid HTML without consuming the fallback asset response', a
   const { response, env } = await request('/');
   assert.equal(response.status, 200);
   assert.match(response.headers.get('content-type'), /text\/html/);
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN');
+  assert.equal(response.headers.get('referrer-policy'), 'strict-origin-when-cross-origin');
   assert.equal(env.assetResponses[0].bodyUsed, false);
   const body = await response.text();
   assert.match(body, /<html>/);
   assert.match(body, /<title>Cakes N More in Sector 76 Noida \| 100% Eggless Cakes, Flowers &amp; Gifts<\/title>/);
   assert.match(body, new RegExp(`<meta name="description" content="${INITIAL_SETTINGS.metaDescription}" \\/>`));
+  assert.match(body, /<h1[^>]*>\s*Cakes N More \| 100% Eggless Cakes/);
 });
 
 test('GET /cart is excluded from search indexing in the server response', async () => {
@@ -101,11 +105,13 @@ test('GET /cart is excluded from search indexing in the server response', async 
   assert.match(body, /<link rel="canonical" href="https:\/\/cakesnmorenoida\.in\/cart" \/>/);
 });
 
-test('unknown routes do not inherit indexable homepage metadata', async () => {
+test('unknown routes return 404 and do not inherit indexable homepage metadata', async () => {
   const { response } = await request('/unknown-route');
+  assert.equal(response.status, 404);
   const body = await response.text();
   assert.match(body, /<title>Page Not Found \| Cakes N More Sector 76 Noida<\/title>/);
-  assert.match(body, /<meta name="robots" content="noindex,follow" \/>/);
+  assert.match(body, /<meta name="robots" content="noindex,nofollow" \/>/);
+  assert.match(body, /<h1[^>]*>Page Not Found<\/h1>/);
 });
 
 test('GET /shop returns SSR SEO HTML and drops stale entity/body headers', async () => {

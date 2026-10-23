@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, ExternalLink, Mail, MapPin, Navigation, Phone, Send, Sparkles, Store } from 'lucide-react';
+import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
 import {
@@ -91,6 +92,7 @@ Please let me know availability and pricing.`;
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs items={[{ label: 'Contact Us' }]} />
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">

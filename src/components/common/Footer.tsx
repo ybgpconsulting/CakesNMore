@@ -148,6 +148,11 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
               ))}
+              <li className="pt-2 border-t border-[#4A3B32]/60">
+                <Link to="/shop" className="text-[#C5A46D] transition-colors hover:underline font-medium text-xs">
+                  Browse All Collections &rarr;
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -199,15 +204,34 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Central Noida Local Delivery & Locality Coverage */}
+        <div className="border-t border-[#4A3B32] py-8 text-xs text-[#81776C] space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="eyebrow-tag text-[10px] text-[#C5A46D] uppercase tracking-wider">
+              Central Noida Local Delivery Coverage
+            </span>
+            <span className="text-[11px] text-[#B4ACA2]">
+              Storefront: Shop 29, Crystal Home, Amrapali Silicon City, Sector 76 Noida
+            </span>
+          </div>
+          <p className="text-[11px] leading-relaxed text-[#B4ACA2]">
+            Doorstep delivery available across Sector 76, Sector 75, Sector 74, Sector 77, Sector 78, Sector 79, Sector 50, Sector 51, and Amrapali Silicon City, Noida. Specializing in 100% pure vegetarian &amp; eggless birthday cakes, anniversary floral bouquets, indoor air-purifying plants, and personalized celebration hampers.
+          </p>
+        </div>
+
         <div className="relative flex flex-col items-center gap-4 border-t border-[#4A3B32] pt-6 text-xs text-[#81776C] sm:flex-row">
-          <p>© {currentYear} Cakes N More. All rights reserved.</p>
-          <nav aria-label="Legal information" className="flex w-full items-center justify-center gap-3 text-[11px] sm:absolute sm:left-1/2 sm:w-auto sm:-translate-x-1/2">
+          <p>&copy; {currentYear} Cakes N More. All rights reserved.</p>
+          <nav aria-label="Footer navigation and legal information" className="flex flex-wrap items-center justify-center gap-3 text-[11px] sm:absolute sm:left-1/2 sm:w-auto sm:-translate-x-1/2">
+            <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
+            <span aria-hidden="true">&bull;</span>
+            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <span aria-hidden="true">&bull;</span>
             <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
-            <span aria-hidden="true">•</span>
+            <span aria-hidden="true">&bull;</span>
             <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
-            <span aria-hidden="true">•</span>
+            <span aria-hidden="true">&bull;</span>
             <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
-            <span aria-hidden="true">•</span>
+            <span aria-hidden="true">&bull;</span>
             <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
           </nav>
           <a

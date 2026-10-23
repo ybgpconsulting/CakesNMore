@@ -76,7 +76,7 @@ export const Hero: React.FC = () => {
         <div className="relative order-2 lg:col-span-7">
           <img
             src={heroImage}
-            alt={heroProduct?.name || 'A selection from the Cakes N More catalogue'}
+            alt={heroProduct?.name ? `${heroProduct.name} - 100% Eggless Celebration Cake Sector 76 Noida` : 'Cakes N More - 100% Eggless Bakery & Florist in Sector 76 Noida'}
             loading="eager"
             fetchPriority="high"
             decoding="async"

@@ -104,10 +104,10 @@ async function buildSitemap(env: Env): Promise<Response> {
 
 function robotsResponse(): Response {
   return new Response(
-    `    User-agent: *
-    Allow: /
-    Disallow: /admin/
-    Disallow: /api/
+    `User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
 
 Sitemap: https://cakesnmorenoida.in/sitemap.xml
 `,
@@ -692,6 +692,7 @@ function injectSsrMeta(
     type?: string;
     robots?: string;
     schema?: Record<string, unknown>;
+    bodyHtml?: string;
   }
 ): string {
   let result = html;
@@ -780,16 +781,32 @@ function injectSsrMeta(
     result = result.replace('</head>', `${schemaScript}</head>`);
   }
 
+  if (meta.bodyHtml) {
+    result = result.replace(
+      /<div id="root">[\s\S]*?<\/div>/i,
+      `<div id="root">\n${meta.bodyHtml}\n    </div>`
+    );
+  }
+
   return result;
 }
 
-function htmlResponse(assetRes: Response, html: string): Response {
+function htmlResponse(
+  assetRes: Response,
+  html: string,
+  status = assetRes.status,
+  statusText = assetRes.statusText
+): Response {
   const headers = new Headers(assetRes.headers);
   headers.delete('content-length');
   headers.delete('content-encoding');
   headers.delete('etag');
   headers.set('content-type', 'text/html; charset=utf-8');
-  return new Response(html, { status: assetRes.status, statusText: assetRes.statusText, headers });
+  headers.set('x-content-type-options', 'nosniff');
+  headers.set('x-frame-options', 'SAMEORIGIN');
+  headers.set('referrer-policy', 'strict-origin-when-cross-origin');
+  headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=(self)');
+  return new Response(html, { status, statusText, headers });
 }
 
 async function handleHtmlWithSsrSeo(request: Request, env: Env, url: URL): Promise<Response> {
@@ -903,6 +920,32 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
         ],
       };
 
+      const productBodyHtml = `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <a href="/shop" class="hover:underline">Shop</a> &gt; <a href="/category/${encodeURIComponent(categorySlug || 'cakes')}" class="hover:underline">${escapeHtml(product.category_name || product.categoryName || 'Category')}</a> &gt; <span class="font-semibold text-[#30251F]">${escapeHtml(product.name)}</span>
+        </nav>
+        <div class="bg-white rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center shadow-xs">
+          <div class="md:col-span-6">
+            <img src="${escapeHtml(fullImageUrl)}" alt="${escapeHtml(product.name)} - Cakes N More Sector 76 Noida" width="600" height="600" class="w-full rounded-2xl object-cover aspect-square" />
+          </div>
+          <div class="md:col-span-6 space-y-4">
+            <span class="text-xs uppercase tracking-wider text-[#C5A46D] font-bold">${escapeHtml(product.category_name || product.categoryName || 'Catalogue')}</span>
+            <h1 class="font-serif text-3xl sm:text-4xl font-normal text-[#30251F] tracking-tight">${escapeHtml(product.name)}</h1>
+            <p class="font-serif text-3xl font-bold text-[#30251F]">₹${product.price}</p>
+            <p class="text-sm text-[#81776C] leading-relaxed">${escapeHtml(product.description || '')}</p>
+            <div class="pt-2 text-xs text-[#244438] font-semibold space-y-1">
+              <p>✓ 100% Pure Vegetarian / Eggless Patisserie</p>
+              <p>✓ Delivery available across Sector 76 &amp; Central Noida</p>
+            </div>
+            <div class="pt-4">
+              <a href="https://wa.me/919999517599" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 rounded-full bg-[#25D366] text-[#123923] text-xs font-bold uppercase tracking-wider">
+                Order on WhatsApp (+91 9999517599)
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>`;
+
       html = injectSsrMeta(html, {
         title,
         description,
@@ -912,6 +955,7 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
         imageAlt: `${product.name} from Cakes N More, Sector 76 Noida`,
         type: 'product',
         schema: productSchema,
+        bodyHtml: productBodyHtml,
       });
 
       return htmlResponse(assetRes, html);
@@ -965,6 +1009,21 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
         ],
       };
 
+      const categoryBodyHtml = `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <a href="/shop" class="hover:underline">Shop</a> &gt; <span class="font-semibold text-[#30251F]">${escapeHtml(category.name)}</span>
+        </nav>
+        <div class="mb-10 text-center max-w-3xl mx-auto">
+          <span class="inline-block px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#A47D40] rounded-full border border-[#E8E2D5] bg-white mb-3">Sector 76 Specialty Collection</span>
+          <h1 class="font-serif text-3xl sm:text-5xl font-medium text-[#30251F] tracking-tight leading-tight">${escapeHtml(category.name)} Delivery in Sector 76 Noida</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed max-w-2xl mx-auto">${escapeHtml(category.description || '')}</p>
+          <div class="mt-4 inline-flex items-center gap-2 text-xs font-medium text-[#244438]">
+            <span class="h-2 w-2 rounded-full bg-[#244438]"></span>
+            <span>Handcrafted with care at our Sector 76 Noida boutique atelier.</span>
+          </div>
+        </div>
+      </main>`;
+
       html = injectSsrMeta(html, {
         title,
         description,
@@ -974,6 +1033,7 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
         imageAlt: `${category.name} in Sector 76 Noida - Cakes N More`,
         type: 'website',
         schema: categorySchema,
+        bodyHtml: categoryBodyHtml,
       });
 
       return htmlResponse(assetRes, html);
@@ -981,11 +1041,29 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
   }
 
   // Other standard public pages
-  const staticRouteMeta: Record<string, { title: string; description: string; keywords?: string; schema?: any }> = {
+  const staticRouteMeta: Record<string, { title: string; description: string; keywords?: string; schema?: any; bodyHtml?: string }> = {
     '/shop': {
       title: 'Online Bakery & Florist in Sector 76 Noida | Cakes N More',
       description: 'Browse eggless celebration cakes, fresh flowers, and gift hampers in Sector 76 Noida. Check delivery availability and order via WhatsApp.',
       keywords: 'buy cakes online noida, order cakes online sector 76 noida, fresh flowers delivery noida, eggless birthday cakes noida, gift hampers noida',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Shop</span>
+        </nav>
+        <div class="mb-10 text-center max-w-4xl mx-auto">
+          <span class="inline-block px-3.5 py-1 text-[11px] font-bold text-[#C5A46D] uppercase tracking-[0.2em] mb-3 rounded-full bg-white border border-[#E8E2D5]">Complete Delivery Catalogue</span>
+          <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#30251F] tracking-tight">Artisanal Bakes &amp; Botanical Floristry in Sector 76 Noida</h1>
+          <p class="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-[#81776C] leading-relaxed">Browse our complete collection of 100% pure vegetarian handcrafted celebration cakes, fresh floral stems, plants, and bespoke gift hampers available for delivery in Sector 76 and Central Noida.</p>
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a href="/category/cakes" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">100% Eggless Cakes</a>
+            <a href="/category/flowers" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">Fresh Flowers</a>
+            <a href="/category/bouquets" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">Curated Bouquets</a>
+            <a href="/category/gifts" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">Celebration Gifts</a>
+            <a href="/category/plants" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">Indoor Plants</a>
+            <a href="/category/hampers" class="px-4 py-2 bg-white rounded-full border border-[#E8E2D5] text-xs font-semibold text-[#30251F]">Luxury Hampers</a>
+          </div>
+        </div>
+      </main>`,
       schema: {
         '@context': 'https://schema.org',
         '@graph': [
@@ -1010,6 +1088,16 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
       title: 'About Us | Cakes N More Sector 76 Noida',
       description: 'Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home.',
       keywords: 'about cakes n more noida, bakery in sector 76 noida, eggless patisserie noida, cake shop near mithaas amrapali silicon city',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
+        <nav aria-label="Breadcrumb" class="text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">About Us</span>
+        </nav>
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="inline-block px-3.5 py-1 text-[11px] font-bold text-[#C5A46D] uppercase tracking-[0.2em] mb-3 rounded-full bg-white border border-[#E8E2D5]">Serving Sector 76 &amp; Central Noida</span>
+          <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#30251F] tracking-tight">Crafting Sweet Moments &amp; Fresh Blooms</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">Welcome to Cakes N More, your neighborhood boutique bakery and florist located at Shop No. 29, Ground Floor, Amrapali Crystal Home Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida. We prepare 100% pure vegetarian cakes and fresh botanical arrangements with love and care.</p>
+        </div>
+      </main>`,
       schema: {
         '@context': 'https://schema.org',
         '@graph': [
@@ -1037,6 +1125,16 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
       title: 'Contact & Location | Cakes N More Noida Sector 76',
       description: 'Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 to ask about products and delivery availability.',
       keywords: 'contact cakes n more noida, bakery phone number sector 76 noida, shop 29 amrapali crystal home noida',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+        <nav aria-label="Breadcrumb" class="text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Contact Us</span>
+        </nav>
+        <div class="text-center max-w-2xl mx-auto">
+          <span class="inline-block px-3.5 py-1 text-[11px] font-bold text-[#C5A46D] uppercase tracking-[0.2em] mb-3 rounded-full bg-white border border-[#E8E2D5]">Store Concierge &amp; Visit</span>
+          <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F] tracking-tight">Connect With Our Boutique</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">Visit us at Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida. Call <a href="tel:+919999517599" class="underline font-semibold text-[#30251F]">+91 9999517599</a> for inquiries and deliveries.</p>
+        </div>
+      </main>`,
       schema: {
         '@context': 'https://schema.org',
         '@graph': [
@@ -1062,18 +1160,54 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
     '/shipping-and-delivery': {
       title: 'Shipping & Delivery Policy | Cakes N More Sector 76 Noida',
       description: 'Learn about delivery availability, delivery areas, and packaging for orders from Cakes N More in Sector 76, Noida.',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Shipping &amp; Delivery</span>
+        </nav>
+        <div class="bg-white rounded-3xl p-8 border border-[#E8E2D5]">
+          <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F]">Shipping &amp; Delivery Policy</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">Cakes N More offers local delivery for freshly baked 100% eggless celebration cakes, floral bouquets, and gift hampers in Sector 76, Noida and adjacent sectors (74, 75, 77, 78, 79, 50, 51). Verify delivery eligibility with our team on WhatsApp.</p>
+        </div>
+      </main>`,
     },
     '/returns-policy': {
       title: 'Returns & Refunds Policy | Cakes N More Sector 76 Noida',
       description: 'Return, refund, and replacement policy for fresh cakes, floral arrangements, and perishable gifts at Cakes N More Sector 76 Noida.',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Returns Policy</span>
+        </nav>
+        <div class="bg-white rounded-3xl p-8 border border-[#E8E2D5]">
+          <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F]">Returns &amp; Refunds Policy</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">Due to the perishable nature of freshly prepared cakes and cut flowers, returns are handled promptly upon delivery inspection. Contact us on WhatsApp with photos if there is any issue with your delivery.</p>
+        </div>
+      </main>`,
     },
     '/terms-and-conditions': {
       title: 'Terms & Conditions | Cakes N More Sector 76 Noida',
       description: 'Terms and conditions governing online ordering, product fulfillment, and delivery at Cakes N More Sector 76 Noida.',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Terms &amp; Conditions</span>
+        </nav>
+        <div class="bg-white rounded-3xl p-8 border border-[#E8E2D5]">
+          <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F]">Terms &amp; Conditions</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">Ordering and fulfillment terms for Cakes N More in Sector 76 Noida. All cake products are 100% vegetarian.</p>
+        </div>
+      </main>`,
     },
     '/privacy-policy': {
       title: 'Privacy Policy | Cakes N More Sector 76 Noida',
       description: 'How Cakes N More collects, uses, and protects customer information on this website and order channels.',
+      bodyHtml: `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <nav aria-label="Breadcrumb" class="mb-6 text-xs text-[#81776C]">
+          <a href="/" class="hover:underline">Home</a> &gt; <span class="font-semibold text-[#30251F]">Privacy Policy</span>
+        </nav>
+        <div class="bg-white rounded-3xl p-8 border border-[#E8E2D5]">
+          <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F]">Privacy Policy</h1>
+          <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed">How Cakes N More handles customer order details and privacy with confidentiality and security.</p>
+        </div>
+      </main>`,
     },
   };
 
@@ -1085,10 +1219,110 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
       console.warn('SSR homepage metadata lookup failed; using initial store metadata.', err);
     }
     const canonical = `${PRODUCTION_ORIGIN}/`;
+    const homeFaqSchema = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebPage',
+          '@id': `${PRODUCTION_ORIGIN}/`,
+          name: storeSettings.websiteTitle || 'Cakes N More in Sector 76 Noida | 100% Eggless Cakes, Flowers & Gifts',
+          description: storeSettings.metaDescription,
+          url: `${PRODUCTION_ORIGIN}/`,
+          about: { '@id': `${PRODUCTION_ORIGIN}/#localbusiness` },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'Are Cakes N More cakes 100% eggless?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes, all cakes and patisserie creations at Cakes N More are 100% pure vegetarian and eggless, prepared in Sector 76 Noida with premium ingredients.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'How can I check delivery availability and timing in Noida?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'We provide prompt delivery across Sector 76 and nearby Noida sectors including 74, 75, 77, 78, 79, 50, and 51. You can verify your address using our delivery checker or contact us on WhatsApp at +91 9999517599.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Where is Cakes N More located for store pickup?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Our boutique is located at Shop No. 29, Ground Floor, Amrapali Crystal Home Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, UP 201301. We are open daily from 9:00 AM to 11:00 PM.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Can I order customized photo cakes or bespoke flower bouquets?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes, we specialize in customized celebration cakes, photo cakes, bento cakes, pinata cakes, and fresh hand-tied floral bouquets. Message us on WhatsApp to discuss your custom requirements.',
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    const homeBodyHtml = `<main class="min-h-screen bg-[#FAF7F0] text-[#30251F] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <header class="mb-10 text-center max-w-3xl mx-auto">
+        <p class="inline-block px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-[#C5A46D] bg-white rounded-full border border-[#E8CECB] shadow-xs mb-4">
+          Sector 76 Noida • 100% Pure Vegetarian Patisserie &amp; Boutique Florist
+        </p>
+        <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#30251F] tracking-tight leading-tight">
+          Cakes N More | 100% Eggless Cakes, Fresh Flowers &amp; Luxury Gifts in Sector 76 Noida
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-[#81776C] leading-relaxed max-w-2xl mx-auto">
+          Welcome to Cakes N More, your neighborhood bakery and boutique florist located at Shop No. 29, Ground Floor, Amrapali Crystal Home Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida. We handcraft 100% pure vegetarian celebration cakes, curated morning-cut floral bouquets, indoor air-purifying plants, and festive gifting hampers with prompt doorstep delivery across Central Noida.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <a href="/shop" class="inline-flex items-center px-6 py-3 rounded-full bg-[#30251F] text-white text-xs font-semibold tracking-wider hover:bg-[#201814] transition-colors">
+            Explore Full Catalogue
+          </a>
+          <a href="/category/cakes" class="inline-flex items-center px-5 py-3 rounded-full bg-white border border-[#E8E2D5] text-[#30251F] text-xs font-semibold hover:border-[#C5A46D] transition-colors">
+            100% Eggless Cakes
+          </a>
+          <a href="/category/flowers" class="inline-flex items-center px-5 py-3 rounded-full bg-white border border-[#E8E2D5] text-[#30251F] text-xs font-semibold hover:border-[#C5A46D] transition-colors">
+            Fresh Flowers &amp; Bouquets
+          </a>
+          <a href="/category/gifts" class="inline-flex items-center px-5 py-3 rounded-full bg-white border border-[#E8E2D5] text-[#30251F] text-xs font-semibold hover:border-[#C5A46D] transition-colors">
+            Celebration Gifts
+          </a>
+        </div>
+      </header>
+
+      <section class="my-12 p-6 sm:p-10 bg-white rounded-3xl border border-[#E8E2D5] shadow-xs max-w-4xl mx-auto">
+        <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[#30251F] mb-4">
+          Visit Our Sector 76 Boutique or Order via WhatsApp
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-[#81776C] leading-relaxed">
+          <div>
+            <p class="font-semibold text-[#30251F] mb-1">Store Address &amp; Landmark:</p>
+            <p>Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301.</p>
+            <p class="mt-2 text-xs font-medium text-[#C5A46D]">📍 Direct Landmark: Next to Mithaas Sweets, Sector 76 Metro Station Hub.</p>
+          </div>
+          <div>
+            <p class="font-semibold text-[#30251F] mb-1">Store Hours &amp; Contact:</p>
+            <p>Open daily from 09:00 AM to 11:00 PM (Monday to Sunday).</p>
+            <p class="mt-1">Telephone: <a href="tel:+919999517599" class="font-semibold text-[#30251F] underline">+91 9999517599</a></p>
+            <p>Serving Sectors 74, 75, 76, 77, 78, 79, 50, and 51 Noida.</p>
+          </div>
+        </div>
+      </section>
+    </main>`;
+
     html = injectSsrMeta(html, {
       title: storeSettings.websiteTitle,
       description: storeSettings.metaDescription,
       canonical,
+      schema: homeFaqSchema,
+      bodyHtml: homeBodyHtml,
     });
     return htmlResponse(assetRes, html);
   }
@@ -1113,17 +1347,32 @@ async function renderHtmlWithSsrSeo(assetRes: Response, sourceHtml: string, env:
       keywords: routeConfig.keywords,
       canonical,
       schema: routeConfig.schema,
+      bodyHtml: routeConfig.bodyHtml,
     });
     return htmlResponse(assetRes, html);
   }
 
+  const notFoundBodyHtml = `<main class="min-h-[70vh] bg-[#FAF7F0] text-[#30251F] py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div class="max-w-xl text-center space-y-6 bg-white rounded-3xl p-8 sm:p-12 border border-[#E8E2D5] shadow-xs">
+      <span class="inline-block px-3.5 py-1 text-xs font-bold text-[#C5A46D] bg-[#FAF7F0] rounded-full border border-[#E8E2D5]">Error 404 • Not Found</span>
+      <h1 class="font-serif text-3xl sm:text-5xl font-normal text-[#30251F]">Page Not Found</h1>
+      <p class="text-sm text-[#81776C] leading-relaxed">The page you requested could not be found. Explore our 100% eggless celebration cakes, fresh floral bouquets, and gift hampers in Sector 76 Noida.</p>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <a href="/" class="px-5 py-2.5 bg-[#30251F] text-white text-xs font-semibold rounded-full">Return to Storefront</a>
+        <a href="/shop" class="px-5 py-2.5 bg-white border border-[#E8E2D5] text-[#30251F] text-xs font-semibold rounded-full">Browse Catalogue</a>
+        <a href="/category/cakes" class="px-5 py-2.5 bg-white border border-[#E8E2D5] text-[#30251F] text-xs font-semibold rounded-full">Eggless Cakes</a>
+      </div>
+    </div>
+  </main>`;
+
   html = injectSsrMeta(html, {
     title: 'Page Not Found | Cakes N More Sector 76 Noida',
     description: 'This page could not be found. Browse cakes, flowers, and gifts from Cakes N More in Sector 76, Noida.',
-    canonical: `${PRODUCTION_ORIGIN}${pathname}`,
-    robots: 'noindex,follow',
+    canonical: `${PRODUCTION_ORIGIN}/`,
+    robots: 'noindex,nofollow',
+    bodyHtml: notFoundBodyHtml,
   });
-  return htmlResponse(assetRes, html);
+  return htmlResponse(assetRes, html, 404, 'Not Found');
 }
 
 export default { async fetch(request: Request, env: Env): Promise<Response> {

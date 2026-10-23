@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
+import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { SEO } from '../components/common/SEO';
 import { ProductCard } from '../components/products/ProductCard';
 import { useStore } from '../context/StoreContext';
@@ -111,6 +112,12 @@ export const CategoryPage: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs
+          items={[
+            { label: 'Shop', path: '/shop' },
+            { label: currentCategory.name },
+          ]}
+        />
         
         {/* Category Editorial Hero Banner */}
         <div className="relative mb-8 h-auto overflow-hidden rounded-3xl border border-[#E8E2D5] bg-white shadow-[0_12px_36px_rgba(89,58,50,0.08)] md:mb-10 md:h-[320px] lg:h-[360px]">
@@ -187,6 +194,30 @@ export const CategoryPage: React.FC = () => {
             ))}
           </div>
         )}
+
+        {/* Category Context & Local Delivery Guide */}
+        <div className="mt-14 sm:mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-[#E8E2D5] shadow-xs space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#C5A46D]" />
+            <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#30251F]">
+              {isCakeCategory
+                ? 'Handcrafted 100% Eggless Cakes in Sector 76 Noida'
+                : `${currentCategory.name} Delivery in Sector 76 Noida`}
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
+            {isCakeCategory
+              ? 'At Cakes N More, every cake is 100% pure vegetarian and baked fresh to order in our Sector 76 boutique (Amrapali Crystal Home Shopping Arcade, near Mithaas). Whether you are celebrating a birthday, anniversary, or special milestone, choose from Belgian Chocolate Truffle, Red Velvet, Pineapple, Black Forest, or order a custom photo cake or trendy bento cake with prompt doorstep delivery across Central Noida.'
+              : `Explore handcrafted ${currentCategory.name.toLowerCase()} curated for birthdays, anniversaries, and festive gifting in Sector 76 Noida. All items are prepared and packed with meticulous care at our boutique in Amrapali Silicon City.`}
+          </p>
+          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#30251F]">
+            <span className="font-semibold text-[#244438]">✓ 100% Pure Vegetarian Patisserie</span>
+            <span className="text-[#81776C]">•</span>
+            <span>📍 Storefront: Sector 76 Noida (Near Metro Station)</span>
+            <span className="text-[#81776C]">•</span>
+            <span>💬 WhatsApp Concierge: <a href="tel:+919999517599" className="font-bold underline">+91 9999517599</a></span>
+          </div>
+        </div>
 
       </div>
     </div>

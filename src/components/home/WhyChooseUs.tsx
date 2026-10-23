@@ -34,7 +34,7 @@ export const WhyChooseUs: React.FC = () => {
             <div className="relative rounded-3xl overflow-hidden border border-[#E8E2D5] aspect-[4/3] sm:aspect-[16/11] bg-white shadow-md">
               <img
                 src={editorialImage}
-                alt={editorialProduct?.name || 'A selection from the Cakes N More catalogue'}
+                alt={editorialProduct?.name ? `${editorialProduct.name} - Cakes N More Sector 76 Noida` : 'Cakes N More Bakery & Florist Boutique Sector 76 Noida'}
                 loading="lazy"
                 decoding="async"
                 width={700}

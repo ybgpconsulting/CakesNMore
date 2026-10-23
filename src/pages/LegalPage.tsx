@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, FileText, Truck, RotateCcw } from 'lucide-react';
+import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { SEO } from '../components/common/SEO';
 import { getProductionUrl } from '../utils/seo';
 
@@ -197,15 +198,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ page }) => {
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#30251F] hover:text-[#C5A46D] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Store</span>
-          </Link>
-        </div>
+        <Breadcrumbs items={[{ label: content.title }]} />
 
         <div className="bg-white rounded-3xl border border-[#E8E2D5] shadow-sm p-6 sm:p-12">
           <div className="mb-10 pb-8 border-b border-[#E8E2D5]">

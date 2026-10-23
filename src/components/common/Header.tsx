@@ -159,6 +159,8 @@ export const Header: React.FC = () => {
               <img
                 src="/logo-horizontal-640w.png"
                 alt="Cakes N More"
+                width={240}
+                height={56}
                 className="h-10 w-auto object-contain sm:h-14"
               />
             </Link>

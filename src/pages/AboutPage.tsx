@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Cake, Clock, Heart, MapPin, Phone, ShieldCheck, Sparkles, Store, ArrowRight } from 'lucide-react';
+import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
 import { getProductionUrl } from '../utils/seo';
@@ -56,6 +57,8 @@ export const AboutPage: React.FC = () => {
       />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+        <Breadcrumbs items={[{ label: 'About Us' }]} />
+
         {/* Header Block */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF7F0] text-[#30251F] border border-[#E8E2D5] text-[11px] font-bold uppercase tracking-[0.2em] shadow-sm">
@@ -76,27 +79,23 @@ export const AboutPage: React.FC = () => {
           <div className="md:col-span-7 space-y-5 text-[#81776C] text-sm sm:text-base leading-relaxed">
             <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A46D]">About Cakes N More</span>
             <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#30251F]">
-              Cakes, Flowers &amp; Gifts
+              Artisanal Eggless Bakery, Fresh Florals &amp; Gifting Studio
             </h2>
             <p>
-              Cakes N More is located in Sector 76, Noida. The current catalogue brings together
-              bakery, flower and gift items in one place.
+              Located in the heart of Sector 76 Noida at Amrapali Crystal Home Shopping Arcade (next to Mithaas, Amrapali Silicon City), Cakes N More is your neighborhood destination for handcrafted 100% pure vegetarian celebration cakes, fresh morning-cut floral bouquets, indoor air-purifying plants, and bespoke gift hampers.
             </p>
             <p>
-              Browse the current catalogue for celebrations, gifts and everyday moments. Product
-              details show available options; contact the store with questions about ingredients,
-              customization or availability.
+              Every celebration deserves perfection. That is why our cakes are prepared fresh to order in a strictly vegetarian kitchen using premium chocolates, pure dairy creams, and seasonal fruits. From classic Belgian Chocolate Truffle and Red Velvet to customized photo cakes, trendy bento cakes, and elaborate multi-tiered wedding cakes, we tailor every creation to your taste and occasion.
             </p>
             <p>
-              Delivery eligibility is checked against current store settings. The team can confirm
-              timing and collection details for a specific order.
+              Our boutique floral studio curates fresh Dutch roses, Asiatic lilies, orchids, carnations, and exotic flowers hand-tied with signature aesthetic wrapping. With prompt doorstep delivery across Sector 76 and adjacent Central Noida sectors (74, 75, 77, 78, 79, 50, and 51), we ensure your sweetest moments arrive fresh and on time.
             </p>
           </div>
 
           <div className="md:col-span-5 aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-[#E8E2D5]">
             <img
               src={catalogueImage}
-              alt={catalogueProduct?.name || 'A selection from the Cakes N More catalogue'}
+              alt={catalogueProduct?.name || 'Handcrafted eggless celebration cakes from Cakes N More Sector 76 Noida'}
               loading="lazy"
               decoding="async"
               width={600}
@@ -112,9 +111,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#244438] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">Eggless Cake Range</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">100% Pure Vegetarian</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              Cakes are presented as eggless. Check individual product details and contact the store with dietary questions.
+              Every single creation is 100% eggless, prepared with highest hygiene standards in a dedicated vegetarian bakery kitchen.
             </p>
           </div>
 
@@ -122,9 +121,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#30251F] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <Clock className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">Product Details</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Baked Fresh to Order</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              Check each catalogue listing for its description, current availability and selectable options.
+              We never sell stale display cakes. Cakes are baked fresh for your order to guarantee optimal fluffiness, flavor, and moisture.
             </p>
           </div>
 
@@ -132,9 +131,9 @@ export const AboutPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-[#FAF7F0] text-[#C5A46D] flex items-center justify-center mx-auto border border-[#E8E2D5]">
               <Heart className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-normal text-[#30251F]">Local Store</h3>
+            <h3 className="font-serif text-lg font-normal text-[#30251F]">Central Noida Delivery</h3>
             <p className="text-xs sm:text-sm text-[#81776C] leading-relaxed">
-              Contact the Sector 76 store to ask about a product, a custom request or order arrangements.
+              Rapid doorstep delivery and easy pickup across Sector 76, 75, 74, 77, 78, 79, 50, and 51 Noida. Connect directly on WhatsApp.
             </p>
           </div>
         </div>

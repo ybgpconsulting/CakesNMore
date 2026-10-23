@@ -19,6 +19,7 @@ import { ShopPage } from './pages/ShopPage';
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
@@ -59,6 +60,7 @@ export default function App() {
                     <Route path="terms-and-conditions" element={<LegalPage page="terms" />} />
                     <Route path="shipping-and-delivery" element={<LegalPage page="shipping" />} />
                     <Route path="returns-policy" element={<LegalPage page="returns" />} />
+                    <Route path="*" element={<NotFoundPage />} />
                   </Route>
 
                   {/* Admin Portal Routes */}
@@ -72,9 +74,6 @@ export default function App() {
                     <Route path="/admin/delivery" element={<DeliverySettingsPage />} />
                     <Route path="/admin/settings" element={<AdminSettingsPage />} />
                   </Route>
-
-                  {/* Fallback 404 to Home */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
             </AuthProvider>
